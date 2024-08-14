@@ -1,4 +1,5 @@
 "use client"
+import { useTransition } from "react"
 import Link from "next/link"
 import { signIn } from "@/auth"
 import { redirect } from "next/navigation"
@@ -16,9 +17,11 @@ import { Label } from "@/components/ui/label"
 import { authenticate } from "@/actions/authActions"
 
 export function LoginForm() {
+    const [isPending, startTransition] = useTransition()
     const { toast } = useToast()
     const handleSubmit = async (formData:FormData) => {
-        const {success} = await authenticate(formData)
+        startTransition(async() => {
+          const {success} = await authenticate(formData)
         console.log(success)
         if(success){
             toast({
@@ -38,6 +41,7 @@ export function LoginForm() {
             })
             
         }
+        })
     }
     
   return (
@@ -70,7 +74,7 @@ export function LoginForm() {
             </div>
             <Input id="password" name="password" type="password" required />
           </div>
-          <Button type="submit" className="w-full">
+          <Button type="submit" disabled={isPending} className="w-full">
             Login
           </Button>
           <Button variant="outline" className="w-full">
