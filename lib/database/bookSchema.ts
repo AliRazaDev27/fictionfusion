@@ -1,6 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
-import { pgTable, serial, text,integer,varchar,char } from "drizzle-orm/pg-core";
+import { pgTable, serial, text,integer,varchar,char,decimal } from "drizzle-orm/pg-core";
 
 export const db = drizzle(sql);
 
@@ -14,7 +14,7 @@ export const BookTable = pgTable(
         first_sentence: text("first_sentence"),
         isbn: varchar("isbn",{length:64}).notNull().array(),
         number_of_pages: integer("number_of_pages"),
-        rating: text("rating"),
+        rating: decimal("rating"),
     }    
 )
 export const getBookTable = async () => {

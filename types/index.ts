@@ -7,3 +7,13 @@ export type User = {
     created_at: string
     updated_at: string
 }
+export type Book = {
+    title: string
+    author: string
+    cover_edition_key: string
+    first_publish_year: string
+    first_sentence: string|null
+    isbn: string[]|null
+    number_of_pages: number|null
+    rating: string|null
+}
