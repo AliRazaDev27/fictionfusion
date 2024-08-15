@@ -1,17 +1,34 @@
 import BookCard from "@/components/book_card";
+import PaginationControll from "@/components/pagination";
 import RatingStar from "@/components/ratingStar";
+import { SearchControlls } from "@/components/search_controlls";
 import { getOpenLibraryCoverLink } from "@/lib";
-import { getBookTable } from "@/lib/database/bookSchema";
+import { getBookTable, getPaginatedBooks } from "@/lib/database/bookSchema";
 
 
-export default async function Page() {
-  const books = await getBookTable();
+export default async function Page({searchParams}:{searchParams:any}) {
+  const page = Number(searchParams.page) || 1;
+  const search = searchParams.search || "";
+  const sort = searchParams.sort || "";
+  const LIMIT = 10;
+  const result = await getPaginatedBooks(LIMIT, (page - 1) * 10);
+  const books = result.data;
   return (
-    <section>
+    <>
+    <section className="grid grid-cols-1 md:grid-cols-4 border border-red-500">
+      <section className="col-span-3">
       {books &&
         books.map((book, index) => (
           <BookCard key={index} book={book} />
         ))}
+      </section>
+      <aside className="col-span-1 border border-blue-500">
+       <SearchControlls/>
+      </aside>
     </section>
+    <section>
+      <PaginationControll count={result.total} limit={LIMIT} />
+    </section>
+    </>
   );
 }

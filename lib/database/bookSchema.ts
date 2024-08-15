@@ -2,6 +2,7 @@ import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { pgTable, serial, text,integer,varchar,char,decimal } from "drizzle-orm/pg-core";
 import { Book } from "@/types";
+import { count } from "drizzle-orm";
 
 export const db = drizzle(sql);
 
@@ -37,4 +38,9 @@ export const getBookTable = async () => {
 export const getBook = async () => {
     const selectResult = await db.select().from(BookTable).limit(1);
     return selectResult
+}
+export const getPaginatedBooks = async (limit:number,offset:number) => {
+    const selectResult = await db.select().from(BookTable).limit(limit).offset(offset);
+    const total = await db.select({count:count()}).from(BookTable)
+    return {data:selectResult,total:total[0].count}
 }
