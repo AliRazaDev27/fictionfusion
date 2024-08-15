@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { pgTable, serial, text,integer,varchar,char,decimal } from "drizzle-orm/pg-core";
 import { Book, SortBook } from "@/types";
-import { asc, count, desc, like } from "drizzle-orm";
+import { asc, count, desc, ilike, like } from "drizzle-orm";
 
 export const db = drizzle(sql);
 
@@ -52,10 +52,11 @@ export const getFilteredBooks = async (search:string,sort:string) => {
     }
     if(search !=="" && sort !== ""){
         console.log("on search and sort")
+        console.log(search,sort)
         const selectResult = await db
         .select()
         .from(BookTable)
-        .where(like(BookTable.title, `%${search}%`))
+        .where(ilike(BookTable.title, `%${search}%`))
         .orderBy(bookSortOption[sort])
         return {data:selectResult}
     }
@@ -71,7 +72,7 @@ export const getFilteredBooks = async (search:string,sort:string) => {
    else if(search !==""){
     console.log("on search")
     const selectResult = await db.select().from(BookTable)
-    .where(like(BookTable.title, `%${search}%`))
+    .where(ilike(BookTable.title, `%${search}%`))
     console.log(selectResult)
     return {data:selectResult}
    }

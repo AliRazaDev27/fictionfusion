@@ -14,7 +14,7 @@ export function SearchControlls() {
   const searchTerm = searchParams.get("search")
   const sortTerm = searchParams.get("sort")
   const router = useRouter()
-  const [sortOption, setSortOption] = useState(sortTerm || "newest")
+  const [sortOption, setSortOption] = useState(sortTerm || "year_newest")
   const [search, setSearch] = useState(searchTerm || "")
   
   const sortOptions = [
