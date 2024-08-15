@@ -1,3 +1,5 @@
+import { SQL } from "drizzle-orm"
+
 export type User = {
     id: string
     name: string
@@ -18,4 +20,13 @@ export type Book = {
     olid: string[]|null
     number_of_pages: number|null
     rating: string|null
+}
+export type SortBook = {
+    year_newest:SQL<unknown>
+    year_oldest:SQL<unknown>
+    rating_max:SQL<unknown>
+    rating_min:SQL<unknown>
+    pages_max:SQL<unknown>
+    pages_min:SQL<unknown>
+    [key:string]:SQL<unknown>
 }

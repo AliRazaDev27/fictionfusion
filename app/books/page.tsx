@@ -3,15 +3,22 @@ import PaginationControll from "@/components/pagination";
 import RatingStar from "@/components/ratingStar";
 import { SearchControlls } from "@/components/search_controlls";
 import { getOpenLibraryCoverLink } from "@/lib";
-import { getBookTable, getPaginatedBooks } from "@/lib/database/bookSchema";
+import { getBookTable, getFilteredBooks, getPaginatedBooks } from "@/lib/database/bookSchema";
 
 
 export default async function Page({searchParams}:{searchParams:any}) {
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search || "";
   const sort = searchParams.sort || "";
+  console.log("page",page,"search",search,"sort",sort)
   const LIMIT = 10;
-  const result = await getPaginatedBooks(LIMIT, (page - 1) * 10);
+  let result = null;
+  if(search !== "" || sort !== ""){
+     result = await getFilteredBooks(search,sort);
+  }
+  else{
+     result = await getPaginatedBooks(LIMIT, (page - 1) * 10);
+  }
   const books = result.data;
   return (
     <>

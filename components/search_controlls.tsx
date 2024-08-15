@@ -20,10 +20,10 @@ export function SearchControlls() {
   const sortOptions = [
     { value: "year_newest", label: "Year: Newest" },
     { value: "year_oldest", label: "Year: Oldest" },
-    { value: "rating_high", label: "Rating: High to Low" },
-    { value: "rating_low", label: "Rating: Low to High" },
-    { value: "pages_high", label: "Page Count: High to Low" },
-    { value: "pages_low", label: "Page Count: Low to High" },
+    { value: "rating_max", label: "Rating: High to Low" },
+    { value: "rating_min", label: "Rating: Low to High" },
+    { value: "pages_max", label: "Page Count: High to Low" },
+    { value: "pages_min", label: "Page Count: Low to High" },
   ]
   function handleFilter() {
     const data:any = {
@@ -36,7 +36,6 @@ export function SearchControlls() {
   function handleReset() {
     setSearch("")
     setSortOption("")
-    setSelectedCategory("")
     router.push(`${path}`)
     router.refresh()
   }
