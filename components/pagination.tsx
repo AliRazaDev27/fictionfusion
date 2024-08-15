@@ -14,19 +14,21 @@ export default function PaginationControll({ count,limit }: { count: number,limi
   const path = usePathname()
   const searchParams = useSearchParams()
   const page = Number(searchParams.get("page")) || 1;
+  const search = searchParams.get("search") || "";
+  const sort = searchParams.get("sort") || "";
   function getPreviousPage() {
     if (page > 1) {
-      return `${path}?page=${page - 1}`
+      return `${path}?page=${page - 1}&search=${search}&sort=${sort}`
 
     }
   }
   function getNextPage() {
     if (page < count / limit) {
-      return `${path}?page=${page + 1}`
+      return `${path}?page=${page + 1}&search=${search}&sort=${sort}`
     }
   }
   function getPageAt(pageNumber: number) {
-    return `${path}?page=${pageNumber}`
+    return `${path}?page=${pageNumber}&search=${search}&sort=${sort}`
   }
   return (
     <Pagination>

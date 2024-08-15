@@ -1,6 +1,5 @@
 "use client"
 import { useSearchParams, usePathname } from "next/navigation"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"

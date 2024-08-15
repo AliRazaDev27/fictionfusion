@@ -1,9 +1,7 @@
 import BookCard from "@/components/book_card";
 import PaginationControll from "@/components/pagination";
-import RatingStar from "@/components/ratingStar";
 import { SearchControlls } from "@/components/search_controlls";
-import { getOpenLibraryCoverLink } from "@/lib";
-import { getBookTable, getFilteredBooks, getPaginatedBooks } from "@/lib/database/bookSchema";
+import {  getFilteredBooks, getPaginatedBooks } from "@/lib/database/bookSchema";
 
 
 export default async function Page({searchParams}:{searchParams:any}) {
@@ -14,12 +12,13 @@ export default async function Page({searchParams}:{searchParams:any}) {
   const LIMIT = 10;
   let result = null;
   if(search !== "" || sort !== ""){
-     result = await getFilteredBooks(search,sort);
+     result = await getFilteredBooks(search,sort,page,LIMIT);
   }
   else{
      result = await getPaginatedBooks(LIMIT, (page - 1) * 10);
   }
-  const books = result.data;
+  const books = result?.data;
+  console.log(result?.total)
   return (
     <>
     <section className="grid grid-cols-1 md:grid-cols-4 border border-red-500">
@@ -34,7 +33,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
       </aside>
     </section>
     <section>
-      <PaginationControll count={result.total} limit={LIMIT} />
+      <PaginationControll count={result?.total || 0} limit={LIMIT} />
     </section>
     </>
   );

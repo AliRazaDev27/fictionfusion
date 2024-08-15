@@ -44,40 +44,24 @@ export const getPaginatedBooks = async (limit:number,offset:number) => {
     const total = await db.select({count:count()}).from(BookTable)
     return {data:selectResult,total:total[0].count}
 }
-export const getFilteredBooks = async (search:string,sort:string) => {
+export const getFilteredBooks = async (search:string,sort:string,page:number,limit:number) => {
     console.log("calling")
     if(search==="" && sort===""){
         console.log("returning null")
         return null
     }
-    if(search !=="" && sort !== ""){
-        console.log("on search and sort")
-        console.log(search,sort)
-        const selectResult = await db
-        .select()
-        .from(BookTable)
-        .where(ilike(BookTable.title, `%${search}%`))
-        .orderBy(bookSortOption[sort])
-        return {data:selectResult}
+    const selectResult = db.select().from(BookTable)
+    if(search !==""){
+        selectResult.where(ilike(BookTable.title, `%${search}%`))
     }
-   else if(sort !== ""){
-    console.log("on sort")
-    const selectResult = await db
-    .select()
-    .from(BookTable)
-    .orderBy(bookSortOption[sort])
-    console.log(selectResult)
-    return {data:selectResult}
-   }
-   else if(search !==""){
-    console.log("on search")
-    const selectResult = await db.select().from(BookTable)
-    .where(ilike(BookTable.title, `%${search}%`))
-    console.log(selectResult)
-    return {data:selectResult}
-   }
+    if(sort !==""){
+        selectResult.orderBy(bookSortOption[sort])
+    }
+    selectResult.limit(limit).offset(limit*(page-1))
+    const data = await selectResult
+    const total = await db.select({count:count()}).from(BookTable).where(ilike(BookTable.title, `%${search}%`))
+    return {data:data,total:total[0].count}
 }
-
 export const bookSortOption:SortBook = {
     year_newest:desc(BookTable.first_publish_year),
     year_oldest: asc(BookTable.first_publish_year),
