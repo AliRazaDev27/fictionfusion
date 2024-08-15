@@ -1,24 +1,27 @@
-import { auth } from "@/auth";
-import { getBookTable } from "@/lib/database/bookSchema";
-import { getUserTable } from "@/lib/database/userSchema";
+
+import Loader from "@/components/loader";
 export default async function Home() {
-const users = await getBookTable()
+// const isPresent = await fetch("https://covers.openlibrary.org/b/olid/OL37371066M-M.jpg?default=false")
+// console.log(isPresent)
+// const data = await addBook({
+//   title:"sample",
+//   author_name:"sample",
+//   author_id:"sample",
+//   cover_edition_key:"sample",
+//   first_publish_year:"sample",
+//   first_sentence:"sample",
+//   olid:["sample"],
+//   number_of_pages:0,
+//   rating:"1"
+// })
+
+
+
+// console.log(result)
   return (
     <main>
-      {Array.isArray(users[0].isbn) ? "Array" : "Object"}
-      {/* {users && users.map((user,index) =>
-        <div key={index}>
-<p>{user.title}</p>
-<p>{user.author}</p>
-<p>{user.first_sentence}</p>
-<div>
-  <ul>
-    {user?.isbn && user.isbn.map((isbn,index) => <li key={index}>{isbn}</li>)}
-  </ul>
-</div>
-        </div>
-
-      )} */}
+<Loader/>
+   
       </main>
   );
 }

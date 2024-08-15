@@ -8,12 +8,14 @@ export type User = {
     updated_at: string
 }
 export type Book = {
+    id?:number
     title: string
-    author: string
+    author_name: string
+    author_id: string
     cover_edition_key: string
     first_publish_year: string
     first_sentence: string|null
-    isbn: string[]|null
+    olid: string[]|null
     number_of_pages: number|null
     rating: string|null
 }
