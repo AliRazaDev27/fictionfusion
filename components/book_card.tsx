@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import {useState} from "react";
+import {useState,useRef} from "react";
 import placeholder from "@/public/bookplaceholder.svg";
 import { getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
 import RatingStar from "./ratingStar";
@@ -18,11 +18,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
-import { deleteImageFromGallery, setBookCoverImage } from "@/actions/bookActions";
+import { FaArrowCircleLeft, FaArrowCircleRight,  FaPen,  FaTrash } from "react-icons/fa";
+import { deleteImageFromGallery, setBookCoverImage, updateBookInfo } from "@/actions/bookActions";
 import { useToast } from "./ui/use-toast";
 
 export default function BookCard({ book }: { book: Book }) {
+  const titleRef = useRef(null)
+  const authorRef = useRef(null)
+  const yearRef = useRef(null)
+const sentenceRef = useRef(null)
   const {toast} = useToast()
   console.log(getOpenLibraryCoverLink("olid",book.cover_edition_key,"M"))
   const [currentGalleryImageIndex, setCurrentGalleryImageIndex] = useState(0);
@@ -83,6 +87,28 @@ export default function BookCard({ book }: { book: Book }) {
       }
       
   }
+  async function updateBook(){
+    let title = titleRef.current.value
+    let author = authorRef.current.value
+    let year = yearRef.current.value
+    let sentence = sentenceRef.current.value
+    const result = await updateBookInfo(book.id,title,author,year,sentence)
+    if(result.success){
+      toast({
+        title: "Book Updated Successfully",
+        className: "bg-green-600 text-white",
+        duration: 1500
+      })
+    }
+    else{
+      toast({
+        title: "Book Update Failed",
+        description: result.message,
+        className: "bg-red-600 text-white",
+        duration: 1500
+      })
+    }
+  }
   return (
     <div className="flex  flex-col md:flex-row gap-8 px-8 border border-yellow-500 my-8">
       <div
@@ -123,7 +149,31 @@ export default function BookCard({ book }: { book: Book }) {
         </Dialog>
       </div>
       <div className="flex flex-col justify-evenly w-full min-h-80  border shadow-2xl shadow-black px-4 border-black rounded-3xl">
+        <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{book.title}</h1>
+        <div className="flex gap-4 items-center">
+          <Dialog>
+          <button><FaTrash/></button>
+          <DialogTrigger><FaPen/></DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+            <DialogTitle className="text-2xl font-light">Edit Book Info</DialogTitle>
+            <DialogDescription>
+              <div className="flex flex-col gap-4 mt-2">
+                <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="title">Title{""}<input type="text" id="title" name="title" ref={titleRef} placeholder={book?.title} /></label>
+                <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="author">Author{""}<input type="text" id="author" name="author" ref={authorRef} placeholder={book?.author_name} /></label>
+                <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="year">Publish Year{""}<input type="text" id="year" name="year" ref={yearRef} placeholder={book?.first_publish_year} /></label>
+                <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="sentence">First Sentence{""}<textarea rows={4} cols={22}  type="text" id="sentence" name="sentence" ref={sentenceRef} placeholder={book?.first_sentence} /></label>
+                <button onClick={updateBook} className="ms-auto mt-2 bg-black hover:bg-black/80 text-white px-4 py-2 rounded-md w-max">Save</button>  
+              </div>
+            </DialogDescription>
+            </DialogHeader>
+
+          </DialogContent>
+          </Dialog>
+        </div>
+        </div>
+
         <div className="flex items-center gap-8">
           <div className="flex gap-2 items-center">
             
