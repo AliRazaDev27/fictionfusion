@@ -28,8 +28,10 @@ export default async function Page({searchParams}:{searchParams:any}) {
           <BookCard key={index} book={book} />
         ))}
       </section>
-      <aside className="col-span-1 border border-blue-500">
+      <aside className="col-span-1  border border-blue-500">
+       <div className="sticky top-0">
        <SearchControlls/>
+       </div>
       </aside>
     </section>
     <section>

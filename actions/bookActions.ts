@@ -1,5 +1,6 @@
+"use server";
 import { franc } from "franc";
-import { addBook } from "@/lib/database/bookSchema";
+import { addBook, deleteImageFromOlid, setCoverImage } from "@/lib/database/bookSchema";
 export async function getBookFromOpenLibrary(bookName:string){
     try{
     let safeTitle = bookName.trim()   
@@ -51,4 +52,12 @@ export async function getBookFromOpenLibrary(bookName:string){
 } catch (err) {
   console.log(err);
 }
+}
+export async function deleteImageFromGallery(value:string,id:number){
+const result = await deleteImageFromOlid(value,id)
+return result
+}
+export async function setBookCoverImage(value:string,id:number){
+  const result = await setCoverImage(value,id)
+  return result
 }

@@ -2,7 +2,7 @@ import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { pgTable, serial, text,integer,varchar,char,decimal } from "drizzle-orm/pg-core";
 import { Book, SortBook } from "@/types";
-import { asc, count, desc, ilike, like } from "drizzle-orm";
+import { asc, count, desc, eq, ilike, like } from "drizzle-orm";
 
 export const db = drizzle(sql);
 
@@ -62,6 +62,42 @@ export const getFilteredBooks = async (search:string,sort:string,page:number,lim
     const total = await db.select({count:count()}).from(BookTable).where(ilike(BookTable.title, `%${search}%`))
     return {data:data,total:total[0].count}
 }
+export const deleteImageFromOlid = async (value:string,id:number) => {
+  try{
+    const book = await db.select({olid:BookTable.olid}).from(BookTable).where(eq(BookTable.id, id)).limit(1)
+    const olid = book[0].olid
+    if(olid === null) return
+    let updatedOlid = olid.filter((item:string) => item !== value)
+    await db
+    .update(BookTable)
+    .set({olid:updatedOlid})
+    .where(eq(BookTable.id, id))
+    return {success:true}
+}
+  catch(err){
+    console.log(err)
+    return {success:false,message:err.message}
+  }
+}
+
+export const setCoverImage = async (value:string,id:number) => {
+   try{
+    await db
+    .update(BookTable)
+    .set({cover_edition_key:value})
+    .where(eq(BookTable.id, id))
+    return {success:true}
+   }
+   catch(err){
+    console.log(err)
+    return {success:false,message:err.message}
+   }
+    
+}
+
+
+
+
 export const bookSortOption:SortBook = {
     year_newest:desc(BookTable.first_publish_year),
     year_oldest: asc(BookTable.first_publish_year),
