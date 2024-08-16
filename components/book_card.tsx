@@ -2,7 +2,7 @@
 import Image from "next/image";
 import {useState,useRef} from "react";
 import placeholder from "@/public/bookplaceholder.svg";
-import { getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
+import { getAuthorId, getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
 import RatingStar from "./ratingStar";
 import { FaBookOpen, FaTrashCan } from "react-icons/fa6";
 import { Book } from "@/types";
@@ -21,6 +21,7 @@ import {
 import { FaArrowCircleLeft, FaArrowCircleRight,  FaPen,  FaTrash } from "react-icons/fa";
 import { deleteImageFromGallery, setBookCoverImage, updateBookInfo } from "@/actions/bookActions";
 import { useToast } from "./ui/use-toast";
+import Link from "next/link";
 
 export default function BookCard({ book }: { book: Book }) {
   const titleRef = useRef(null)
@@ -183,7 +184,7 @@ const sentenceRef = useRef(null)
                 <AvatarFallback><IoPersonCircle className="w-10 h-10"/></AvatarFallback>
               </Avatar>
             </div>
-            <p>{book.author_name}</p>
+            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="hover:text-black underline">{book.author_name}</Link>
           </div>
           <p>{book.first_publish_year}</p>
         </div>

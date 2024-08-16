@@ -17,3 +17,11 @@ export const getOpenLibraryAuthorLink =  (key:Key,value:string,size:Size) => {
 
     return `https://covers.openlibrary.org/a/${key}/${cleanValue}-${size}.jpg?default=false`
 }
+export const getAuthorId = (value:string) => {
+    if(!value) return
+    value = value.trim()
+    if(value.startsWith("{\"")){
+        value = value.slice(2,-2)
+    }
+    return value
+}
