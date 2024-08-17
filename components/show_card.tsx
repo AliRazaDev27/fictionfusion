@@ -4,13 +4,17 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
 export  function ShowCard({ show }: { show: Show }) {
+    let image = show.image as any
+    let coverSrc = image?.medium ? image?.medium : image?.original
+    if(!coverSrc) coverSrc = "/bookplaceholder.svg"
+    let rating = show.rating as any;
+    let averageRating = rating?.average ? rating?.average : null
 return(
     <div className="grid grid-cols-1  md:grid-cols-6   gap-2 px-4 py-2">
         <div className="col-span-1 overflow-hidden border-2 mx-auto  border-yellow-700">
             <div className="border relative border-green-700 group">
-            {show.image?.medium ? 
-            <img src={show.image?.medium} alt="cover"  className="w-full h-full group-hover:blur-md"/> :
-            <img src={show.image?.original} alt="org_cover" className="w-full h-full group-hover:blur-md" />
+            {
+            <img src={coverSrc} alt="cover"  className="w-full h-full group-hover:blur-md"/>
             }
             <Button  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden group-hover:block text-white hover:bg-blue-900 ">View</Button>
             </div>
@@ -22,7 +26,7 @@ return(
         <h1 className="text-2xl font-semibold">{show.name}</h1>
         <div className="flex flex-wrap gap-4">
             <p className="font-semibold text-lg">{show.type}</p>
-            <Badge>{show.rating.average}</Badge>
+            {averageRating && <Badge>{averageRating}</Badge>}
         </div>
         
         <div className="flex flex-wrap gap-4">
@@ -38,7 +42,7 @@ return(
         <div className="flex flex-wrap gap-2">
             <p className="font-semibold">Genres</p>
             <ul className="flex flex-wrap gap-2">
-    {show.genres.map((genre, index) => (
+    {show.genres && show.genres.map((genre, index) => (
         <li key={index}>{genre}</li>
     ))}
 </ul>

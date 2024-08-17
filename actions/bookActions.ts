@@ -61,8 +61,13 @@ export async function setBookCoverImage(value:string,id:number){
   const result = await setCoverImage(value,id)
   return result
 }
-export async function updateBookInfo(id:number,title:string,author:string,year:string,sentence:string){
+export async function updateBookInfo(id:number,title?:string,author?:string,year?:string,sentence?:string){
+  if(!!title || !!author || !!year || !!sentence){
   const result = await updateBook(id,title,author,year,sentence)
   return result
+}
+else{
+  return
+}
 }
 

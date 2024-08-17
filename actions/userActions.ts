@@ -1,11 +1,12 @@
 "use server"
+import { getUserByEmail } from "@/lib/database/userSchema"
 import { sql } from "@vercel/postgres"
 import { hash } from "bcrypt"
 
 export async function getUser(email: string) {
-    const { rows } = await sql`SELECT * FROM users WHERE email = ${email}`
+    const  user  = await getUserByEmail(email)
     
-    return rows[0]
+    return user
 }
 export async function createUser(name: string,email: string, password: string, role: string) {
     try{
@@ -19,7 +20,7 @@ export async function createUser(name: string,email: string, password: string, r
         const { rows } = await sql`INSERT INTO users (name, email, password, role ) VALUES (${name}, ${email}, ${hashPassword}, ${role} ) RETURNING *`
         return rows
     }
-    catch(err){
+    catch(err: any) {
         console.log(err)
         throw new Error(err.message)
     }

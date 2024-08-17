@@ -1,4 +1,5 @@
 import { drizzle } from 'drizzle-orm/vercel-postgres';
+import { InferSelectModel, InferInsertModel,eq } from 'drizzle-orm';
 import { sql } from "@vercel/postgres";
 import {
   pgTable,
@@ -7,7 +8,10 @@ import {
   timestamp,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { PassThrough } from 'stream';
+
+
+export type User = InferSelectModel<typeof UserTable>;
+export type NewUser = InferInsertModel<typeof UserTable>;
 
 // Use this object to send drizzle queries to your DB
 export const db = drizzle(sql);
@@ -34,3 +38,10 @@ export const getUserTable = async () => {
   const selectResult = await db.select().from(UserTable);
   return selectResult
 };
+export const getUserByEmail = async (email: string) => {
+  const selectResult = await db
+    .select()
+    .from(UserTable)
+    .where(eq(UserTable.email, email));
+  return selectResult[0]
+}

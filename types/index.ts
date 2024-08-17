@@ -1,26 +1,12 @@
 import { SQL } from "drizzle-orm"
+import type { Book, NewBook } from "@/lib/database/bookSchema"
+import type { Show, NewShow } from "@/lib/database/showSchema"
+import type { User, NewUser } from "@/lib/database/userSchema"
+export type { Book, NewBook }
+export type { Show, NewShow }
+export type { User, NewUser }
 
-export type User = {
-    id: string
-    name: string
-    email: string
-    role: string
-    password: string
-    created_at: string
-    updated_at: string
-}
-export type Book = {
-    id?:number
-    title: string
-    author_name: string
-    author_id: string
-    cover_edition_key: string
-    first_publish_year: string
-    first_sentence: string|null
-    olid: string[]|null
-    number_of_pages: number|null
-    rating: string|null
-}
+
 export type SortBook = {
     year_newest:SQL<unknown>
     year_oldest:SQL<unknown>
@@ -29,23 +15,4 @@ export type SortBook = {
     pages_max:SQL<unknown>
     pages_min:SQL<unknown>
     [key:string]:SQL<unknown>
-}
-export type Show = {
-    id:number,
-    name:string,
-    type:string,
-    language:string,
-    genres:string[]|null,
-    status:string,
-    runtime:string,
-    premiered:string,
-    ended:string,
-    rating:{
-        average?:number|null
-    },
-    image:{
-        medium?:string,
-        original?:string,
-    },
-    summary:string,
 }

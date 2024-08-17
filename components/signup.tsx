@@ -39,11 +39,11 @@ export function SignupForm() {
         });
         router.push("/")
       }
-      catch (err) {
+      catch (err:any) {
         console.log(err)
         toast({
           title: "User Creation Failed",
-          description:  err.message as string,
+          description:  err?.message as string,
           className: "bg-red-500 text-white",
           duration: 1500
         })

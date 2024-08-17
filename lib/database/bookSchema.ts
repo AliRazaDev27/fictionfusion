@@ -1,5 +1,6 @@
 import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
+import {InferSelectModel,InferInsertModel} from "drizzle-orm";
 import {
   pgTable,
   serial,
@@ -9,7 +10,7 @@ import {
   char,
   decimal,
 } from "drizzle-orm/pg-core";
-import { Book, SortBook } from "@/types";
+import {  SortBook } from "@/types";
 import { asc, count, desc, eq, ilike, like } from "drizzle-orm";
 
 export const db = drizzle(sql);
@@ -27,7 +28,10 @@ export const BookTable = pgTable("books", {
   rating: decimal("rating"),
 });
 
-export const addBook = async (book: Book) => {
+export type NewBook = InferInsertModel<typeof BookTable>;
+export type Book = InferSelectModel<typeof BookTable>;
+
+export const addBook = async (book: NewBook) => {
   const insertResult = await db.insert(BookTable).values(book).returning();
   return insertResult;
 };
@@ -84,13 +88,14 @@ export const deleteImageFromOlid = async (value: string, id: number) => {
       .limit(1);
     const olid = book[0].olid;
     if (olid === null) return;
+    if(olid.length === 0) return;
     let updatedOlid = olid.filter((item: string) => item !== value);
     await db
       .update(BookTable)
       .set({ olid: updatedOlid })
       .where(eq(BookTable.id, id));
     return { success: true };
-  } catch (err) {
+  } catch (err:any) {
     console.log(err);
     return { success: false, message: err.message };
   }
@@ -103,7 +108,7 @@ export const setCoverImage = async (value: string, id: number) => {
       .set({ cover_edition_key: value })
       .where(eq(BookTable.id, id));
     return { success: true };
-  } catch (err) {
+  } catch (err:any) {
     console.log(err);
     return { success: false, message: err.message };
   }
@@ -111,21 +116,24 @@ export const setCoverImage = async (value: string, id: number) => {
 
 export const updateBook = async (
   id: number,
-  title: string,
-  author: string,
-  year: string,
-  sentence: string
+  title?: string,
+  author?: string,
+  year?: string,
+  sentence?: string
 ) => {
   try {
+if(!title && !author && !year && !sentence){
+  return
+}
     const book = {};
-    if (title) book["title"] = title;
-    if (author) book["author_name"] = author;
-    if (year) book["first_publish_year"] = year;
-    if (sentence) book["first_sentence"] = sentence;
+    if (!!title) book["title"] = title;
+    if (!!author) book["author_name"] = author;
+    if (!!year) book["first_publish_year"] = year;
+    if (!!sentence) book["first_sentence"] = sentence;
 
     await db.update(BookTable).set(book).where(eq(BookTable.id, id));
     return { success: true };
-  } catch (err) {
+  } catch (err:any) {
     console.log(err);
     return { success: false, message: err.message };
   }

@@ -33,7 +33,7 @@ export default function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" aria-description="Main menu">
+          <SheetContent side="left">
             <NavLinksMobile/>
           </SheetContent>
         </Sheet>
@@ -46,7 +46,7 @@ export default function Header() {
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" aria-description="User menu">
+            <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Settings</DropdownMenuItem>

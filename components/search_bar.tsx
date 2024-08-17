@@ -20,7 +20,7 @@ export function SearchBar() {
           if (e.key === "Enter") {
             e.preventDefault()
             const value = searchRef.current?.value
-            searchRef.current.value = ""
+            if(searchRef.current?.value) searchRef.current.value = ""
             searchRef.current?.blur()
             router.push(`/search/shows?query=${value}`)
           }

@@ -1,10 +1,14 @@
-import { Book, Show } from "@/types";
+import { Book, } from "@/types";
+import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { json, pgTable, serial,text,varchar } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
 
 export const db = drizzle(sql);
+
+export type Show = InferSelectModel<typeof ShowTable>;
+export type NewShow = InferInsertModel<typeof ShowTable>;
 
 export const ShowTable = pgTable("shows", {
     id: serial("id").primaryKey(),

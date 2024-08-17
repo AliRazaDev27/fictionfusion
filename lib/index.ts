@@ -1,8 +1,8 @@
 export type Key = "isbn" | "olid"
 export type Size = "S" | "M" | "L"
-export const getOpenLibraryCoverLink =  (key:Key,value:string,size:Size) => {
+export const getOpenLibraryCoverLink =  (key:Key,value:string|null,size:Size) => {
     console.log(value)
-    if(!value) return
+    if(!value) return "/bookplaceholder.svg"
     value = value.trim()
     return `https://covers.openlibrary.org/b/${key}/${value}-${size}.jpg?default=false`
 }

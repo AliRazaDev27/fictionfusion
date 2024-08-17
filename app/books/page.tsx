@@ -1,7 +1,7 @@
 import BookCard from "@/components/book_card";
 import PaginationControll from "@/components/pagination";
 import { SearchControlls } from "@/components/search_controlls";
-import {  getFilteredBooks, getPaginatedBooks } from "@/lib/database/bookSchema";
+import {  Book, getFilteredBooks, getPaginatedBooks } from "@/lib/database/bookSchema";
 
 
 export default async function Page({searchParams}:{searchParams:any}) {
@@ -10,7 +10,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
   const sort = searchParams.sort || "";
   console.log("page",page,"search",search,"sort",sort)
   const LIMIT = 10;
-  let result = null;
+  let result:{data:Book[],total:number}|null = {data:[],total:0};
   if(search !== "" || sort !== ""){
      result = await getFilteredBooks(search,sort,page,LIMIT);
   }

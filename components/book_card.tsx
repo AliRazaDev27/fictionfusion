@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import {useState,useRef} from "react";
+import {useState,useRef, MutableRefObject} from "react";
 import placeholder from "@/public/bookplaceholder.svg";
 import { getAuthorId, getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
 import RatingStar from "./ratingStar";
@@ -24,16 +24,15 @@ import { useToast } from "./ui/use-toast";
 import Link from "next/link";
 
 export default function BookCard({ book }: { book: Book }) {
-  const titleRef = useRef(null)
-  const authorRef = useRef(null)
-  const yearRef = useRef(null)
-const sentenceRef = useRef(null)
+  const titleRef:any = useRef()
+  const authorRef:any = useRef()
+  const yearRef:any = useRef()
+const sentenceRef:any = useRef()
   const {toast} = useToast()
   console.log(getOpenLibraryCoverLink("olid",book.cover_edition_key,"M"))
   const [currentGalleryImageIndex, setCurrentGalleryImageIndex] = useState(0);
   function nextGalleryImage() {  
-    console.log(book.olid)
-    if(currentGalleryImageIndex === book.olid.length - 1){
+    if((currentGalleryImageIndex+1) === book?.olid?.length){
       console.log("last image")
     }
     else{
@@ -51,7 +50,9 @@ const sentenceRef = useRef(null)
   }
   async function saveImageAsCover(){
     console.log(book.cover_edition_key)
-    const result = await setBookCoverImage(book.olid[currentGalleryImageIndex],book.id)
+    const imageIndex = book?.olid && book?.olid[currentGalleryImageIndex]
+    if(!imageIndex) return
+    const result = await setBookCoverImage(imageIndex,book.id)
     if(result.success){
       toast({
         title: "Image Saved Successfully",
@@ -70,8 +71,10 @@ const sentenceRef = useRef(null)
   }
   async function deleteImage(){
     console.log("delete click")
-      const result = await deleteImageFromGallery(book.olid[currentGalleryImageIndex],book.id)
-      if(result.success){
+    const imageIndex = book?.olid && book?.olid[currentGalleryImageIndex]
+    if(!imageIndex) return
+      const result = await deleteImageFromGallery(imageIndex,book.id)
+      if(result?.success){
         toast({
           title: "Image Deleted Successfully",
           className: "bg-green-600 text-white",
@@ -81,7 +84,7 @@ const sentenceRef = useRef(null)
       else{
         toast({
           title: "Image Deletion Failed",
-          description: result.message,
+          description: result?.message,
           className: "bg-red-600 text-white",
           duration: 1500
         })
@@ -89,12 +92,13 @@ const sentenceRef = useRef(null)
       
   }
   async function updateBook(){
-    let title = titleRef.current.value
-    let author = authorRef.current.value
-    let year = yearRef.current.value
-    let sentence = sentenceRef.current.value
+    let title = titleRef?.current?.value
+    let author = authorRef?.current?.value
+    let year = yearRef?.current?.value
+    let sentence = sentenceRef?.current?.value
+    if(!title && !author && !year && !sentence) return
     const result = await updateBookInfo(book.id,title,author,year,sentence)
-    if(result.success){
+    if(result?.success){
       toast({
         title: "Book Updated Successfully",
         className: "bg-green-600 text-white",
@@ -104,7 +108,7 @@ const sentenceRef = useRef(null)
     else{
       toast({
         title: "Book Update Failed",
-        description: result.message,
+        description: result?.message,
         className: "bg-red-600 text-white",
         duration: 1500
       })
@@ -129,14 +133,14 @@ const sentenceRef = useRef(null)
           }}
         />
         <Dialog>
-        <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 ${book.olid.length === 0 ? "hidden" : ""}`}><DialogTrigger className="hover:bg-black bg-black/80 text-white px-4 py-2 rounded-xl">Open Gallery</DialogTrigger></div>
+        <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 ${book?.olid?.length === 0 ? "hidden" : ""}`}><DialogTrigger className="hover:bg-black bg-black/80 text-white px-4 py-2 rounded-xl">Open Gallery</DialogTrigger></div>
         <DialogContent>
     <DialogHeader>
-      <DialogTitle className="text-2xl font-light">Gallery / {book.olid.length}</DialogTitle>
+      <DialogTitle className="text-2xl font-light">Gallery / {book?.olid && book?.olid.length}</DialogTitle>
       <DialogDescription>
         <div className="relative flex justify-center w-full h-full overflow-hidden">
         <div className="w-80 aspect-[3/4] border border-black">
-          <img src={getOpenLibraryCoverLink("olid", book.olid[currentGalleryImageIndex], "M")} alt="gallery" className="w-full h-full"/>
+          <img src={getOpenLibraryCoverLink("olid", book?.olid && book.olid[currentGalleryImageIndex], "M")} alt="gallery" className="w-full h-full"/>
         </div>
         <div className="absolute top-1/2 right-0  -translate-y-1/2"><button onClick={nextGalleryImage}><FaArrowCircleRight className="size-8 hover:text-black/80"/></button></div>
         <div className="absolute top-1/2 left-0  -translate-y-1/2"><button onClick={previousGalleryImage}><FaArrowCircleLeft className="size-8 hover:text-black/80 "/></button></div>
@@ -164,7 +168,7 @@ const sentenceRef = useRef(null)
                 <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="title">Title{""}<input type="text" id="title" name="title" ref={titleRef} placeholder={book?.title} /></label>
                 <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="author">Author{""}<input type="text" id="author" name="author" ref={authorRef} placeholder={book?.author_name} /></label>
                 <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="year">Publish Year{""}<input type="text" id="year" name="year" ref={yearRef} placeholder={book?.first_publish_year} /></label>
-                <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="sentence">First Sentence{""}<textarea rows={4} cols={22}  type="text" id="sentence" name="sentence" ref={sentenceRef} placeholder={book?.first_sentence} /></label>
+                <label className="flex gap-4 items-center justify-between text-black text-lg font-semibold" htmlFor="sentence">First Sentence{""}<textarea rows={4} cols={22}   id="sentence" name="sentence" ref={sentenceRef} placeholder={book?.first_sentence || ""} /></label>
                 <button onClick={updateBook} className="ms-auto mt-2 bg-black hover:bg-black/80 text-white px-4 py-2 rounded-md w-max">Save</button>  
               </div>
             </DialogDescription>
