@@ -2,6 +2,7 @@ import { Book, Show } from "@/types";
 import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { json, pgTable, serial,text,varchar } from "drizzle-orm/pg-core";
+import { eq } from "drizzle-orm";
 
 export const db = drizzle(sql);
 
@@ -34,4 +35,11 @@ export const getShows = async () => {
         .from(ShowTable)
         ;
     return result
+}
+export const deleteShow = async (id: number) => {
+  await db
+        .delete(ShowTable)
+        .where(eq(ShowTable.id, id))
+        ;
+    return {success: true}
 }

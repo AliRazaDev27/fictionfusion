@@ -1,6 +1,7 @@
 "use server"
-import { addShowTODatabase, getShows } from "@/lib/database/showSchema";
+import { addShowTODatabase, deleteShow, getShows } from "@/lib/database/showSchema";
 import { Show } from "@/types";
+import { revalidatePath } from "next/cache";
 
 
 export async function getShowInfo(showID: string) {
@@ -17,9 +18,19 @@ export async function searchShowByTitle(title: string) {
 }
 export async function addShow(show: Show) {
     const result = await addShowTODatabase(show);
+    if(result.success){
+        revalidatePath("/shows")
+    }
     return result
 }
 export async function getAllShows() {
     const result = await getShows();
+    return result
+}
+export async function deleteShowByID(id: number) {
+    const result = await deleteShow(id);
+    if(result.success){
+        revalidatePath("/shows")
+    }
     return result
 }
