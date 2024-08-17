@@ -30,3 +30,22 @@ export type SortBook = {
     pages_min:SQL<unknown>
     [key:string]:SQL<unknown>
 }
+export type Show = {
+    id:number,
+    name:string,
+    type:string,
+    language:string,
+    genres:string[]|null,
+    status:string,
+    runtime:string,
+    premiered:string,
+    ended:string,
+    rating:{
+        average?:number|null
+    },
+    image:{
+        medium?:string,
+        original?:string,
+    },
+    summary:string,
+}
