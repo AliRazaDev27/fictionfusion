@@ -22,8 +22,10 @@ import { FaArrowCircleLeft, FaArrowCircleRight,  FaPen,  FaTrash } from "react-i
 import { deleteImageFromGallery, setBookCoverImage, updateBookInfo } from "@/actions/bookActions";
 import { useToast } from "./ui/use-toast";
 import Link from "next/link";
+import { removeEmptyImages } from "@/actions/cleaner";
+import { Badge } from "./ui/badge";
 
-export default function BookCard({ book }: { book: Book }) {
+export default function BookCard({ book,role }: { book: Book,role:string }) {
   const titleRef:any = useRef()
   const authorRef:any = useRef()
   const yearRef:any = useRef()
@@ -115,9 +117,9 @@ const sentenceRef:any = useRef()
     }
   }
   return (
-    <div className="flex  flex-col md:flex-row gap-8 px-8 border border-yellow-500 my-8">
+    <div className="flex  flex-col md:flex-row gap-8 max-md:items-center  my-8">
       <div
-        className="max-w-[300px] md:aspect-[3/4]"
+        className="min-w-[300px] md:aspect-[3/4] rounded-2xl overflow-hidden"
         style={{ position: "relative", height: "400px" }}
       >
         <Image
@@ -139,13 +141,17 @@ const sentenceRef:any = useRef()
       <DialogTitle className="text-2xl font-light">Gallery / {book?.olid && book?.olid.length}</DialogTitle>
       <DialogDescription>
         <div className="relative flex justify-center w-full h-full overflow-hidden">
-        <div className="w-80 aspect-[3/4] border border-black">
+        <div className="w-80 aspect-[3/4]">
           <img src={getOpenLibraryCoverLink("olid", book?.olid && book.olid[currentGalleryImageIndex], "M")} alt="gallery" className="w-full h-full"/>
         </div>
         <div className="absolute top-1/2 right-0  -translate-y-1/2"><button onClick={nextGalleryImage}><FaArrowCircleRight className="size-8 hover:text-black/80"/></button></div>
         <div className="absolute top-1/2 left-0  -translate-y-1/2"><button onClick={previousGalleryImage}><FaArrowCircleLeft className="size-8 hover:text-black/80 "/></button></div>
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 "><Button onClick={saveImageAsCover} className="hover:bg-black">Save as Cover</Button></div>
-        <div className="absolute top-0 right-4"><button onClick={deleteImage}><FaTrashCan className="size-8 hover:text-black/80"/></button></div>
+        {role === "ADMIN" && (
+          <div>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 "><Button onClick={saveImageAsCover} className="hover:bg-black">Save as Cover</Button></div>
+            <div className="absolute top-0 right-4"><button onClick={deleteImage}><FaTrashCan className="size-8 hover:text-black/80"/></button></div>
+          </div>
+        )}
         </div>
 
       </DialogDescription>
@@ -153,11 +159,13 @@ const sentenceRef:any = useRef()
   </DialogContent>
         </Dialog>
       </div>
-      <div className="flex flex-col justify-evenly w-full min-h-80  border shadow-2xl shadow-black px-4 border-black rounded-3xl">
+      <div className="flex flex-col justify-evenly w-full min-h-80  shadow-md shadow-black px-4  rounded-2xl">
         <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{book.title}</h1>
+        <h1 className="text-xl md:text-3xl  italic font-light">{book.title}</h1>
         <div className="flex gap-4 items-center">
-          <Dialog>
+          {
+            role === "ADMIN" && (
+            <Dialog>
           <button><FaTrash/></button>
           <DialogTrigger><FaPen/></DialogTrigger>
           <DialogContent>
@@ -176,6 +184,8 @@ const sentenceRef:any = useRef()
 
           </DialogContent>
           </Dialog>
+          )
+          }
         </div>
         </div>
 
@@ -183,24 +193,31 @@ const sentenceRef:any = useRef()
           <div className="flex gap-2 items-center">
             
             <div>
-              <Avatar>
-                <AvatarImage src={getOpenLibraryAuthorLink("olid", book.author_id, "S")} />
-                <AvatarFallback><IoPersonCircle className="w-10 h-10"/></AvatarFallback>
+              <Avatar className="size-14">
+                <AvatarImage src={getOpenLibraryAuthorLink("olid", book.author_id, "S")} className="object-cover object-center" />
+                <AvatarFallback><IoPersonCircle className="size-14"/></AvatarFallback>
               </Avatar>
             </div>
-            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="hover:text-black underline">{book.author_name}</Link>
+            {/* TODO: some beautiful animation here */}
+            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="hover:bg-blue-500 text-xl underline">{book.author_name}</Link>
           </div>
-          <p>{book.first_publish_year}</p>
+          <p className="font-semibold">{book.first_publish_year}</p>
         </div>
         <div className="flex gap-8">
-          <div>{<RatingStar rating={Number(book.rating)} />}</div>
+          <div className="flex gap-2 items-center">
+            <Badge className="text-sm">{Number(book.rating).toFixed(2)}</Badge>
+          {<RatingStar rating={Number(book.rating)} />}
+          </div>
           <div className="flex justify-center items-center gap-2">
-            <p>{book.number_of_pages} </p>
+            <p className="text-md">{book.number_of_pages} </p>
             <FaBookOpen />
           </div>
         </div>
-        <p>{book.first_sentence}</p>
-        <Button className="w-max px-4 py-2">Add to List</Button>
+        <p className="line-clamp-3">{book.first_sentence}</p>
+        <div className="flex gap-4">
+        {role!=="VISITOR" &&  <Button className="w-max px-4 py-2">Add to List</Button>}
+        {role==="ADMIN" && <Button className="w-max px-4 py-2" onClick={async()=>await removeEmptyImages(book.id,book?.olid)}>Clean</Button>}
+        </div>
       </div>
     </div>
   );
