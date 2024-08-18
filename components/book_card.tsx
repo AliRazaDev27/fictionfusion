@@ -26,6 +26,10 @@ import { removeEmptyImages } from "@/actions/cleaner";
 import { Badge } from "./ui/badge";
 
 export default function BookCard({ book,role }: { book: Book,role:string }) {
+  let rating = book?.rating;
+  if(!rating) rating = (book as any)?.ratings_average;
+  if(!rating) rating = "0"
+  if(!book?.olid) book.olid = (book as any)?.edition_key;
   const titleRef:any = useRef()
   const authorRef:any = useRef()
   const yearRef:any = useRef()
@@ -138,7 +142,7 @@ const sentenceRef:any = useRef()
         <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 ${book?.olid?.length === 0 ? "hidden" : ""}`}><DialogTrigger className="hover:bg-black bg-black/80 text-white px-4 py-2 rounded-xl">Open Gallery</DialogTrigger></div>
         <DialogContent>
     <DialogHeader>
-      <DialogTitle className="text-2xl font-light">Gallery / {book?.olid && book?.olid.length}</DialogTitle>
+      <DialogTitle className="text-2xl font-light">Gallery {currentGalleryImageIndex + 1} / {book?.olid && book?.olid.length}</DialogTitle>
       <DialogDescription>
         <div className="relative flex justify-center w-full h-full overflow-hidden">
         <div className="w-80 aspect-[3/4]">
@@ -205,8 +209,8 @@ const sentenceRef:any = useRef()
         </div>
         <div className="flex gap-8">
           <div className="flex gap-2 items-center">
-            <Badge className="text-sm">{Number(book.rating).toFixed(2)}</Badge>
-          {<RatingStar rating={Number(book.rating)} />}
+            <Badge className="text-sm">{Number(rating).toFixed(2)}</Badge>
+            <RatingStar rating={Number(rating)} />
           </div>
           <div className="flex justify-center items-center gap-2">
             <p className="text-md">{book.number_of_pages} </p>

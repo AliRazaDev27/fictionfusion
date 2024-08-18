@@ -71,3 +71,26 @@ else{
 }
 }
 
+export async function searchBookByTitle(title:string){
+  const result = await fetch(`https://openlibrary.org/search.json?q=${title}`)
+  const response = await result.json()
+  return response
+}
+export async function addBookToDB(book:any){
+ try{
+  book.rating = book.ratings_average;
+  book.olid = book.edition_key;
+  if(!book.sentence) book.sentence = "";
+  if(!book.author_id) book.author_id = "";
+  const result = await addBook(book)
+  return {
+    success:true}
+ }
+ catch(err:any){
+  console.log(err)
+  return {
+    success:false,
+    message:err.message
+  }
+ }
+}

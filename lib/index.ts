@@ -7,7 +7,7 @@ export const getOpenLibraryCoverLink =  (key:Key,value:string|null,size:Size) =>
     return `https://covers.openlibrary.org/b/${key}/${value}-${size}.jpg?default=false`
 }
 export const getOpenLibraryAuthorLink =  (key:Key,value:string,size:Size) => {
-    
+    if(!value) return "/bookplaceholder.svg"
     let cleanValue = value.trim()
     if(value.startsWith("{\"")){
         cleanValue = value.slice(2,-2)
