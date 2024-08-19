@@ -10,9 +10,9 @@ export  function ShowCard({ show }: { show: Show }) {
     let rating = show.rating as any;
     let averageRating = rating?.average ? rating?.average : null
 return(
-    <div className="grid grid-cols-1  md:grid-cols-6   gap-2 px-4 py-2">
-        <div className="col-span-1 overflow-hidden border-2 mx-auto  border-yellow-700">
-            <div className="border relative border-green-700 group">
+    <div className="grid grid-cols-1  md:grid-cols-6   gap-2 mx-2 px-4 py-2 border border-black/50 rounded-xl">
+        <div className="col-span-1 overflow-hidden mx-auto ">
+            <div className="border relative  group">
             {
             <img src={coverSrc} alt="cover"  className="w-full h-full group-hover:blur-md"/>
             }
@@ -22,7 +22,7 @@ return(
             
         </div>
 
-        <div className="border border-red-500 col-span-5 space-y-2 px-2 mx-2">
+        <div className=" col-span-5 space-y-2 px-2 mx-2">
         <h1 className="text-2xl font-semibold">{show.name}</h1>
         <div className="flex flex-wrap gap-4">
             <p className="font-semibold text-lg">{show.type}</p>

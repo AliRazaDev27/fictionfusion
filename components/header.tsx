@@ -15,9 +15,12 @@ import { signOut } from "@/auth"
 import NavLinks from "./nav_links"
 import NavLinksMobile from "./nav_links_mobile"
 import { SearchBar } from "./search_bar"
+import { auth } from "@/auth"
+import Link from "next/link"
 
 export default function Header() {
-  
+    const session:any = auth()
+    const role = session?.user?.role || "VISITOR";
     return <div>
         <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <NavLinks/>
@@ -39,7 +42,9 @@ export default function Header() {
         </Sheet>
         <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
           <SearchBar/>
-          <DropdownMenu>
+          {role === "VISITOR" ? 
+        <Link href="/login" className="px-4 py-2   rounded-full bg-black/90 hover:bg-black text-white">Login</Link>:
+        <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
                 <CircleUser className="h-5 w-5" />
@@ -61,7 +66,8 @@ export default function Header() {
                     </form>
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu>  
+        }
         </div>
       </header>
     </div>;

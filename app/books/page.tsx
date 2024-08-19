@@ -8,8 +8,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
   const search = searchParams.search || "";
   const sort = searchParams.sort || "";
   const session:any = await auth()
-  if(!session) session.user.role = "VISITOR"
-  const role = session?.user?.role
+  const role = session?.user?.role || "VISITOR";
   const LIMIT = 10;
   let result:{data:Book[],total:number}|null = {data:[],total:0};
   if(search !== "" || sort !== ""){
