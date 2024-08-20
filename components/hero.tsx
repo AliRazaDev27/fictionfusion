@@ -85,7 +85,7 @@ export function Hero() {
                     <h3 className="text-xl font-bold">Track Your Progress</h3>
                   </div>
                   <p className="text-muted-foreground">
-                    Keep track of what you've watched, read, or experienced, and never lose your place in your favorite
+                    Keep track of what you&apos;ve watched, read, or experienced, and never lose your place in your favorite
                     content.
                   </p>
                 </div>
