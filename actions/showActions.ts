@@ -34,3 +34,8 @@ export async function deleteShowByID(id: number) {
     }
     return result
 }
+export async function getShowGallery(id: number) {
+    const result = await fetch(`https://api.tvmaze.com/shows/${id}/images`);
+    const response = await result.json();
+    return response;
+}

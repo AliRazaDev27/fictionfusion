@@ -1,11 +1,12 @@
 "use client"
 import { useSearchParams, usePathname } from "next/navigation"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState,useEffect,useRef, MutableRefObject } from "react"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Label } from "./ui/label"
+import { SheetClose } from "./ui/sheet"
 
 export function SearchControlls() {
   const searchParams = useSearchParams()
@@ -15,6 +16,8 @@ export function SearchControlls() {
   const router = useRouter()
   const [sortOption, setSortOption] = useState(sortTerm || "year_newest")
   const [search, setSearch] = useState(searchTerm || "")
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  
   
   const sortOptions = [
     { value: "year_newest", label: "Year: Newest" },
@@ -38,16 +41,26 @@ export function SearchControlls() {
     router.push(`${path}`)
     router.refresh()
   }
+  console.log(close)
+
   return (
     (<div
-      className="flex flex-col items-center gap-4 bg-background p-4 w-[90%] mx-auto rounded-lg shadow-lg">
+      className="flex flex-col items-center gap-4 bg-background p-4 w-full mx-auto rounded-lg shadow-lg">
       <div className="relative flex-1">
+        <SheetClose ref={buttonRef}/>
         <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
           name="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.currentTarget.blur();
+              buttonRef.current?.click()
+              handleFilter();
+            }
+          }}
           placeholder="Search products..."
           className="w-full pl-8 rounded-md bg-muted" />
       </div>

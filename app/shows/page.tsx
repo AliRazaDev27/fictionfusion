@@ -12,7 +12,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
     return(
         <div>
             {result.map((show) =>(
-                <div key={show.id} className="relative">
+                <div key={show.id} className="relative my-8 mx-8">
 <ShowCard show={show}/>
 {role === "ADMIN" && <DeleteShow id={show.id}/>}
                 </div>

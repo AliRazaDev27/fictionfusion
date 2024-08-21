@@ -2,7 +2,17 @@ import BookCard from "@/components/book_card";
 import PaginationControll from "@/components/pagination";
 import { SearchControlls } from "@/components/search_controlls";
 import {  Book, getFilteredBooks, getPaginatedBooks } from "@/lib/database/bookSchema";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 import { auth } from "@/auth";
+import { FaFilter } from "react-icons/fa";
 export default async function Page({searchParams}:{searchParams:any}) {
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search || "";
@@ -19,26 +29,31 @@ export default async function Page({searchParams}:{searchParams:any}) {
   }
   const books = result?.data;
   return (
-    <>
-    <section className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-8">
+    <div className="relative">
+      <Sheet>
+  <div className=" sticky mt-2 z-50 w-max ms-auto top-6 right-6  flex justify-end">
+  <SheetTrigger  className=""><FaFilter className="size-5" /></SheetTrigger>
+  </div>
+
+  <SheetContent side="top" className="border border-red-500">
+    <SheetTitle className="hidden">Search & Filter</SheetTitle>
+    <SearchControlls/>
+  </SheetContent>
+</Sheet>
+    <section className="">
     
-      <section className="row-start-2 md:row-start-1 md:col-start-1 col-span-3 px-4">
+      <section className=" px-4">
       {books &&
         books.map((book, index) => (
             <BookCard key={index} book={book} role={role} />
         ))}
       </section>
-      <aside className="row-start-1 md:col-start-4 w-full  mx-auto ">
-       <div className="sticky top-0">
-        {/* MAYBE switch to side sheet */}
-       <SearchControlls/>
-       </div>
-      </aside>
       
     </section>
+    
     <section className="my-2">
       <PaginationControll count={result?.total || 0} limit={LIMIT} />
     </section>
-    </>
+    </div>
   );
 }

@@ -1,9 +1,24 @@
 import { Show } from "@/types";
+import { IoMdCloseCircle } from "react-icons/io";
 import RatingStar from "./ratingStar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+  } from "@/components/ui/drawer"
+import { getShowGallery } from "@/actions/showActions";
+  
 
-export  function ShowCard({ show }: { show: Show }) {
+export  async function ShowCard({ show }: { show: Show }) {
+    let gallery = await getShowGallery(show.id)
+
     let image = show.image as any
     let coverSrc = image?.medium ? image?.medium : image?.original
     if(!coverSrc) coverSrc = "/bookplaceholder.svg"
@@ -16,7 +31,34 @@ return(
             {
             <img src={coverSrc} alt="cover"  className="w-full h-full group-hover:blur-md"/>
             }
-            <Button  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden group-hover:block text-white hover:bg-blue-900 ">View</Button>
+            
+            <Drawer>
+  <DrawerTrigger className="absolute px-4 py-2 bg-black rounded-xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden group-hover:block text-white hover:bg-blue-900 ">
+  View
+  </DrawerTrigger>
+  <DrawerContent className="h-[90vh] w-full">
+    <DrawerHeader className="flex   py-2 -translate-y-4 justify-between items-center">
+      <DrawerTitle><span className="font-light text-xl md:text-2xl">Gallery</span> / {gallery.length} </DrawerTitle>
+      <DrawerClose>
+      <IoMdCloseCircle className="size-8" />
+      </DrawerClose>
+    </DrawerHeader>
+    <div className="overflow-y-scroll flex flex-wrap">
+       {gallery.map((item,index)=>(
+        <div key={index}>
+            {item?.resolutions?.medium ? 
+            <img src={item?.resolutions?.medium.url} alt="cover"/>
+            :
+            <img src={item?.resolutions?.original.url} alt="cover"/>
+        }
+            
+        </div>
+       ))}
+    </div>
+      
+  </DrawerContent>
+</Drawer>
+
             </div>
 
             
