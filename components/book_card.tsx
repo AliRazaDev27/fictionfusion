@@ -35,7 +35,6 @@ export default function BookCard({ book,role }: { book: Book,role:string }) {
   const yearRef:any = useRef()
 const sentenceRef:any = useRef()
   const {toast} = useToast()
-  console.log(getOpenLibraryCoverLink("olid",book.cover_edition_key,"M"))
   const [currentGalleryImageIndex, setCurrentGalleryImageIndex] = useState(0);
   function nextGalleryImage() {  
     if((currentGalleryImageIndex+1) === book?.olid?.length){
@@ -76,7 +75,6 @@ const sentenceRef:any = useRef()
     }
   }
   async function deleteImage(){
-    console.log("delete click")
     const imageIndex = book?.olid && book?.olid[currentGalleryImageIndex]
     if(!imageIndex) return
       const result = await deleteImageFromGallery(imageIndex,book.id)

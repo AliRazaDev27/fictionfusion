@@ -16,3 +16,10 @@ export type SortBook = {
     pages_min:SQL<unknown>
     [key:string]:SQL<unknown>
 }
+export type SortShow = {
+    year_newest:SQL<unknown>
+    year_oldest:SQL<unknown>
+    rating_max:SQL<unknown>
+    rating_min:SQL<unknown>
+    [key:string]:SQL<unknown>
+}

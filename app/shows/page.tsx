@@ -1,4 +1,4 @@
-import { getAllShows, getPaginatedShows } from "@/actions/showActions";
+import { getAllShows, getFilteredShows, getPaginatedShows } from "@/actions/showActions";
 import { DeleteShow } from "@/components/delete_show";
 import { ShowCard } from "@/components/show_card";
 import { Show } from "@/types";
@@ -16,12 +16,12 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search || "";
   const sort = searchParams.sort || "";
-  const LIMIT = 3;
+  const LIMIT = 10;
   const session: any = await auth();
   const role = session?.user?.role || "VISITOR";
   let result:{data:Show[],total:number}|null = {data:[],total:0};
   if(search !== "" || sort !== ""){
-    //  result = await getFilteredBooks(search,sort,page,LIMIT);
+     result = await getFilteredShows(search,sort,page,LIMIT);
   }
   else{
      result = await getPaginatedShows(page, LIMIT);
@@ -37,10 +37,10 @@ export default async function Page({ searchParams }: { searchParams: any }) {
         </div>
         <SheetContent side="top" className="border border-red-500">
           <SheetTitle className="hidden">Search & Filter</SheetTitle>
-          <SearchControlls />
+          <SearchControlls type="shows"/>
         </SheetContent>
       </Sheet>
-      {shows.map((show) => (
+      {shows && shows.map((show) => (
         <div key={show.id} className="relative">
           <ShowCard show={show} />
           {role === "ADMIN" && <DeleteShow id={show.id} />}

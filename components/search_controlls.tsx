@@ -7,8 +7,9 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "@/components/ui/button"
 import { Label } from "./ui/label"
 import { SheetClose } from "./ui/sheet"
+import { getSortOptions } from "@/lib/utils"
 
-export function SearchControlls() {
+export function SearchControlls({type}:{type:string}) {
   const searchParams = useSearchParams()
   const path = usePathname()
   const searchTerm = searchParams.get("search")
@@ -17,16 +18,10 @@ export function SearchControlls() {
   const [sortOption, setSortOption] = useState(sortTerm || "year_newest")
   const [search, setSearch] = useState(searchTerm || "")
   const buttonRef = useRef<HTMLButtonElement>(null)
+ const sortOptions = getSortOptions(type)
+ console.log(sortOptions)
   
-  
-  const sortOptions = [
-    { value: "year_newest", label: "Year: Newest" },
-    { value: "year_oldest", label: "Year: Oldest" },
-    { value: "rating_max", label: "Rating: High to Low" },
-    { value: "rating_min", label: "Rating: Low to High" },
-    { value: "pages_max", label: "Page Count: High to Low" },
-    { value: "pages_min", label: "Page Count: Low to High" },
-  ]
+ 
   function handleFilter() {
     const data:any = {
       page: 1,

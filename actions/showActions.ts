@@ -1,11 +1,11 @@
 "use server"
 import { addShowTODatabase, deleteShow, getShows } from "@/lib/database/showSchema";
-import { Show } from "@/types";
+import { Show, SortShow } from "@/types";
 import { revalidatePath } from "next/cache";
 import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { ShowTable } from "@/lib/database/showSchema";
-import { count } from "drizzle-orm";
+import { asc, count, desc, eq, ilike, like } from "drizzle-orm";
 const db = drizzle(sql);
 
 
@@ -49,3 +49,36 @@ export async function getPaginatedShows(page: number, limit: number) {
     const total = await db.select({ count: count() }).from(ShowTable);
     return { data: result, total: total[0].count };
 }
+export const getFilteredShows = async (
+    search: string,
+    sort: string,
+    page: number,
+    limit: number
+  ) => {
+    console.log("calling");
+    if (search === "" && sort === "") {
+      console.log("returning null");
+      return null;
+    }
+    const selectResult = db.select().from(ShowTable);
+    if (search !== "") {
+      selectResult.where(ilike(ShowTable.name, `%${search}%`));
+    }
+    if (sort !== "") {
+      selectResult.orderBy(showSortOption[sort]);
+    }
+    selectResult.limit(limit).offset(limit * (page - 1));
+    const data = await selectResult;
+    const total = await db
+      .select({ count: count() })
+      .from(ShowTable)
+      .where(ilike(ShowTable.name, `%${search}%`));
+    return { data: data, total: total[0].count };
+  };
+
+const showSortOption: SortShow = {
+    year_newest: desc(ShowTable.premiered),
+    year_oldest: asc(ShowTable.premiered),
+    rating_max: desc(ShowTable.rating),
+    rating_min: asc(ShowTable.rating),
+  };
