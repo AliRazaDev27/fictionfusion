@@ -34,10 +34,10 @@ export default function PaginationControll({ count,limit }: { count: number,limi
     <Pagination>
       <PaginationContent>
         <PaginationItem className={clsx({ hidden: page === 1 })}>
-          <PaginationPrevious href={getPreviousPage()} />
+          <PaginationPrevious href={getPreviousPage()} className="bg-white/60" />
         </PaginationItem>
         <PaginationItem className={clsx({ hidden: page === 1 })}>
-          <PaginationLink href={getPageAt(page - 1)}>{page - 1}</PaginationLink>
+          <PaginationLink href={getPageAt(page - 1)} className="bg-white/60">{page - 1}</PaginationLink>
         </PaginationItem>
         <PaginationItem>
           <PaginationLink href="#" isActive>
@@ -45,10 +45,10 @@ export default function PaginationControll({ count,limit }: { count: number,limi
           </PaginationLink>
         </PaginationItem>
         <PaginationItem className={clsx({ hidden: page === count / limit })}>
-          <PaginationLink href={getPageAt(page + 1)}>{page + 1}</PaginationLink>
+          <PaginationLink href={getPageAt(page + 1)} className="bg-white/60">{page + 1}</PaginationLink>
         </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href={getNextPage()} />
+        <PaginationItem className={clsx({ hidden: page === count / limit })}>
+          <PaginationNext href={getNextPage()} className="bg-white/60" />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

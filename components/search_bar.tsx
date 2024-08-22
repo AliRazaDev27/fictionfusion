@@ -42,10 +42,12 @@ export function SearchBar() {
     if(searchType !== "" ){
       const type = searchType
       const value = searchRef.current?.value
+      console.log(type,value)
       if (searchRef.current?.value) searchRef.current.value = "";
       searchRef.current?.blur();
       setSearchType("")
       setOpen(false)
+      console.log(type,value)
       router.push(`/search/${type}?query=${value}`)
     }
   },[searchType])

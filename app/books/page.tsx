@@ -29,10 +29,10 @@ export default async function Page({searchParams}:{searchParams:any}) {
   }
   const books = result?.data;
   return (
-    <div className="relative">
+    <div className="relative bg-gradient-to-b from-black/90 via-gray-800 to-gray-900">
       <Sheet>
-  <div className=" sticky mt-2 z-50 w-max ms-auto top-6 right-6  flex justify-end">
-  <SheetTrigger  className=""><FaFilter className="size-5" /></SheetTrigger>
+  <div className=" sticky pt-4 z-50 w-max ms-auto top-6 right-6  flex justify-end">
+  <SheetTrigger  className=""><FaFilter className="size-5 text-blue-500" /></SheetTrigger>
   </div>
 
   <SheetContent side="top" className="border border-red-500">
@@ -51,7 +51,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
       
     </section>
     
-    <section className="my-2">
+    <section className="py-2">
       <PaginationControll count={result?.total || 0} limit={LIMIT} />
     </section>
     </div>

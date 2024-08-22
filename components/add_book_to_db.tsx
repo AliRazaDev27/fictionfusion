@@ -25,6 +25,6 @@ export function AddBookToDB({book}:{book:any}){
         }
     }
     return(
-        <Button className="absolute bottom-5 right-5" onClick={handleAdd}>Add to DB</Button>
+        <Button className="absolute bottom-8 right-5" onClick={handleAdd}>Add to DB</Button>
     )
 }

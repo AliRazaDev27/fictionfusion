@@ -121,7 +121,7 @@ const sentenceRef:any = useRef()
     }
   }
   return (
-    <div className="flex  flex-col md:flex-row gap-8 max-md:items-center  my-8">
+    <div className="flex  flex-col md:flex-row gap-8 max-md:items-center  my-8 ">
       <div
         className="min-w-[300px] md:aspect-[3/4] rounded-2xl overflow-hidden"
         style={{ position: "relative", height: "400px" }}
@@ -163,7 +163,7 @@ const sentenceRef:any = useRef()
   </DialogContent>
         </Dialog>
       </div>
-      <div className="flex flex-col justify-evenly w-full min-h-80  shadow-md shadow-black px-4  rounded-2xl">
+      <div className="flex flex-col justify-evenly w-full min-h-80  shadow-md shadow-black px-4 bg-white/80 rounded-2xl">
         <div className="flex justify-between items-center">
         <h1 className="text-xl md:text-3xl  italic font-light">{book.title}</h1>
         <div className="flex gap-4 items-center">

@@ -25,7 +25,7 @@ export  async function ShowCard({ show }: { show: Show }) {
     let rating = show.rating as any;
     let averageRating = rating?.average ? rating?.average : null
 return(
-    <div className="grid grid-cols-1  md:grid-cols-6   gap-2 mx-2 px-4 py-2 border border-black/50 rounded-xl">
+    <div className="grid grid-cols-1  md:grid-cols-6   gap-2 mx-2 px-4 py-2 border border-black/50 bg-white/90 rounded-xl">
         <div className="col-span-1 overflow-hidden mx-auto ">
             <div className="border relative  group">
             {
