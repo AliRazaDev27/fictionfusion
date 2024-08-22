@@ -26,6 +26,11 @@ export const ShowTable = pgTable("shows", {
 })
 
 export const addShowTODatabase = async (show: Show) => {
+    const exists = await db.select({ id: ShowTable.id }).from(ShowTable).where(eq(ShowTable.name, show.name));
+    if(exists.length > 0){
+        return {success: false, message: "Show already exists"}
+    }
+    show.runtime = show.runtime || "N/A";
     await db
         .insert(ShowTable)
         .values(show)

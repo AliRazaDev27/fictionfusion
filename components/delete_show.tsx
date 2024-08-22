@@ -15,6 +15,6 @@ export function DeleteShow({id}:{id:number}) {
         }
     }
     return(
-        <button onClick={handleDelete}><FaTrashCan className="absolute top-5 right-8 size-6"/></button>
+        <button onClick={handleDelete}><FaTrashCan className="absolute top-5 right-12 size-6"/></button>
     )
 }

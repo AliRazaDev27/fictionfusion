@@ -16,6 +16,14 @@ export function AddShowToDB({show}:{show:Show}) {
                 className: "bg-green-600 text-white",
             })
         }
+        else{
+            toast({
+                title: "Failed to Add",
+                description: result.message,
+                duration: 2000,
+                className: "bg-red-600 text-white",
+            })
+        }
     }
     return(
  <Button className="absolute top-5 right-8" onClick={handleAdd}>Add</Button>           

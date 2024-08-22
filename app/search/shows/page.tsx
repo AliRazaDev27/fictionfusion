@@ -12,7 +12,6 @@ export default async function Page({searchParams}:{searchParams:any}) {
     const role = session?.user?.role || "VISITOR";
     return(
         <div className="flex flex-col gap-6 py-6 px-4 bg-gradient-to-b from-black/90 via-gray-800 to-gray-900">
-           
             {result.map((show:{show:Show}) =>(
                 <div key={show.show.id} className="relative ">
                     <ShowCard show={show.show}/>
@@ -20,8 +19,6 @@ export default async function Page({searchParams}:{searchParams:any}) {
                 </div>
             )      
              )}
-         
-           
         </div>
     )
 }

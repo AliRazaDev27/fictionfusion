@@ -14,8 +14,7 @@ import {
     DrawerTrigger,
   } from "@/components/ui/drawer"
 import { getShowGallery } from "@/actions/showActions";
-  
-
+import { stripHtml } from "@/lib/utils";
 export  async function ShowCard({ show }: { show: Show }) {
     let gallery = await getShowGallery(show.id)
 
@@ -90,7 +89,7 @@ return(
 </ul>
         </div>
         
-<p className="text-lg">{show.summary}</p>
+<p className="text-lg">{stripHtml(show.summary)}</p>
 
         </div>
     </div>
