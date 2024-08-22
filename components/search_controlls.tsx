@@ -19,7 +19,6 @@ export function SearchControlls({type}:{type:string}) {
   const [search, setSearch] = useState(searchTerm || "")
   const buttonRef = useRef<HTMLButtonElement>(null)
  const sortOptions = getSortOptions(type)
- console.log(sortOptions)
   
  
   function handleFilter() {
@@ -28,15 +27,16 @@ export function SearchControlls({type}:{type:string}) {
       search: search,
       sort: sortOption,
     }
+    buttonRef.current?.click()
     router.push(`${path.toString()}?${new URLSearchParams(data).toString()}`)
   }
   function handleReset() {
     setSearch("")
     setSortOption("")
+    buttonRef.current?.click()
     router.push(`${path}`)
     router.refresh()
   }
-  console.log(close)
 
   return (
     (<div
