@@ -72,7 +72,7 @@ else{
 }
 
 export async function searchBookByTitle(title:string){
-  const result = await fetch(`https://openlibrary.org/search.json?q=${title}`)
+  const result = await fetch(`https://openlibrary.org/search.json?q=${title}&limit=5`)
   const response = await result.json()
   return response
 }
