@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import {useState,useRef, MutableRefObject} from "react";
+import {useState,useRef, MutableRefObject, useTransition} from "react";
 import placeholder from "@/public/bookplaceholder.svg";
 import { getAuthorId, getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
 import RatingStar from "./ratingStar";
@@ -35,6 +35,7 @@ export default function BookCard({ book,role }: { book: Book,role:string }) {
   const yearRef:any = useRef()
 const sentenceRef:any = useRef()
   const {toast} = useToast()
+  const [isPending, startTransition] = useTransition();
   const [currentGalleryImageIndex, setCurrentGalleryImageIndex] = useState(0);
   function nextGalleryImage() {  
     if((currentGalleryImageIndex+1) === book?.olid?.length){
@@ -117,6 +118,25 @@ const sentenceRef:any = useRef()
         duration: 1500
       })
     }
+  }
+  async function handleClean(id:number,olid:string[]|null){
+    startTransition(async() => {
+      const result = await removeEmptyImages(id,olid)
+      if(result?.success){
+        toast({
+          title: "Images Cleaned Successfully",
+          className: "bg-green-600 text-white",
+          duration: 1500
+        })
+      }
+      else{
+        toast({
+          title: "Images Cleaning Failed",
+          className: "bg-red-600 text-white",
+          duration: 1500
+        })
+      }
+    })
   }
   return (
     <div className="flex  flex-col md:flex-row gap-8 max-md:items-center  my-8 ">
@@ -218,7 +238,7 @@ const sentenceRef:any = useRef()
         <p className="line-clamp-3">{book.first_sentence}</p>
         <div className="flex gap-4">
         {role!=="VISITOR" &&  <Button className="w-max px-4 py-2">Add to List</Button>}
-        {role==="ADMIN" && <Button className="w-max px-4 py-2" onClick={async()=>await removeEmptyImages(book.id,book?.olid)}>Clean</Button>}
+        {role==="ADMIN" && <Button className="w-max px-4 py-2" onClick={()=>handleClean(book.id,book.olid)} disabled={isPending}>Clean</Button>}
         </div>
       </div>
     </div>
