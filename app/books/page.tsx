@@ -29,7 +29,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
   }
   const books = result?.data;
   return (
-    <div className="relative bg-gradient-to-b from-black/90 via-gray-800 to-gray-900">
+    <div className="relative ">
       <Sheet>
   <div className=" sticky pt-4 z-50 w-max ms-auto top-6 right-6  flex justify-end">
   <SheetTrigger  className=""><FaFilter className="size-5 text-blue-500" /></SheetTrigger>

@@ -24,7 +24,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
     }
 
     return(
-        <div className="flex flex-col gap-4 px-4 py-6 bg-gradient-to-b from-black/90 via-gray-800 to-gray-900">     
+        <div className="flex flex-col gap-4 px-4 py-6 ">     
             {books && books.map((book:Book,index:number)=> (
             <div key={index} className="relative">
                 <BookCard book={book}  role="VISITOR"/>

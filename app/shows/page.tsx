@@ -28,7 +28,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   }
   const shows = result?.data;
   return (
-    <div className="relative min-h-[90vh] flex flex-col justify-between gap-4 py-6 px-4 bg-gradient-to-b from-black/90 via-gray-800 to-gray-900">
+    <div className="relative min-h-[90vh] flex flex-col justify-between gap-4 py-6 px-4 ">
       <Sheet>
         <div className=" sticky  z-50 w-max ms-auto top-5 right-8  flex justify-end">
           <SheetTrigger className="">
