@@ -4,7 +4,7 @@ export async function getAuthorInfo(authorID: string) {
     return response;
 }
 export async function getBooksFromAuthor(authorID: string) {
-    const result = await fetch(`https://openlibrary.org/authors/${authorID}/works.json`);
+    const result = await fetch(`https://openlibrary.org/authors/${authorID}/works.json?limit=100`);
     const response = await result.json();
     return response
 }
