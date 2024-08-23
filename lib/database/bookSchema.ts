@@ -48,6 +48,7 @@ export const getPaginatedBooks = async (limit: number, offset: number) => {
   const selectResult = await db
     .select()
     .from(BookTable)
+    .orderBy(asc(BookTable.id))
     .limit(limit)
     .offset(offset);
   const total = await db.select({ count: count() }).from(BookTable);
