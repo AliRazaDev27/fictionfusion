@@ -1,19 +1,17 @@
 import { searchBookByTitle } from "@/actions/bookActions"
 import { AddBookToDB } from "@/components/add_book_to_db"
 import BookCard from "@/components/book_card"
-import { Button } from "@/components/ui/button"
-import { getOpenLibraryCoverLink } from "@/lib"
 import type { Book } from "@/types"
 export const dynamic = "force-dynamic"
 import { auth } from "@/auth"
 export default async function Page({searchParams}:{searchParams:any}) {
     const query = searchParams.query
+    const unique = new Set()
+    const books:any = []
     const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
     const result = await searchBookByTitle(query)
     const jumbo = result?.docs
-    const unique = new Set()
-    const books:any = []
     for(let i=0;i<jumbo.length;i++){
         let book = jumbo[i]
         let identifer = book?.title + "," + book?.author_name

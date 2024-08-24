@@ -21,3 +21,17 @@ export const getAuthorId = (value:string) => {
     }
     return value
 }
+type PosterSize = 
+      "w92"|
+      "w154"|
+      "w185"|
+      "w342" |
+      "w500" |
+      "w780" |
+      "original"
+    
+const tmdb_baseUrl = "https://image.tmdb.org/t/p/" 
+ export const getMoviePosterLink = (value:string,size:PosterSize) => {
+    if(!value) return "/bookplaceholder.svg"
+    return `${tmdb_baseUrl}w185${value}`
+ }   

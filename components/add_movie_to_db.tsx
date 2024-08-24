@@ -1,13 +1,13 @@
 "use client"
 import { useToast } from "./ui/use-toast";
-import { addBookToDB } from "@/actions/bookActions";
+import { addMovieToDB } from "@/actions/movieActions";
 import { Button } from "./ui/button";
 
 
-export function AddBookToDB({book}:{book:any}){
+export function AddMovieToDB({movie}:{movie:any}){
     const { toast } = useToast()
     const handleAdd = async() => {
-        const result = await addBookToDB(book)
+        const result = await addMovieToDB(movie)
         if(result.success){
             toast({
                 title: "Added to DB",
@@ -25,6 +25,6 @@ export function AddBookToDB({book}:{book:any}){
         }
     }
     return(
-        <Button className="absolute bottom-10 right-5" onClick={handleAdd}>Add to DB</Button>
+        <Button className="absolute bg-gray-700 bottom-2 right-5" onClick={handleAdd}>Add to DB</Button>
     )
 }
