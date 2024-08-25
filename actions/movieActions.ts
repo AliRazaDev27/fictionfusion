@@ -22,8 +22,7 @@ export async function getMovieByTitle(title: string) {
     method: "GET",
     headers: {
       accept: "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OWI4NThhODE2MTY3OTIzZDYzM2RiNDk4YjQ0YzA2YyIsIm5iZiI6MTcyNDQ3NDA5MS4xMjQ4NTEsInN1YiI6IjY2Yzk2MTcwNTJiMTlhYWU0OGE3MDFlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.cj714SINutl545l4BOT3xbUTDRMXvMX6ruX0_KVWU94",
+      Authorization:`${process.env.TMDB_TOKEN}`,
     },
   });
   const result = await data.json();
