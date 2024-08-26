@@ -70,7 +70,7 @@ export async function ShowCard({ show }: { show: Show }) {
         </div>
       </div>
 
-      <div className=" col-span-5 space-y-2 px-2 mx-2">
+      <div className=" col-span-1 md:col-span-5   space-y-2 px-2 mx-2">
         <h1 className="text-2xl font-semibold">{show.name}</h1>
         <div className="flex flex-wrap gap-4">
           <p className="font-semibold text-lg">{show.type}</p>

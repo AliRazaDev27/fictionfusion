@@ -56,9 +56,14 @@ export const getShows = async () => {
     return result
 }
 export const deleteShow = async (id: number) => {
-  await db
+  try{
+    await db
         .delete(ShowTable)
         .where(eq(ShowTable.id, id))
         ;
     return {success: true}
+  }
+  catch(err){
+    return {success: false, message: "Error deleting show"}
+  }
 }

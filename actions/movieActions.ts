@@ -3,6 +3,7 @@ import { db } from "@/lib/database";
 import { MovieTable } from "@/lib/database/movieSchema";
 import { SortMovie } from "@/types";
 import { count, eq,ilike,desc,asc } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function addMovieToDB(movie: any) {
     const exists = await db.select({ id: MovieTable.id }).from(MovieTable).where(eq(MovieTable.title, movie.title));
@@ -30,9 +31,17 @@ export async function getMovieByTitle(title: string) {
 }
 export async function getPaginatedMovies(page: number, limit: number) {
     // maybe order them before returning
-    const result = await db.select().from(MovieTable).limit(limit).offset((page - 1) * limit);
+    try{
+      console.log(page,limit)
+      const result = await db.select().from(MovieTable).limit(limit).offset((page - 1) * limit);
+
     const total = await db.select({ count: count() }).from(MovieTable);
     return { data: result, total: total[0].count };
+    }
+    catch(err){
+      // console.log(err);
+      return null
+    }
 }
 export const getFilteredMovies = async (
     search: string,
@@ -60,6 +69,19 @@ export const getFilteredMovies = async (
       .where(ilike(MovieTable.title, `%${search}%`));
     return { data: data, total: total[0].count };
   };
+  export async function deleteMovieByID(id: number) {
+    try{
+      await db.delete(MovieTable).where(eq(MovieTable.id, id));
+      revalidatePath("/movies")
+      return {success: true}
+    }
+    catch(err){
+      console.log(err)
+      return {success: false, message: "Error deleting movie"}
+    }
+    
+}
+
   const movieSortOption: SortMovie = {
     year_newest: desc(MovieTable.release_date),
     year_oldest: asc(MovieTable.release_date),
