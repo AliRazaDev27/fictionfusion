@@ -4,38 +4,35 @@ import { usePathname } from "next/navigation"
 import { CircleUser, Menu, Package2, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export default function NavLinks() {
+export default function NavLinks({role}:{role:string}) {
     const pathname = usePathname()
+  
     return (
-        <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-lg font-semibold md:text-base"
-          >
-            <Package2 className="h-6 w-6" />
-            <span className="sr-only">Acme Inc</span>
-          </Link>
-          <Link
+        <nav className="hidden  gap-6 translate-x-8  text-xl font-medium md:flex md:flex-row md:items-center md:gap-2  lg:gap-6">
+         
+          { role !== "VISITOR" && (
+            <Link
             href="/dashboard"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/dashboard" ? "text-foreground": "text-muted-foreground")}
+            className={cn(`transition-colors hover:text-foreground`, pathname === "/dashboard" ? "text-white font-semibold": "text-white/60 ")}
           >
             Dashboard
-          </Link>
+          </Link>)
+          }
           <Link
             href="/books"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-foreground": "text-muted-foreground")}
+            className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white font-semibold": "text-white/60")}
           >
             Books
           </Link>
           <Link
             href="/movies"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/movies" ? "text-foreground": "text-muted-foreground")}
+            className={cn(`transition-colors hover:text-foreground`, pathname === "/movies" ? "text-white font-semibold": "text-white/60")}
           >
             Movies
           </Link>
           <Link
             href="/shows"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/shows" ? "text-foreground": "text-muted-foreground")}
+            className={cn(`transition-colors hover:text-foreground`, pathname === "/shows" ? "text-white font-semibold": "text-white/60")}
           >
             Shows
           </Link>
