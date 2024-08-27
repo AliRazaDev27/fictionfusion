@@ -4,7 +4,15 @@ const nextConfig = {
         remotePatterns:[{
             protocol:"https",
             hostname:"covers.openlibrary.org",
-        }],
+        },
+    {
+        protocol:"https",
+        hostname:"image.tmdb.org",
+    },
+{
+    protocol:"https",
+    hostname:"static.tvmaze.com"
+}],
     }
 };
 

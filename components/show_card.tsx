@@ -1,8 +1,6 @@
 import { Show } from "@/types";
 import { IoMdCloseCircle } from "react-icons/io";
-import RatingStar from "./ratingStar";
 import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -14,29 +12,37 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { getShowGallery } from "@/actions/showActions";
-import { stripHtml } from "@/lib/utils";
+import Image from "next/image";
 export async function ShowCard({ show }: { show: Show }) {
   let gallery = await getShowGallery(show.id);
   let image = show.image as any;
   let coverSrc = image?.medium ? image?.medium : image?.original;
   if (!coverSrc) coverSrc = "/bookplaceholder.svg";
   let rating = show.rating as any;
-  console.log(rating);
   let averageRating = rating;
   if (typeof rating === "object") {
     averageRating = rating?.average ? rating?.average : "0.0";
   }
   return (
-    <div className="grid grid-cols-1  md:grid-cols-6   gap-2 mx-2 px-4 py-2 border border-black/50 bg-white/90 rounded-xl">
-      <div className="col-span-1 overflow-hidden mx-auto ">
-        <div className="border relative  group">
-          {
+    <div className="grid grid-cols-1  md:grid-cols-6   gap-2 mx-2 px-4 py-2 border border-black/50 bg-gray-900 rounded-xl text-white">
+      <div className="col-span-1 relative group aspect-[2/3] overflow-hidden rounded-xl ">
+          {/* {
             <img
               src={coverSrc}
               alt="cover"
               className="w-full h-full group-hover:blur-md"
             />
-          }
+          } */}
+          <Image
+          src={coverSrc}
+          alt="cover"
+          placeholder="blur"
+          blurDataURL="/placeholder.svg"
+          className="group-hover:blur-md"
+          unoptimized
+          fill
+          style={{ objectFit: "cover" }}
+          />
 
           <Drawer>
             <DrawerTrigger className="absolute px-4 py-2 bg-black rounded-xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden group-hover:block text-white hover:bg-blue-900 ">
@@ -67,7 +73,6 @@ export async function ShowCard({ show }: { show: Show }) {
               </div>
             </DrawerContent>
           </Drawer>
-        </div>
       </div>
 
       <div className=" col-span-1 md:col-span-5   space-y-2 px-2 mx-2">

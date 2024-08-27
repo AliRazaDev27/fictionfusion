@@ -18,8 +18,8 @@ import { SearchBar } from "./search_bar"
 import { auth } from "@/auth"
 import Link from "next/link"
 
-export default function Header() {
-    const session:any = auth()
+export default async function Header() {
+    const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
     return <div>
         <header className="sticky top-0 flex justify-between py-4 items-center  bg-transparent px-4 md:px-6">
@@ -55,8 +55,8 @@ export default function Header() {
         <Link href="/login" className="px-4 py-2   rounded-full bg-black/90 hover:bg-black text-white">Login</Link>:
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
+              <Button size={"icon"}  className="rounded-full  bg-emerald-700 outline-none ring-transparent text-white">
+                <CircleUser className="size-7" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>

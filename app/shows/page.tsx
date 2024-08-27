@@ -19,6 +19,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   const LIMIT = 10;
   const session: any = await auth();
   const role = session?.user?.role || "VISITOR";
+  // console.log(role);
   let result:{data:Show[],total:number}|null = {data:[],total:0};
   if(search !== "" || sort !== ""){
      result = await getFilteredShows(search,sort,page,LIMIT);

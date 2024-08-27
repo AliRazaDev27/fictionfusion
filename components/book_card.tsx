@@ -183,7 +183,7 @@ const sentenceRef:any = useRef()
       </div>
       <div className="flex flex-col justify-evenly w-full min-h-80  shadow-md shadow-black px-4 bg-white/80 rounded-2xl">
         <div className="flex justify-between items-center">
-        <h1 className="text-xl md:text-3xl  italic font-light">{book.title}</h1>
+        <h1 className="text-xl md:text-3xl  font-medium italic">{book.title}</h1>
         <div className="flex gap-4 items-center">
           {
             role === "ADMIN" && (
@@ -221,7 +221,7 @@ const sentenceRef:any = useRef()
               </Avatar>
             </div>
             {/* TODO: some beautiful animation here */}
-            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="hover:bg-blue-500 text-xl underline">{book.author_name}</Link>
+            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="px-2 py-1  hover:bg-blue-600 hover:no-underline hover:rounded-2xl text-xl underline underline-offset-4 transition-color duration-500">{book.author_name}</Link>
           </div>
           <p className="font-semibold">{book.first_publish_year}</p>
         </div>
