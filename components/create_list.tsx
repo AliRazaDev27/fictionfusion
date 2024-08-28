@@ -12,13 +12,33 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { CreateList as Create } from "@/actions/listActions"
+import { useToast } from "./ui/use-toast"
+import { DialogClose } from "@radix-ui/react-dialog"
+import { useRef } from "react"
 export  function CreateList({listType}:{listType:string}){
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const {toast} = useToast()
     const handleSumbit = async(formData:FormData) => {
         console.log(formData.get("listName"))
         const listName  = formData.get("listName")
         if(formData.get("listName") === "" || formData.get("listName") === null) return
         const result = await Create(listName as string,listType)
-        console.log(result)
+        if(result.success){
+            toast({
+                description: "List created",
+                duration: 1500,
+                className: "bg-green-600 text-white"
+              })
+        }
+        else{
+            toast({
+                description: "Error creating list",
+                duration: 2500,
+                className: "bg-red-600 text-white"
+              })
+        }
+        closeRef.current?.click()
+        
     }
     return(
         
@@ -50,6 +70,7 @@ export  function CreateList({listType}:{listType:string}){
         <DialogFooter>
           <Button type="submit">Create</Button>
         </DialogFooter>
+        <DialogClose ref={closeRef}/>
         </form>
       </DialogContent>
     </Dialog>      

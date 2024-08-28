@@ -12,6 +12,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import PaginationControll from "@/components/pagination";
+import { getShowList } from "@/actions/userListActions";
 export default async function Page({ searchParams }: { searchParams: any }) {
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search || "";
@@ -19,6 +20,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   const LIMIT = 10;
   const session: any = await auth();
   const role = session?.user?.role || "VISITOR";
+  const list = await getShowList();
   // console.log(role);
   let result:{data:Show[],total:number}|null = {data:[],total:0};
   if(search !== "" || sort !== ""){
@@ -43,7 +45,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
       </Sheet>
       {shows && shows.map((show) => (
         <div key={show.id} className="relative">
-          <ShowCard show={show} />
+          <ShowCard show={show} role={role} list={list} />
           {role === "ADMIN" && <DeleteShow id={show.id} />}
         </div>
       ))}

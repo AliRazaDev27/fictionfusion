@@ -75,6 +75,10 @@ export const getFilteredShows = async (
       .where(ilike(ShowTable.name, `%${search}%`));
     return { data: data, total: total[0].count };
   };
+  export async function getTotalShows(){
+    const result = await db.select({count:count()}).from(ShowTable)
+    return result
+  } 
 
 const showSortOption: SortShow = {
     year_newest: desc(ShowTable.premiered),

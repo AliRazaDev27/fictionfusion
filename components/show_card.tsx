@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/drawer";
 import { getShowGallery } from "@/actions/showActions";
 import Image from "next/image";
-export async function ShowCard({ show }: { show: Show }) {
+import { AddToList } from "./add_to_list";
+export async function ShowCard({ show, role,list }: { show: Show, role?: string, list?: any }) {
   let gallery = await getShowGallery(show.id);
   let image = show.image as any;
   let coverSrc = image?.medium ? image?.medium : image?.original;
@@ -109,7 +110,8 @@ export async function ShowCard({ show }: { show: Show }) {
           </ul>
         </div>
 
-        <p className="text-lg">{show?.summary}</p>
+        <p className="text-lg md:line-clamp-3">{show?.summary}</p>
+        {role !== "VISITOR" && <AddToList list={list} item={show.id} />}
       </div>
     </div>
   );

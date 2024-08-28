@@ -1,6 +1,8 @@
 "use server";
 import { franc } from "franc";
-import { addBook, deleteImageFromOlid, setCoverImage, updateBook } from "@/lib/database/bookSchema";
+import { addBook, BookTable, deleteImageFromOlid, setCoverImage, updateBook } from "@/lib/database/bookSchema";
+import { db } from "@/lib/database";
+import { count } from "drizzle-orm";
 export async function getBookFromOpenLibrary(bookName:string){
     try{
     let safeTitle = bookName.trim()   
@@ -94,3 +96,7 @@ export async function addBookToDB(book:any){
   }
  }
 }
+export async function getTotalBooks(){
+  const result = await db.select({count:count()}).from(BookTable)
+  return result
+} 

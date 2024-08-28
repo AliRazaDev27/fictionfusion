@@ -3,7 +3,7 @@ import { getMoviePosterLink } from "@/lib";
 import { getGenre } from "@/lib/utils";
 import Image from "next/image";
 import { AddToList } from "./add_to_list";
-export function MovieCard({ movie,role}: { movie: Movie,role:string }) {
+export function MovieCard({ movie,role,list}: { movie: Movie,role:string,list?:any }) {
   
     return (
       <div
@@ -22,7 +22,7 @@ export function MovieCard({ movie,role}: { movie: Movie,role:string }) {
           style={{ objectFit: "cover" }} 
           />
         </div>
-        <div className="col-span-1 pt-2 sm:col-span-4 md:col-span-5 flex flex-col justify-between px-4 bg-gray-900 rounded-2xl border border-gray-800">
+        <div className="col-span-1 py-2 sm:col-span-4 md:col-span-5 flex flex-col justify-between px-4 bg-gray-900 rounded-2xl border border-gray-800">
           <h2 className="text-lg md:text-2xl">{movie.title}</h2>
           <ul className="flex gap-2">
             {movie.genre_ids && movie.genre_ids.map((genre: any) => (
@@ -39,7 +39,7 @@ export function MovieCard({ movie,role}: { movie: Movie,role:string }) {
             <p>Popularity: <span>{movie.popularity}</span></p>
           </div>
           <p>{movie.overview}</p>
-          {role !== "VISITOR" && <AddToList list={[]} item={movie.id} />}
+          {role !== "VISITOR" && <AddToList list={list} item={movie.id} />}
         </div>
       </div>
     );

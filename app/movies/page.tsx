@@ -6,6 +6,7 @@ import { getFilteredMovies, getPaginatedMovies } from "@/actions/movieActions";
 import { MovieCard } from "@/components/movie_card";
 import { SearchAndFilter } from "@/components/seach_filter_sheet";
 import { Suspense } from "react";
+import { getMovieList } from "@/actions/userListActions";
 
 export default async function Page({ searchParams }: { searchParams: any }) {
     const page = Number(searchParams.page) || 1;
@@ -14,6 +15,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   const LIMIT = 10;
   const session: any = await auth();
   const role = session?.user?.role || "VISITOR";
+  const list = await getMovieList()
   let result:{data:Movie[],total:number}|null = {data:[],total:0};
   if(search !== "" || sort !== ""){
      result = await getFilteredMovies(search,sort,page,LIMIT);
@@ -28,7 +30,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
         <Suspense fallback={<p>Loading</p>}>
         {movies && movies.map((show) => (
           <div key={show.id} className="relative">
-            <MovieCard movie={show} role={role}/>
+            <MovieCard movie={show} role={role} list={list}/>
             {role === "ADMIN" && <DeleteMovie id={show.id} />}
           </div>
         ))}

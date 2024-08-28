@@ -8,9 +8,9 @@ export async function CreateList(name:string|null,type:string|null){
     try{
         const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
-    if(role === "VISITOR") return
-    if(name === "" || name === null) return
-    if(type === "" || type === null) return
+    if(role === "VISITOR") throw new Error("Not Authorized")
+    if(name === "" || name === null) throw new Error("List name cannot be empty")
+    if(type === "" || type === null) throw new Error("List type cannot be empty")
     // add check to see if user already has a list with given name and type.
     const result = await db.insert(ListTable).values({listName:name,creator:session?.user?.name,type: type}).returning()
     const exists = await db.select().from(UserListTable).where(eq(UserListTable.email,session?.user?.email)).limit(1)
@@ -52,12 +52,12 @@ export async function CreateList(name:string|null,type:string|null){
             }
         }
     }
-    return "success"
+    return {success:true}
 
     }
-    catch(e){
-        console.log(e)
-        return "error creating list"
+    catch(err:any){
+        console.log(err)
+        return {success:false,message:err?.message}
     }
 
 }

@@ -16,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return(
         <div className="min-h-screen w-full border border-blue-500">
         <TooltipProvider>
-        <aside className="fixed h-max left-1/2 translate-y-2 max-md:-translate-x-1/2 md:left-2 md:top-1/2 md:-translate-y-1/2 z-10  border border-red-500 bg-sky-950 rounded-2xl">
+        <aside className="md:fixed  h-max w-max mx-auto mt-2  md:left-2 md:top-1/2 md:-translate-y-1/2 z-10  border border-red-500 bg-sky-950 rounded-2xl">
         <nav className="flex flex-row md:flex-col items-center gap-4 px-2 py-2">
           
           <Tooltip>

@@ -16,12 +16,13 @@ import { useToast } from "./ui/use-toast"
 import { Label } from "@/components/ui/label"
 import { useEffect, useState,useRef } from "react"
 export function AddToList({list,item}) {
-  const [checked,setChecked] = useState(new Array(list.length))
-  const [initial,setInitial] = useState(new Array(list.length))
+  console.log(list)
+  const [checked,setChecked] = useState(new Array(list?.length))
+  const [initial,setInitial] = useState(new Array(list?.length))
   const closeRef = useRef<HTMLButtonElement>(null)
   const { toast } = useToast()
   useEffect(()=>{
-    for(let i=0 ;i<list.length;i++){
+    for(let i=0 ;i<list?.length;i++){
       let content = list[i]
       if(!content.items) continue
       if(content.items.includes(item)){
@@ -35,7 +36,7 @@ export function AddToList({list,item}) {
   const handleSave = async () => {
     // for now only add items, not remove.
     const addLists:number[] = []
-    for(let i = 0;i<checked.length;i++){
+    for(let i = 0;i<checked?.length;i++){
       if(checked[i] && !initial[i]){
         addLists.push(list[i].id)
       }

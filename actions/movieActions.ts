@@ -81,6 +81,10 @@ export const getFilteredMovies = async (
     }
     
 }
+export async function getTotalMovies(){
+  const result = await db.select({count:count()}).from(MovieTable)
+  return result
+} 
 
   const movieSortOption: SortMovie = {
     year_newest: desc(MovieTable.release_date),
