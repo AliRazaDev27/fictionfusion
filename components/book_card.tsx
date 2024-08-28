@@ -26,7 +26,7 @@ import { removeEmptyImages } from "@/actions/cleaner";
 import { Badge } from "./ui/badge";
 import { AddToList } from "./add_to_list";
 
-export default function BookCard({ book,role,list }: { book: Book,role:string,list:any }) {
+export default function BookCard({ book,role,list }: { book: Book,role:string,list?:any }) {
   
   let rating = book?.rating;
   if(!rating) rating = (book as any)?.ratings_average;

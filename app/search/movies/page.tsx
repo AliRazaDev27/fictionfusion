@@ -13,7 +13,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
     <div className="flex flex-col gap-4 py-4 px-4">
       {result.results.map((movie: any) => (
         <div className="relative" key={movie.id}>
-            <MovieCard  movie={movie} />
+            <MovieCard  movie={movie} role={role}/>
             {role === "ADMIN" && <AddMovieToDB movie={movie} />}
         </div>
       ))}

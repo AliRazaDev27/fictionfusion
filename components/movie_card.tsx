@@ -4,6 +4,7 @@ import { getGenre } from "@/lib/utils";
 import Image from "next/image";
 import { AddToList } from "./add_to_list";
 export function MovieCard({ movie,role}: { movie: Movie,role:string }) {
+  
     return (
       <div
         key={movie.id}
@@ -38,7 +39,7 @@ export function MovieCard({ movie,role}: { movie: Movie,role:string }) {
             <p>Popularity: <span>{movie.popularity}</span></p>
           </div>
           <p>{movie.overview}</p>
-          {role !== "VISITOR" && <AddToList />}
+          {role !== "VISITOR" && <AddToList list={[]} item={movie.id} />}
         </div>
       </div>
     );
