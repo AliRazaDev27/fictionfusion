@@ -2,15 +2,13 @@ import { Movie } from "@/types";
 import { getMoviePosterLink } from "@/lib";
 import { getGenre } from "@/lib/utils";
 import Image from "next/image";
-export function MovieCard({ movie }: { movie: Movie }) {
+import { AddToList } from "./add_to_list";
+export function MovieCard({ movie,role}: { movie: Movie,role:string }) {
     return (
       <div
         key={movie.id}
         className="grid grid-cols-1 sm:grid-cols-6  mx-2 gap-2    text-white"
       >
-        {/* <div className=" mx-auto sm:mx-0   col-span-1 sm:col-span-2 md:col-span-1  rounded-lg overflow-hidden">
-          <img src={getMoviePosterLink(movie.poster_path, "w342")} alt="poster" className="w-[300px] sm:w-full" />
-        </div> */}
         <div className="col-span-1 relative overflow-hidden aspect-[2/3] rounded-3xl">
           <Image
           src={getMoviePosterLink(movie.poster_path, "w342")}
@@ -23,7 +21,7 @@ export function MovieCard({ movie }: { movie: Movie }) {
           style={{ objectFit: "cover" }} 
           />
         </div>
-        <div className="col-span-1 pt-2 sm:col-span-4 md:col-span-5 space-y-2 px-4 bg-gray-900 rounded-2xl border border-gray-800">
+        <div className="col-span-1 pt-2 sm:col-span-4 md:col-span-5 flex flex-col justify-between px-4 bg-gray-900 rounded-2xl border border-gray-800">
           <h2 className="text-lg md:text-2xl">{movie.title}</h2>
           <ul className="flex gap-2">
             {movie.genre_ids && movie.genre_ids.map((genre: any) => (
@@ -40,6 +38,7 @@ export function MovieCard({ movie }: { movie: Movie }) {
             <p>Popularity: <span>{movie.popularity}</span></p>
           </div>
           <p>{movie.overview}</p>
+          {role !== "VISITOR" && <AddToList />}
         </div>
       </div>
     );

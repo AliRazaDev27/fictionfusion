@@ -28,7 +28,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
         <Suspense fallback={<p>Loading</p>}>
         {movies && movies.map((show) => (
           <div key={show.id} className="relative">
-            <MovieCard movie={show} />
+            <MovieCard movie={show} role={role}/>
             {role === "ADMIN" && <DeleteMovie id={show.id} />}
           </div>
         ))}

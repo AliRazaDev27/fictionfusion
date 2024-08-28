@@ -5,8 +5,11 @@ import {  Book, getFilteredBooks, getPaginatedBooks } from "@/lib/database/bookS
 
 import { auth } from "@/auth";
 import { SearchAndFilter } from "@/components/seach_filter_sheet";
+import { getBookList } from "@/actions/userListActions";
 
 export default async function Page({searchParams}:{searchParams:any}) {
+  const data = await getBookList()
+  console.log(data)
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search || "";
   const sort = searchParams.sort || "";
@@ -27,7 +30,7 @@ export default async function Page({searchParams}:{searchParams:any}) {
       <section className=" px-4">
       {books &&
         books.map((book, index) => (
-            <BookCard key={index} book={book} role={role} />
+            <BookCard key={index} book={book} role={role} list={data}/>
         ))}
       </section>
     <section className="py-2">

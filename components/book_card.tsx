@@ -24,8 +24,10 @@ import { useToast } from "./ui/use-toast";
 import Link from "next/link";
 import { removeEmptyImages } from "@/actions/cleaner";
 import { Badge } from "./ui/badge";
+import { AddToList } from "./add_to_list";
 
-export default function BookCard({ book,role }: { book: Book,role:string }) {
+export default function BookCard({ book,role,list }: { book: Book,role:string,list:any }) {
+  
   let rating = book?.rating;
   if(!rating) rating = (book as any)?.ratings_average;
   if(!rating) rating = "0"
@@ -237,7 +239,7 @@ const sentenceRef:any = useRef()
         </div>
         <p className="line-clamp-3">{book.first_sentence}</p>
         <div className="flex gap-4">
-        {role!=="VISITOR" &&  <Button className="w-max px-4 py-2">Add to List</Button>}
+        {role!=="VISITOR" &&  <AddToList list={list} item={book.id}/>}
         {role==="ADMIN" && <Button className="w-max px-4 py-2" onClick={()=>handleClean(book.id,book.olid)} disabled={isPending}>Clean</Button>}
         </div>
       </div>
