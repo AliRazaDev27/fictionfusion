@@ -4,6 +4,7 @@ import { db } from "@/lib/database";
 import { ListTable } from "@/lib/database/listSchema";
 import { UserListTable } from "@/lib/database/userListTable";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 export async function CreateList(name:string|null,type:string|null){
     try{
         const session:any = await auth()
@@ -69,6 +70,48 @@ export async function addItemToList(listId:number,itemId:number){
         const updatedItems = exists[0].items ? [...exists[0].items,itemId] : [itemId]
         await db.update(ListTable).set({items:updatedItems}).where(eq(ListTable.id,listId))
         return {success:true}
+    }
+    catch(err:any){
+        console.log(err)
+        return {success:false,message:err?.message}
+    }
+}
+export async function updateListName(listId:number,name:string){
+    try{
+        const session:any = await auth()
+    const role = session?.user?.role || "VISITOR";
+    if(role === "VISITOR") throw new Error("Not Authorized")
+    else if(role === "ADMIN"){
+        await db.update(ListTable).set({listName:name}).where(eq(ListTable.id,listId))
+    }
+    else{
+        const exists = await db.select().from(ListTable).where(eq(ListTable.id,listId)).limit(1)
+        if(exists[0].creator !== session?.user?.name) throw new Error("Not Authorized")
+        await db.update(ListTable).set({listName:name}).where(eq(ListTable.id,listId))    
+    }
+    revalidatePath("/dashboard/books")
+    return {success:true}
+    }
+    catch(err:any){
+        console.log(err)
+        return {success:false,message:err?.message}
+    }
+}
+export async function deleteList(listId:number){
+    try{
+        const session:any = await auth()
+    const role = session?.user?.role || "VISITOR";
+    if(role === "VISITOR") throw new Error("Not Authorized")
+    else if(role === "ADMIN"){
+        await db.delete(ListTable).where(eq(ListTable.id,listId))
+    }
+    else{
+        const exists = await db.select().from(ListTable).where(eq(ListTable.id,listId)).limit(1)
+        if(exists[0].creator !== session?.user?.name) throw new Error("Not Authorized")
+        await db.delete(ListTable).where(eq(ListTable.id,listId))    
+    }
+    revalidatePath("/dashboard/books")
+    return {success:true}
     }
     catch(err:any){
         console.log(err)
