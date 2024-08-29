@@ -2,7 +2,7 @@
 import { franc } from "franc";
 import { addBook, BookTable, deleteImageFromOlid, setCoverImage, updateBook } from "@/lib/database/bookSchema";
 import { db } from "@/lib/database";
-import { count } from "drizzle-orm";
+import { count, inArray } from "drizzle-orm";
 export async function getBookFromOpenLibrary(bookName:string){
     try{
     let safeTitle = bookName.trim()   
@@ -99,4 +99,11 @@ export async function addBookToDB(book:any){
 export async function getTotalBooks(){
   const result = await db.select({count:count()}).from(BookTable)
   return result
-} 
+}
+export async function getBooksFromArrayList(list: number[]) {
+  const result = await db
+    .select()
+    .from(BookTable)
+    .where(inArray(BookTable.id, list));
+  return result
+}

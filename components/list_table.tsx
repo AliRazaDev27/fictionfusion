@@ -46,7 +46,7 @@ export function ListTable({data}){
     // add some transition animations
     const name = nameRef.current?.value
     if(!name || name === "") return
-    const result = await updateListName(data[0].id,name)
+    const result = await updateListName(data[0].id,name,"books")
     if(result.success){
       toast({
         title:"List Name Updated",
@@ -65,7 +65,7 @@ export function ListTable({data}){
     closeRef.current?.click()
   }
   const handleDelete = async(listId:number,type:string) => {
-    const result = await deleteListFromUserList(listId,type)
+    const result = await deleteListFromUserList(listId,type,"books")
     if(result.success){
       toast({
         title:"List Deleted",

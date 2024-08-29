@@ -5,6 +5,9 @@ import { ListTable } from "@/lib/database/listSchema";
 import { UserListTable } from "@/lib/database/userListTable";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { getBooksFromArrayList } from "./bookActions";
+import { getShowsFromArrayList } from "./showActions";
+import { getMoviesFromArrayList } from "./movieActions";
 export async function CreateList(name:string|null,type:string|null){
     try{
         const session:any = await auth()
@@ -76,7 +79,7 @@ export async function addItemToList(listId:number,itemId:number){
         return {success:false,message:err?.message}
     }
 }
-export async function updateListName(listId:number,name:string){
+export async function updateListName(listId:number,name:string,path:string){
     try{
         const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
@@ -89,7 +92,7 @@ export async function updateListName(listId:number,name:string){
         if(exists[0].creator !== session?.user?.name) throw new Error("Not Authorized")
         await db.update(ListTable).set({listName:name}).where(eq(ListTable.id,listId))    
     }
-    revalidatePath("/dashboard/books")
+    revalidatePath(`/dashboard/${path}`)
     return {success:true}
     }
     catch(err:any){
@@ -97,7 +100,7 @@ export async function updateListName(listId:number,name:string){
         return {success:false,message:err?.message}
     }
 }
-export async function deleteList(listId:number){
+export async function deleteList(listId:number,path:string){
     try{
         const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
@@ -110,11 +113,38 @@ export async function deleteList(listId:number){
         if(exists[0].creator !== session?.user?.name) throw new Error("Not Authorized")
         await db.delete(ListTable).where(eq(ListTable.id,listId))    
     }
-    revalidatePath("/dashboard/books")
+    revalidatePath(`/dashboard/${path}`)
     return {success:true}
     }
     catch(err:any){
         console.log(err)
         return {success:false,message:err?.message}
+    }
+}
+export async function getListItems(listId:number) {
+    try{
+        const session:any = await auth()
+        const role = session?.user?.role || "VISITOR";
+        if(role === "VISITOR") throw new Error("Not Authorized")
+        const list = await db.select().from(ListTable).where(eq(ListTable.id,listId)).limit(1)
+        if(list[0].creator !== session?.user?.name) throw new Error("Not Authorized") 
+        const {items,type} = list[0] 
+        if(!items || items.length === 0) throw new Error("List not Found / Empty List")
+        // create a getItemsByArray function for each type
+        if(type==="book"){
+            const result = await getBooksFromArrayList(items)
+            return {result:result,type:type}
+        }
+        if(type==="movie"){
+            const result = await getMoviesFromArrayList(items)
+            return {result:result,type:type}
+        }
+        if(type==="show"){
+            const result = await getShowsFromArrayList(items)
+            return {result:result,type:type}
+        }
+    }
+    catch(err:any){
+        console.log(err)
     }
 }

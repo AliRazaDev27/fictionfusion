@@ -2,7 +2,7 @@
 import { db } from "@/lib/database";
 import { MovieTable } from "@/lib/database/movieSchema";
 import { SortMovie } from "@/types";
-import { count, eq,ilike,desc,asc } from "drizzle-orm";
+import { count, eq,ilike,desc,asc, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function addMovieToDB(movie: any) {
@@ -85,6 +85,13 @@ export async function getTotalMovies(){
   const result = await db.select({count:count()}).from(MovieTable)
   return result
 } 
+export async function getMoviesFromArrayList(list: number[]) {
+  const result = await db
+    .select()
+    .from(MovieTable)
+    .where(inArray(MovieTable.id, list));
+  return result
+}
 
   const movieSortOption: SortMovie = {
     year_newest: desc(MovieTable.release_date),

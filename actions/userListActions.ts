@@ -42,12 +42,12 @@ export async function getBookList(){
     const data = await db.select().from(ListTable).where(inArray(ListTable.id,values))
     return data
 }
-export async function deleteListFromUserList(listId:number,type:string){
+export async function deleteListFromUserList(listId:number,type:string,path:string){
     try{
      const session:any = await auth();
      const role = session?.user?.role || "VISITOR";
      if(role === "VISITOR") throw new Error("Not Authorized")
-     const isDeleted = await deleteList(listId)
+     const isDeleted = await deleteList(listId,path)
      if(!isDeleted.success) throw new Error(isDeleted?.message)
      if(type === "movie"){
         const userList = await db.select({movieLists:UserListTable.movieLists}).from(UserListTable).where(eq(UserListTable.email,session?.user?.email)).limit(1)

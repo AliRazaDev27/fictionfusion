@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { ShowTable } from "@/lib/database/showSchema";
-import { asc, count, desc, eq, ilike, like } from "drizzle-orm";
+import { asc, count, desc, eq, ilike, inArray, like } from "drizzle-orm";
 const db = drizzle(sql);
 
 
@@ -79,6 +79,13 @@ export const getFilteredShows = async (
     const result = await db.select({count:count()}).from(ShowTable)
     return result
   } 
+  export async function getShowsFromArrayList(list: number[]) {
+    const result = await db
+      .select()
+      .from(ShowTable)
+      .where(inArray(ShowTable.id, list));
+    return result
+  }
 
 const showSortOption: SortShow = {
     year_newest: desc(ShowTable.premiered),
