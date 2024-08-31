@@ -6,8 +6,10 @@ import { Show } from "@/types"
 export const dynamic = "force-dynamic"
 export default async function Page({searchParams}:{searchParams:any}) {
     const query = searchParams.query
-    const [session,result]:[any,any] = await Promise.all([auth,searchShowByTitle(query)])
+    const session:any = await auth()
+    const result = await searchShowByTitle(query)
     const role = session?.user?.role || "VISITOR";
+    console.log(session.user)
     return(
         <div className="w-full min-h-[90vh] flex flex-col gap-6 py-6 px-4">
             {result.map((show:{show:Show}) =>(

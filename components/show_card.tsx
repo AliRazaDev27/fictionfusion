@@ -90,9 +90,11 @@ export async function ShowCard({ show, role,list }: { show: Show, role?: string,
           <span className="flex gap-2 font-semibold">
             Language<Badge>{show.language}</Badge>
           </span>
-          <span className="flex gap-2 font-semibold">
+          {
+            show.runtime && <span className="flex gap-2 font-semibold">
             Runtime<Badge>{show.runtime}</Badge>
           </span>
+          }
         </div>
         <div className="flex gap-4 flex-wrap">
           <p className="font-semibold">

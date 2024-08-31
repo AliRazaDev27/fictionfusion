@@ -26,6 +26,6 @@ export function AddShowToDB({show}:{show:Show}) {
         }
     }
     return(
- <Button className="absolute top-5 right-8" onClick={handleAdd}>Add</Button>           
+ <Button className="absolute top-5 right-8" onClick={handleAdd}>Add to DB</Button>           
     )
 }
