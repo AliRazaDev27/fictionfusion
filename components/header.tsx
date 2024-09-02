@@ -26,9 +26,9 @@ export default async function Header() {
           <div className="hidden md:block">
           <Link
             href="/"
-            className="text-xl text-white"
+            className="text-xl md:text-2xl italic text-white"
           >
-            Fiction<span className="text-orange-500 text-2xl">Fusion</span>
+            Fiction<span className="text-orange-500 text-3xl">Fusion</span>
           </Link>
           </div>
 

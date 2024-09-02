@@ -86,17 +86,17 @@ export function ListTable({data}){
         <div className="text-white">
         <Table>
           <TableHeader>
-            <TableRow className="text-lg hover:bg-dark">
-              <TableHead>List Name</TableHead>
-              <TableHead>Item Count</TableHead>
-              <TableHead>Creator</TableHead>
-              <TableHead>Actions</TableHead>
+            <TableRow className="text-lg md:text-xl">
+              <TableHead className="text-orange-500">List Name</TableHead>
+              <TableHead className="text-orange-500">Item Count</TableHead>
+              <TableHead className="text-orange-500">Creator</TableHead>
+              <TableHead className="text-orange-500">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data && data.map((item:any,index:number)=>(
-                <TableRow className="hover:bg-sky-900" key={index}>
-              <TableCell><Link href={`/lists/${item.id}`}>{item.listName}</Link></TableCell>
+                <TableRow className="hover:bg-neutral-800 " key={index} >
+              <TableCell><Link href={`/lists/${item.id}`} className="border rounded-full px-4 py-2 font-bold hover:bg-orange-700">{item.listName}</Link></TableCell>
               <TableCell>{item.items?.length || 0}</TableCell>
               <TableCell>{item.creator}</TableCell>
               <TableCell>

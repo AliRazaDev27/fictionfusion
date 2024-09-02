@@ -165,8 +165,16 @@ const sentenceRef:any = useRef()
       <DialogTitle className="text-2xl font-light">Gallery {currentGalleryImageIndex + 1} / {book?.olid && book?.olid.length}</DialogTitle>
       <DialogDescription>
         <div className="relative flex justify-center w-full h-full overflow-hidden">
-        <div className="w-80 aspect-[3/4]">
-          <img src={getOpenLibraryCoverLink("olid", book?.olid && book.olid[currentGalleryImageIndex], "M")} alt="gallery" className="w-full h-full"/>
+        <div className="w-80 aspect-[3/4] relative">
+          {/* <img src={getOpenLibraryCoverLink("olid", book?.olid && book.olid[currentGalleryImageIndex], "M")} alt="gallery" className="w-full h-full"/> */}
+          <Image
+           src={getOpenLibraryCoverLink("olid", book?.olid && book.olid[currentGalleryImageIndex], "M")}
+            alt="gallery"
+            placeholder="blur"
+            blurDataURL="/bookplaceholder.svg"
+            fill
+            unoptimized
+             className="bg-cover"/>
         </div>
         <div className="absolute top-1/2 right-0  -translate-y-1/2"><button onClick={nextGalleryImage}><FaArrowCircleRight className="size-8 hover:text-black/80"/></button></div>
         <div className="absolute top-1/2 left-0  -translate-y-1/2"><button onClick={previousGalleryImage}><FaArrowCircleLeft className="size-8 hover:text-black/80 "/></button></div>

@@ -44,7 +44,7 @@ export  function CreateList({listType}:{listType:string}){
         
         <Dialog>
       <DialogTrigger asChild>
-      <button  className="text-lg px-3 py-2  rounded-3xl bg-sky-700">Create New List</button>
+      <button  className="text-lg px-3 py-2  rounded-3xl bg-orange-500 border hover:bg-orange-600">Create New List</button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
       <form action={handleSumbit}>

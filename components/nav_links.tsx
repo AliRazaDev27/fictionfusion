@@ -8,7 +8,7 @@ export default function NavLinks({role}:{role:string}) {
     const pathname = usePathname()
   
     return (
-        <nav className="hidden  gap-6 translate-x-8  text-xl font-medium md:flex md:flex-row md:items-center md:gap-2  lg:gap-6">
+        <nav className="hidden translate-x-8  text-lg font-medium md:flex md:flex-row md:items-center md:gap-2  lg:gap-4">
          
           { role !== "VISITOR" && (
             <Link

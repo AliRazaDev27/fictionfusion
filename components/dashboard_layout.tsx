@@ -35,13 +35,6 @@ export function DashboardLayout({total,list}) {
     { name: 'Movies', value: total.totalMovies },
   ]
 
-  const listDataa = [
-    { name: 'Summer Reads 2023', type: 'Books', items: 12, lastUpdated: '2 days ago' },
-    { name: 'Must-Watch Sci-Fi', type: 'Movies & Shows', items: 8, lastUpdated: '1 week ago' },
-    { name: 'Classic Literature', type: 'Books', items: 20, lastUpdated: '3 days ago' },
-    { name: 'Favorite Comedies', type: 'Movies & Shows', items: 15, lastUpdated: '5 days ago' },
-    { name: 'Thriller Novels', type: 'Books', items: 10, lastUpdated: '1 day ago' },
-  ]
   const listData = list.map((item) => {
     return {
       name: item?.listName,
@@ -50,7 +43,7 @@ export function DashboardLayout({total,list}) {
       lastUpdated: item?.updatedAt?.toDateString(),
     }
   })
-  console.log(listData)
+
 
   return (
     <div className="min-h-screen ">
@@ -60,7 +53,7 @@ export function DashboardLayout({total,list}) {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Media Distribution Chart */}
-          <Card>
+          <Card className='bg-black/60 text-white'>
             <CardHeader>
               <CardTitle>Media Distribution</CardTitle>
             </CardHeader>
@@ -91,7 +84,7 @@ export function DashboardLayout({total,list}) {
 
           {/* Stats */}
           <div className="grid grid-cols-1 sam:grid-cols-3 gap-4">
-            <Card>
+            <Card className='bg-black/60 text-white'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Books</CardTitle>
                 <Book className="h-4 w-4 text-muted-foreground" />
@@ -100,7 +93,7 @@ export function DashboardLayout({total,list}) {
                 <div className="text-2xl font-bold">{total.totalBooks}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className='bg-black/60 text-white'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Movies</CardTitle>
                 <Film className="h-4 w-4 text-muted-foreground" />
@@ -109,7 +102,7 @@ export function DashboardLayout({total,list}) {
                 <div className="text-2xl font-bold">{total.totalMovies}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className='bg-black/60 text-white'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Shows</CardTitle>
                 <Tv className="h-4 w-4 text-muted-foreground" />
@@ -122,7 +115,7 @@ export function DashboardLayout({total,list}) {
         </div>
 
         {/* All Lists */}
-        <Card>
+        <Card className='bg-black/60 text-white'>
           <CardHeader>
             <div className="flex items-center">
               <CardTitle>All Lists</CardTitle>
