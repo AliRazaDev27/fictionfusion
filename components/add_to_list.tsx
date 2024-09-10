@@ -64,7 +64,7 @@ export function AddToList({list,item}) {
   return(
         <Dialog>
       <DialogTrigger asChild>
-        <Button  className="w-max">ADD</Button>
+        <Button  className="w-max bg-orange-600 hover:bg-orange-700">ADD</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

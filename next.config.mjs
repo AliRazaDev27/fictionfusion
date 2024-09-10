@@ -12,6 +12,10 @@ const nextConfig = {
 {
     protocol:"https",
     hostname:"static.tvmaze.com"
+},
+{
+    protocol:"https",
+    hostname:"i.mydramalist.com"
 }],
     }
 };

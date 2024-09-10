@@ -30,6 +30,7 @@
     "drizzle-orm": "^0.33.0",
     "embla-carousel-react": "^8.1.8",
     "franc": "^6.2.0",
+    "jsdom": "^25.0.0",
     "lucide-react": "^0.427.0",
     "next": "^14.2.6",
     "next-auth": "^5.0.0-beta.20",
@@ -44,6 +45,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^20",
     "@types/pbkdf2": "^3.1.2",
     "@types/react": "^18",

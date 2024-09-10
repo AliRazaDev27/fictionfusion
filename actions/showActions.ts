@@ -86,6 +86,13 @@ export const getFilteredShows = async (
       .where(inArray(ShowTable.id, list));
     return result
   }
+export async function getShowByID(id: number) {
+    const result = await db
+      .select()
+      .from(ShowTable)
+      .where(eq(ShowTable.id, id));
+    return result[0];
+} 
 
 const showSortOption: SortShow = {
     year_newest: desc(ShowTable.premiered),

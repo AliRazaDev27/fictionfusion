@@ -14,6 +14,8 @@ import {
 import { getShowGallery } from "@/actions/showActions";
 import Image from "next/image";
 import { AddToList } from "./add_to_list";
+import { Button } from "./ui/button";
+import Link from "next/link";
 export async function ShowCard({ show, role,list }: { show: Show, role?: string, list?: any }) {
   let gallery = await getShowGallery(show.id);
   let image = show.image as any;
@@ -27,13 +29,6 @@ export async function ShowCard({ show, role,list }: { show: Show, role?: string,
   return (
     <div className="grid grid-cols-1  md:grid-cols-6   gap-2 mx-2 px-4 py-2 border border-black/50 bg-gray-900 rounded-xl text-white">
       <div className="col-span-1 relative group aspect-[2/3] overflow-hidden rounded-xl ">
-          {/* {
-            <img
-              src={coverSrc}
-              alt="cover"
-              className="w-full h-full group-hover:blur-md"
-            />
-          } */}
           <Image
           src={coverSrc}
           alt="cover"
@@ -113,7 +108,10 @@ export async function ShowCard({ show, role,list }: { show: Show, role?: string,
         </div>
 
         <p className="text-lg md:line-clamp-3">{show?.summary}</p>
+        <div className="flex items-center gap-4">
         {role !== "VISITOR" && <AddToList list={list} item={show.id} />}
+        {role === "ADMIN" && <Link href={`/track/${show.id}`} className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg">Track</Link>}
+        </div>
       </div>
     </div>
   );
