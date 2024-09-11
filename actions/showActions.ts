@@ -51,29 +51,29 @@ export async function getPaginatedShows(page: number, limit: number) {
     return { data: result, total: total[0].count };
 }
 export const getFilteredShows = async (
-    search: string,
-    sort: string,
-    page: number,
-    limit: number
-  ) => {
-    console.log("calling");
-    if (search === "" && sort === "") {
-      console.log("returning null");
-      return null;
-    }
+  page: number,
+    limit: number,
+    search?: string,
+    sort?: string,
+  ) => {    
     const selectResult = db.select().from(ShowTable);
-    if (search !== "") {
-      selectResult.where(ilike(ShowTable.name, `%${search}%`));
-    }
-    if (sort !== "") {
-      selectResult.orderBy(showSortOption[sort]);
+    if (!!search) selectResult.where(ilike(ShowTable.name, `%${search}%`));
+    if (!!sort) selectResult.orderBy(showSortOption[sort]);
+    else{
+      selectResult.orderBy(desc(ShowTable.rating));
     }
     selectResult.limit(limit).offset(limit * (page - 1));
     const data = await selectResult;
-    const total = await db
+    let total: { count: number }[] = [];
+    if(!!search){
+     total = await db
       .select({ count: count() })
       .from(ShowTable)
       .where(ilike(ShowTable.name, `%${search}%`));
+    } 
+    else{
+       total = await db.select({ count: count() }).from(ShowTable);
+    }
     return { data: data, total: total[0].count };
   };
   export async function getTotalShows(){
