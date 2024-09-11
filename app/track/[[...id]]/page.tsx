@@ -1,7 +1,8 @@
 import { getShowByID } from "@/actions/showActions"
-import { Badge } from "@/components/ui/badge"
+import { ShowRatingUpdateCard } from "@/components/show_rating_update_card"
+
 import jsdom from "jsdom"
-import Image from "next/image"
+
 export default async function Page({params}){
     const id = params.id[0]
     const show = await getShowByID(id)
@@ -31,22 +32,12 @@ export default async function Page({params}){
         if(link) item.link = link
         showData.push(item)
     }
-    
-    
-    console.log(showData)
+     
     return(
-        <div className="container mx-auto grid grid-cols-3 gap-8 px-4 py-8">
+        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 py-8">
             {
                 showData.map((item:any,index:number)=>(
-                    <div key={index} className="border border-red-500 flex flex-col items-center gap-4 rounded-lg p-4 text-center">
-                        <div className="relative overflow-hidden w-1/2 border border-yellow-500 mx-auto aspect-[2/3]">
-                            <Image src={item.image}  alt="cover" fill className="bg-cover"/>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <p className="font-semibold text-white text-lg">{item.title}</p>
-                            <Badge className="bg-orange-500 text-white text-lg">{item.rating}</Badge>
-                        </div>
-                    </div>
+                    <ShowRatingUpdateCard key={index} item={item} id={id}/>
                 ))
             }
         </div>

@@ -1,11 +1,12 @@
 import React from 'react';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
-const RatingStar = ({ rating }: { rating: number }) => {
+const RatingStar = ({ rating,max = 5 }: { rating: number, max?: number }) => {
   rating = rating || 0;
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  const emptyStars = max - fullStars - (hasHalfStar ? 1 : 0);
+  console.log("empty:", emptyStars)
 
   return (
     <div className="flex items-center">

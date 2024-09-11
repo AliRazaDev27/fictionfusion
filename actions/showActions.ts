@@ -6,6 +6,7 @@ import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { ShowTable } from "@/lib/database/showSchema";
 import { asc, count, desc, eq, ilike, inArray, like } from "drizzle-orm";
+import { auth } from "@/auth";
 const db = drizzle(sql);
 
 
@@ -93,7 +94,23 @@ export async function getShowByID(id: number) {
       .where(eq(ShowTable.id, id));
     return result[0];
 } 
-
+export async function updateShowRating(id: number, rating: string) {
+    try{
+      if(!(Number.isInteger(parseInt(rating)))) throw new Error("Rating must be an integer")
+      if(parseInt(rating) < 0 || parseInt(rating) > 10) throw new Error("Rating must be between 0 and 10")
+      const session:any = await auth()
+    if(session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
+      await db
+      .update(ShowTable)
+      .set({ rating: rating })
+      .where(eq(ShowTable.id, id));
+      return {success:true} 
+    }
+    catch(err:any){
+      console.log(err)
+      return {success:false, message:err?.message}
+    }
+}
 const showSortOption: SortShow = {
     year_newest: desc(ShowTable.premiered),
     year_oldest: asc(ShowTable.premiered),
