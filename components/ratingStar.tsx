@@ -6,7 +6,6 @@ const RatingStar = ({ rating,max = 5 }: { rating: number, max?: number }) => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;
   const emptyStars = max - fullStars - (hasHalfStar ? 1 : 0);
-  console.log("empty:", emptyStars)
 
   return (
     <div className="flex items-center">

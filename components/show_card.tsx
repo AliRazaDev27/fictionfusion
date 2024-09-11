@@ -16,8 +16,9 @@ import Image from "next/image";
 import { AddToList } from "./add_to_list";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import RatingStar from "./ratingStar";
 export async function ShowCard({ show, role,list }: { show: Show, role?: string, list?: any }) {
-  let gallery = await getShowGallery(show.id);
+  let images = await getShowGallery(show.id);
   let image = show.image as any;
   let coverSrc = image?.medium ? image?.medium : image?.original;
   if (!coverSrc) coverSrc = "/bookplaceholder.svg";
@@ -26,6 +27,14 @@ export async function ShowCard({ show, role,list }: { show: Show, role?: string,
   if (typeof rating === "object") {
     averageRating = rating?.average ? rating?.average : "0.0";
   }
+  const gallery:{image:string,width:number}[] = new Array();
+    for(let item of images){
+    if(item?.resolutions?.medium) gallery.push({image:item?.resolutions?.medium?.url,width:item?.resolutions?.medium?.width})
+    else{
+        gallery.push({image:item?.resolutions?.original?.url,width:item?.resolutions?.original?.width})
+    }
+    }
+    gallery.sort((a, b) => a.width - b.width);
   return (
     <div className="grid grid-cols-1  md:grid-cols-6   gap-2 mx-2 px-4 py-2 border border-black/50 bg-gray-900 rounded-xl text-white">
       <div className="col-span-1 relative group aspect-[2/3] overflow-hidden rounded-xl ">
@@ -39,7 +48,6 @@ export async function ShowCard({ show, role,list }: { show: Show, role?: string,
           fill
           style={{ objectFit: "cover" }}
           />
-
           <Drawer>
             <DrawerTrigger className="absolute px-4 py-2 bg-black rounded-xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden group-hover:block text-white hover:bg-blue-900 ">
               View
@@ -56,26 +64,21 @@ export async function ShowCard({ show, role,list }: { show: Show, role?: string,
                   <IoMdCloseCircle className="size-8" />
                 </DrawerClose>
               </DrawerHeader>
-              <div className="overflow-y-scroll flex flex-wrap">
-                {gallery.map((item, index) => (
-                  <div key={index}>
-                    {item?.resolutions?.medium ? (
-                      <img src={item?.resolutions?.medium.url} alt="cover" />
-                    ) : (
-                      <img src={item?.resolutions?.original.url} alt="cover" />
-                    )}
-                  </div>
-                ))}
+              <div className="overflow-y-scroll flex flex-wrap p-4">
+                {gallery.map((item, index) => {
+                    return <img key={index} src={item?.image} alt="cover" className="flex-auto" />
+                }
+                )}
               </div>
             </DrawerContent>
           </Drawer>
       </div>
 
-      <div className=" col-span-1 md:col-span-5   space-y-2 px-2 mx-2">
+      <div className=" col-span-1 md:col-span-5 flex flex-col justify-between px-2 mx-2">
         <h1 className="text-2xl font-semibold">{show.name}</h1>
         <div className="flex flex-wrap gap-4">
-          <p className="font-semibold text-lg">{show.type}</p>
-          {averageRating && <Badge>{averageRating}</Badge>}
+          <RatingStar rating={averageRating} max={10}/>
+          {averageRating && <Badge className="text-lg">{averageRating}</Badge>}
         </div>
 
         <div className="flex flex-wrap gap-4">

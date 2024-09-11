@@ -16,7 +16,6 @@ import { useToast } from "./ui/use-toast"
 import { Label } from "@/components/ui/label"
 import { useEffect, useState,useRef } from "react"
 export function AddToList({list,item}) {
-  console.log(list)
   const [checked,setChecked] = useState(new Array(list?.length))
   const [initial,setInitial] = useState(new Array(list?.length))
   const closeRef = useRef<HTMLButtonElement>(null)
