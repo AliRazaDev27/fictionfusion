@@ -45,39 +45,46 @@ export const getBook = async () => {
   return selectResult;
 };
 export const getPaginatedBooks = async (limit: number, offset: number) => {
-  const selectResult = await db
-    .select()
-    .from(BookTable)
-    .orderBy(asc(BookTable.id))
-    .limit(limit)
-    .offset(offset);
-  const total = await db.select({ count: count() }).from(BookTable);
+  let start = performance.now();
+  const [selectResult,total] = await Promise.all([
+    db
+      .select()
+      .from(BookTable)
+      .orderBy(asc(BookTable.id))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: count() }).from(BookTable),
+  ])
+  console.log("time taken", performance.now() - start);
   return { data: selectResult, total: total[0].count };
 };
 export const getFilteredBooks = async (
-  search: string,
-  sort: string,
-  page: number,
-  limit: number
+  page=1,
+  limit=9,
+  search?: string,
+  sort?: string,
+  
 ) => {
-  console.log("calling");
-  if (search === "" && sort === "") {
-    console.log("returning null");
-    return null;
-  }
+  // maybe  fix the max rating order issue?
   const selectResult = db.select().from(BookTable);
-  if (search !== "") {
+  const countBooks = db.select({ count: count() }).from(BookTable);
+  if (search) {
     selectResult.where(ilike(BookTable.title, `%${search}%`));
+    countBooks.where(ilike(BookTable.title, `%${search}%`));
   }
-  if (sort !== "") {
+  if (sort) {
     selectResult.orderBy(bookSortOption[sort]);
   }
+  else{
+    selectResult.orderBy(asc(BookTable.id))
+  }
   selectResult.limit(limit).offset(limit * (page - 1));
-  const data = await selectResult;
-  const total = await db
-    .select({ count: count() })
-    .from(BookTable)
-    .where(ilike(BookTable.title, `%${search}%`));
+  let start = performance.now();
+  const [data,total] = await Promise.all([
+    selectResult,
+    countBooks,
+  ])
+  console.log("time taken", performance.now() - start);
   return { data: data, total: total[0].count };
 };
 export const deleteImageFromOlid = async (value: string, id: number) => {

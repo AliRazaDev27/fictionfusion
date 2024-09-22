@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import PaginationControll from "@/components/pagination";
 import { getFilteredMovies, getPaginatedMovies } from "@/actions/movieActions";
 import { MovieCard } from "@/components/movie_card";
-import { SearchAndFilter } from "@/components/seach_filter_sheet";
+import  SearchAndFilter  from "@/components/seach_filter_sheet";
 import { Suspense } from "react";
 import { getMovieList } from "@/actions/userListActions";
 

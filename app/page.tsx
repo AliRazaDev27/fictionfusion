@@ -1,22 +1,11 @@
 "use client"
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { BookOpen, Film, Tv, Search, List, ChevronDown } from "lucide-react"
+import { BookOpen, Film, Tv, ChevronDown } from "lucide-react"
 import Link from "next/link"
 
 export default function LandingPage() {
-  const [scrolled, setScrolled] = useState(false)
   const [activeFeature, setActiveFeature] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveFeature((prev) => (prev + 1) % 3)
@@ -25,25 +14,7 @@ export default function LandingPage() {
   }, [])
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#1e3a8a] to-[#1e3a5a] text-white">
-      {/* <header className={`fixed w-full p-4 transition-all duration-300 ${scrolled ? 'bg-[#1e3a8a]/80 backdrop-blur-md' : ''}`}>
-        <div className="container mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold">Fiction<span className="text-[#f97316]">Fusion</span></span>
-          </Link>
-          <nav className="hidden md:flex space-x-4">
-            {['Dashboard', 'Books', 'Movies', 'Shows'].map((item) => (
-              <Link key={item} href={`/${item.toLowerCase()}`} className="hover:text-[#f97316] transition-colors">
-                {item}
-              </Link>
-            ))}
-          </nav>
-          <Button variant="outline" className="bg-[#f97316] text-white hover:bg-[#ea580c] transition-colors">
-            Login
-          </Button>
-        </div>
-      </header> */}
-
+    <div className="flex flex-col min-h-screen  text-white">
       <main className="flex-grow flex flex-col items-center justify-center p-8 text-center mt-16">
         <h1 className="text-5xl font-bold mb-6 animate-fade-in-down">
           Discover <span className="text-[#f97316]">Organize</span> Track
@@ -77,7 +48,7 @@ export default function LandingPage() {
         </div>
       </main>
 
-      <section className="py-16 bg-white/5 backdrop-blur-lg">
+      <section className="py-16  backdrop-blur-lg">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold mb-8">Why Choose FictionFusion?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -95,7 +66,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="p-4 text-center text-sm bg-[#1e3a8a]">
+      <footer className="p-4 text-center text-sm">
         <div className="container mx-auto">
           <p>© 2023 <span className="font-semibold text-[#f97316]">FictionFusion</span>. All rights reserved.</p>
         </div>
@@ -108,7 +79,7 @@ function FeatureCard({ icon, title, description, isActive, linkTo}: { icon: Reac
   return (
     <div className={`flex flex-col items-center p-6 rounded-lg transition-all duration-300 transform ${isActive ? 'bg-[#f97316] scale-105' : 'bg-[#2a4a9e] hover:bg-[#3a5abe]'}`}>
       {icon}
-      {linkTo ? <Link href={linkTo} className='underline underline-offset-4 decoration-2 hover:no-underline  hover:bg-green-700 rounded-full px-3 py-1 mt-1'>{title}</Link>: <h2 className="mt-4 text-xl font-semibold">{title}</h2>}
+      {linkTo ? <Link href={linkTo} className='underline underline-offset-4 decoration-2 hover:no-underline  hover:bg-black hover:text-white rounded-full px-4 py-2 mt-1 transition-colors duration-500'>{title}</Link>: <h2 className="mt-4 text-xl font-semibold">{title}</h2>}
       <p className="mt-2 text-sm text-neutral-300">{description}</p>
     </div> 
   )
