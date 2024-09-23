@@ -10,26 +10,28 @@ const SearchAndFilter = lazy(()=>import("@/components/seach_filter_sheet"))
 // a few ways to improve performance, remove the list method, restructure to include inside the book data but will need to re structure (very tedious).
 
 export default async function Page({searchParams}:{searchParams:any}) {
-  let start = performance.now();
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search;
   const sort = searchParams.sort;
   const LIMIT = 10;
   // let result:{data:Book[],total:number}|null = {data:[],total:0};
+  let start = performance.now();
   const [result,session,list] = await Promise.all([getFilteredBooks(page,LIMIT,search,sort),auth(),getBookList()])
+  console.log("time taken in books", performance.now() - start);
   let role = (session as any)?.user?.role || "VISITOR"; 
   const books = result?.data;
-  console.log("time taken in books", performance.now() - start);
   return (
     <div className="relative min-h-[90vh] py-4 ">
       <Suspense>
       <SearchAndFilter type="books" />
       </Suspense>
       <section className=" px-4">
-      {books &&
+      <Suspense>
+        {books &&
         books.map((book, index) => (
             <BookCard key={index} book={book} role={role} list={list}/>
         ))}
+      </Suspense>
       </section>
     <section className="py-2">
       <Suspense>

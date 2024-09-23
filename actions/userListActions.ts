@@ -7,15 +7,26 @@ import { auth } from "@/auth";
 import { deleteList } from "./listActions";
 
 
+const bookCache = new Map<string, { data: any, expiry: number }>();
+const movieCache = new Map<string, { data: any, expiry: number }>();
+const showCache = new Map<string, { data: any, expiry: number }>();
+
+
+
 export async function getMovieList(){
     const session:any = await auth();
     const role = session?.user?.role || "VISITOR";
     if(role === "VISITOR") return
+    const cacheEntry = movieCache.get(session?.user?.email);
+    if (cacheEntry && cacheEntry.expiry > Date.now()) {
+        return cacheEntry.data;
+    }
     const result = await db.select({movieLists:UserListTable.movieLists}).from(UserListTable).where(eq(UserListTable.email,session?.user?.email)).limit(1)
     if(result.length === 0) return
     const values = result[0].movieLists
     if(!values || values.length === 0) return
     const data = await db.select().from(ListTable).where(inArray(ListTable.id,values))
+    movieCache.set(session?.user?.email, { data, expiry: Date.now() + 15 * 60 * 1000 });
     return data
 }
 
@@ -23,11 +34,16 @@ export async function getShowList(){
     const session:any = await auth();
     const role = session?.user?.role || "VISITOR";
     if(role === "VISITOR") return
+    const cacheEntry = showCache.get(session?.user?.email);
+    if (cacheEntry && cacheEntry.expiry > Date.now()) {
+        return cacheEntry.data;
+    }
     const result = await db.select({showLists:UserListTable.showLists}).from(UserListTable).where(eq(UserListTable.email,session?.user?.email)).limit(1)
     if(result.length === 0) return
     const values = result[0].showLists
     if(!values || values.length === 0) return
     const data = await db.select().from(ListTable).where(inArray(ListTable.id,values))
+    showCache.set(session?.user?.email, { data, expiry: Date.now() + 15 * 60 * 1000 });
     return data
 }
 
@@ -35,11 +51,18 @@ export async function getBookList(){
     const session:any = await auth();
     const role = session?.user?.role || "VISITOR";
     if(role === "VISITOR") return
+    const cacheEntry = bookCache.get(session?.user?.email);
+    if (cacheEntry && cacheEntry.expiry > Date.now()) {
+    console.log("cache hit")
+        return cacheEntry.data;
+    }
     const result = await db.select({bookLists:UserListTable.bookLists}).from(UserListTable).where(eq(UserListTable.email,session?.user?.email)).limit(1)
     if(result.length === 0) return
     const values = result[0].bookLists
     if(!values || values.length === 0) return
     const data = await db.select().from(ListTable).where(inArray(ListTable.id,values))
+    console.log("action hit")
+    bookCache.set(session?.user?.email, { data, expiry: Date.now() + 15 * 60 * 1000 });
     return data
 }
 export async function deleteListFromUserList(listId:number,type:string,path:string){
