@@ -65,6 +65,7 @@ export const getFilteredBooks = async (
   sort?: string,
   
 ) => {
+  let a = performance.now();
   // maybe  fix the max rating order issue?
   const selectResult = db.select().from(BookTable);
   const countBooks = db.select({ count: count() }).from(BookTable);
@@ -79,6 +80,7 @@ export const getFilteredBooks = async (
     selectResult.orderBy(asc(BookTable.id))
   }
   selectResult.limit(limit).offset(limit * (page - 1));
+  console.log("query time", performance.now() - a);
   let start = performance.now();
   const [data,total] = await Promise.all([
     selectResult,

@@ -4,58 +4,49 @@ import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { eq } from "drizzle-orm";
 import { BookTable } from "@/lib/database/bookSchema";
+
 const db = drizzle(sql);
+
 export async function removeEmptyImages(bookID: number, olid: string[] | null) {
   try {
     if (!olid || olid.length === 0) return;
-    const batchSize = 500;
     const updatedOlid: string[] = [];
-    const processBatch = async (batch: string[]) => {
-      const fetchPromises = batch.map(async (id, i) => {
-        try {
-          const source = await fetch(getOpenLibraryCoverLink("olid", id, "M"), {
-            method: "HEAD",
-          });
+    for(let i = 0; i < olid.length; i++){
+      const id = olid[i];
+      if(updatedOlid.length > 100) break;
+      try {
+          const url = getOpenLibraryCoverLink("olid", id, "M")
+          const source = await fetch(url, { method: "HEAD" });
           if (source.status === 200) {
-            console.log("added ", i + 1);
-            return id;
+            updatedOlid.push(id);
           }
-        } catch (error) {
+        } catch (error:any) {
           console.log("Error fetching URL:", id, error);
         }
-        return null;
-      });
-
-      const fetcher = await Promise.all(fetchPromises);
-      return fetcher.filter((item) => item !== null);
-    };
-
-    for (let i = 0; i < olid.length; i += batchSize) {
-      const batch = olid.slice(i, i + batchSize);
-      const batchResult = await processBatch(batch);
-      updatedOlid.push(...batchResult);
-    }
-
-    const result = await db
+      }
+      const result = await db
       .update(BookTable)
       .set({ olid: updatedOlid })
       .where(eq(BookTable.id, bookID));
-    return {
+      return {
       success: true};
-  } catch (err) {
+    }
+  catch (err:any) {
     console.log(err);
   }
 }
+  
+
 export async function clean() {
-  console.log("cleaning");
+console.log("cleaning")
   try {
     const allBooks = await db
       .select({ id: BookTable.id, olid: BookTable.olid })
       .from(BookTable);
-    console.log("got all books");
-    for (const book of allBooks) {
-      await removeEmptyImages(book.id, book.olid);
-      console.log("updated ", book.id);
+    console.log("books found ", allBooks.length);
+    for (let i = 15; i < allBooks.length; i++) {
+      await removeEmptyImages(allBooks[i].id, allBooks[i].olid);
+      console.log("updated ", i + 1);
     }
   } catch (err) {
     console.log(err);
