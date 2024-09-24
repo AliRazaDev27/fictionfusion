@@ -24,6 +24,16 @@ export default function NavLinksMobile({role}:{role:string}) {
               </Link>
                 )
               }
+              {
+                role !== "VISITOR" && (
+                  <Link
+                href="/watchlist"
+                className={cn(`transition-colors hover:text-foreground`, pathname === "/watchlist" ? "text-white": "text-white/50")}
+              >
+                Watchlist
+              </Link>
+                )
+              }
               <Link
                 href="/books"
                 className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white": "text-white/50")}

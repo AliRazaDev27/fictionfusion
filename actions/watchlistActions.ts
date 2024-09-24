@@ -1,7 +1,9 @@
 "use server"
+import { get } from "http";
 import jsdom from "jsdom"
+import { getIgnoreList } from "./ignorelistActions";
 export async function getWatchlist(url:string) {
-    const result = await fetch(url);
+    const [result,ignoreList] = await Promise.all([fetch(url),getIgnoreList()]);
     const response = await result.text()
     const dom = new jsdom.JSDOM(response)
     const document = dom.window.document
@@ -28,5 +30,12 @@ export async function getWatchlist(url:string) {
     
         return item;
     });
-    return showData;
+    if(ignoreList.success === true){
+      const filterValues = showData.filter((item:any)=>!ignoreList?.items?.includes(item.title))
+      return filterValues;
+    }
+    else{
+      return showData;  
+    }
+    
 }

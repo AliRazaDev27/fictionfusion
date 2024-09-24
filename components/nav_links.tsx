@@ -18,6 +18,14 @@ export default function NavLinks({role}:{role:string}) {
             Dashboard
           </Link>)
           }
+          { role !== "VISITOR" && (
+            <Link
+            href="/watchlist"
+            className={cn(`transition-colors hover:text-foreground`, pathname === "/watchlist" ? "text-white font-semibold": "text-white/60 ")}
+          >
+            Watchlist
+          </Link>)
+          }
           <Link
             href="/books"
             className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white font-semibold": "text-white/60")}
