@@ -25,10 +25,13 @@ export function ShowRatingUpdateCard({ item, id }: { item: any; id: any }) {
     }
   };
   return (
-    <div className="bg-sky-950 flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center">
+    <div className="bg-sky-950 relative flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center">
       <div className="relative overflow-hidden w-[60%]  mx-auto aspect-[2/3]">
         <Image src={item.image} alt="cover" fill className="bg-cover" />
       </div>
+      {
+        item.ranking && <div className="absolute top-2 right-2 text-white bg-orange-500 px-2 py-1 rounded-xl">{item.ranking}</div>
+      }
       <a
         href={`https://mydramalist.com${item.link}`}
         target="_blank"
@@ -43,7 +46,14 @@ export function ShowRatingUpdateCard({ item, id }: { item: any; id: any }) {
             {item.rating}
           </Badge>
         </div>
+        
       )}
+      {
+        item?.info && <div className="text-neutral-300">{item?.info}</div>
+      }
+        {
+          item?.description && <div className="text-white text-lg">{item?.description}</div>
+        }
       <Button className="hover:bg-orange-600" onClick={handleRatingUpdate}>
         Update
       </Button>
