@@ -8,8 +8,10 @@ export default async function Page({params}){
     const show = await getShowByID(id)
     const title = encodeURIComponent(show.name)
     const result = await fetch(`https://mydramalist.com/search?q=${title}`)
+    console.log(result.text())
     const response = await result.text()
     const dom = new jsdom.JSDOM(response)
+    console.log(dom)
     const data = dom.window.document.getElementById("content")?.firstElementChild?.children[1]?.firstElementChild?.firstElementChild?.children[1]?.children
     if(!data) return
     let onlyShows:any = []

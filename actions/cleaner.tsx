@@ -13,17 +13,19 @@ export async function removeEmptyImages(bookID: number, olid: string[] | null) {
     const updatedOlid: string[] = [];
     for(let i = 0; i < olid.length; i++){
       const id = olid[i];
-      if(updatedOlid.length > 100) break;
+      if(updatedOlid.length >= 20) break;
       try {
           const url = getOpenLibraryCoverLink("olid", id, "M")
           const source = await fetch(url, { method: "HEAD" });
           if (source.status === 200) {
+            console.log("added ", i+1);
             updatedOlid.push(id);
           }
         } catch (error:any) {
           console.log("Error fetching URL:", id, error);
         }
       }
+      console.log("updating book ", bookID);
       const result = await db
       .update(BookTable)
       .set({ olid: updatedOlid })
@@ -44,7 +46,7 @@ console.log("cleaning")
       .select({ id: BookTable.id, olid: BookTable.olid })
       .from(BookTable);
     console.log("books found ", allBooks.length);
-    for (let i = 15; i < allBooks.length; i++) {
+    for (let i = 0; i < allBooks.length; i++) {
       await removeEmptyImages(allBooks[i].id, allBooks[i].olid);
       console.log("updated ", i + 1);
     }
