@@ -53,7 +53,6 @@ export async function getBookList(){
     if(role === "VISITOR") return
     const cacheEntry = bookCache.get(session?.user?.email);
     if (cacheEntry && cacheEntry.expiry > Date.now()) {
-    console.log("cache hit")
         return cacheEntry.data;
     }
     const result = await db.select({bookLists:UserListTable.bookLists}).from(UserListTable).where(eq(UserListTable.email,session?.user?.email)).limit(1)
@@ -61,7 +60,6 @@ export async function getBookList(){
     const values = result[0].bookLists
     if(!values || values.length === 0) return
     const data = await db.select().from(ListTable).where(inArray(ListTable.id,values))
-    console.log("action hit")
     bookCache.set(session?.user?.email, { data, expiry: Date.now() + 15 * 60 * 1000 });
     return data
 }
