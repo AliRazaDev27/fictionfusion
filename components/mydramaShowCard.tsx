@@ -11,6 +11,7 @@ export default function MyDramaShowCard({item}:any) {
     const cardRef = useRef<HTMLDivElement>(null);
     const { toast } = useToast()
     const handleClick = async () => {
+        if (cardRef.current) cardRef.current.style.display = "none";
         const result = await addItemToIgnoreList(item.title);
         if (result.success) {
           toast({
@@ -23,6 +24,7 @@ export default function MyDramaShowCard({item}:any) {
           }
         }
         else {
+          if (cardRef.current) cardRef.current.style.display = "flex";
           toast({
             description: result?.message || "Failed to add item to ignore list",
             duration: 1500,

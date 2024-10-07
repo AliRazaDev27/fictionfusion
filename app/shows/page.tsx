@@ -13,7 +13,6 @@ import {
 import PaginationControll from "@/components/pagination";
 import { getShowList } from "@/actions/userListActions";
 export default async function Page({ searchParams }: { searchParams: any }) {
-  console.log("a",performance.now())
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search;
   const sort = searchParams.sort;
@@ -21,7 +20,6 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   const [session,list,result] = await Promise.all([auth(),getShowList(),getFilteredShows(page,LIMIT,search,sort)])
   const role = (session?.user as any)?.role || "VISITOR";
   const shows = result?.data;
-  console.log("c", performance.now());
   // add ui for no results
   return (
     <div className="relative min-h-[90vh] flex flex-col justify-between gap-4 py-6 px-4 ">

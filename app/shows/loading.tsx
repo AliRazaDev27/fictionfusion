@@ -1,6 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
 export default function Loading() {
-    console.log("b",performance.now())
     return (
 <div className="min-h-[90vh] py-6 px-4 mt-8 ">
 <div className=" grid grid-cols-1 min-h-[300px]  md:grid-cols-6 gap-4">
