@@ -1,7 +1,6 @@
 import { getFilteredShows } from "@/actions/showActions";
 import { DeleteShow } from "@/components/delete_show";
 import { ShowCard } from "@/components/show_card";
-import { Show } from "@/types";
 import { FaFilter} from "react-icons/fa6";
 import { auth } from "@/auth";
 import { SearchControlls } from "@/components/search_controlls";
@@ -14,16 +13,15 @@ import {
 import PaginationControll from "@/components/pagination";
 import { getShowList } from "@/actions/userListActions";
 export default async function Page({ searchParams }: { searchParams: any }) {
+  console.log("a",performance.now())
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search;
   const sort = searchParams.sort;
   const LIMIT = 10;
-  const session: any = await auth();
-  const role = session?.user?.role || "VISITOR";
-  const list = await getShowList();
-  let result:{data:Show[],total:number}|null = {data:[],total:0};
-  result = await getFilteredShows(page,LIMIT,search,sort);
+  const [session,list,result] = await Promise.all([auth(),getShowList(),getFilteredShows(page,LIMIT,search,sort)])
+  const role = (session?.user as any)?.role || "VISITOR";
   const shows = result?.data;
+  console.log("c", performance.now());
   // add ui for no results
   return (
     <div className="relative min-h-[90vh] flex flex-col justify-between gap-4 py-6 px-4 ">

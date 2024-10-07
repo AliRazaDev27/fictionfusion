@@ -55,7 +55,8 @@ export const getFilteredShows = async (
     limit: number,
     search?: string,
     sort?: string,
-  ) => {    
+  ) => {
+    const x = performance.now();    
     const selectResult = db.select().from(ShowTable);
     if (!!search) selectResult.where(ilike(ShowTable.name, `%${search}%`));
     if (!!sort) selectResult.orderBy(showSortOption[sort]);
@@ -63,18 +64,22 @@ export const getFilteredShows = async (
       selectResult.orderBy(desc(ShowTable.rating));
     }
     selectResult.limit(limit).offset(limit * (page - 1));
-    const data = await selectResult;
-    let total: { count: number }[] = [];
+    let totalCountQuery:any;
     if(!!search){
-     total = await db
+      totalCountQuery = db
       .select({ count: count() })
       .from(ShowTable)
       .where(ilike(ShowTable.name, `%${search}%`));
     } 
     else{
-       total = await db.select({ count: count() }).from(ShowTable);
+       totalCountQuery =  db.select({ count: count() }).from(ShowTable);
     }
-    return { data: data, total: total[0].count };
+    const [data, total] = await Promise.all([
+      selectResult,
+      totalCountQuery
+    ])
+    console.log("query time", performance.now() - x);
+    return { data: data, total: total[0]?.count };
   };
   export async function getTotalShows(){
     const result = await db.select({count:count()}).from(ShowTable)
