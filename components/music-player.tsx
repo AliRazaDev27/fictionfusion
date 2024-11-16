@@ -54,7 +54,7 @@ export function MusicPlayer({musicSource}:{musicSource:string}) {
         ref={progressRef}
         className="progress-bar absolute top-0 left-0 h-full bg-blueviolet z-[-10]"
       ></div>
-      <div className='flex  h-full w-[300px] text-3xl mx-auto items-center justify-between border border-black'>
+      <div className='flex  h-full w-[300px] text-3xl mx-auto items-center justify-between'>
         <button><IoPlaySkipBackSharp/></button>
         <button onClick={()=>seek(-10)}><IoPlayBack/></button>
         <button onClick={()=>play()}>
