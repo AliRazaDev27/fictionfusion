@@ -11,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
 export function SearchBar() {
   const [open, setOpen] = useState(false);
@@ -60,16 +59,16 @@ export function SearchBar() {
     <form className="ml-auto  flex-1 sm:flex-initial">
         <DropdownMenu open={open}>
         {/*  TODO: Add search mode for db and api */}
-        <div className=" flex relative border border-black/40 rounded-lg items-center group">
+        <div className=" flex relative group  border border-black/40 rounded-lg items-center group">
         <DropdownMenuTrigger/>
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute pointer-events-none left-2.5 top-2.5 h-5 w-5 text-gray-600" />
         <Input
           type="search"
           ref={searchRef}
           placeholder="Search API..."
-          className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px] text-black"
+          className="pl-8 w-[0px] focus:w-full  text-black"
         />
-        <Badge className="absolute right-4 group-focus-within:hidden">CtrlK</Badge>
+        <Badge className="hidden absolute right-4 group-focus-within:hidden">CtrlK</Badge>
         </div>  
           <DropdownMenuContent side="bottom" sideOffset={8} align="start" alignOffset={8} className="w-full text-center border border-black/50" onInteractOutside={() => setOpen(false)}>
             <DropdownMenuLabel>Search in...</DropdownMenuLabel>

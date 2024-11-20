@@ -49,7 +49,7 @@ export default async function Header() {
             <NavLinksMobile role={role}/>
           </SheetContent>
         </Sheet>
-        <div className="flex  items-center gap-4  md:gap-2 lg:gap-4">
+        <div className="flex  items-center gap-1  md:gap-2 lg:gap-4">
           <SearchBar/>
           {role === "VISITOR" ? 
         <Link href="/login" className="px-4 py-2   rounded-full bg-black/90 hover:bg-black text-white">Login</Link>:

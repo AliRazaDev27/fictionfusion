@@ -45,6 +45,12 @@ export default function NavLinks({role}:{role:string}) {
             Shows
           </Link>
           
+          <Link
+            href="/music"
+            className={cn(`transition-colors hover:text-foreground`, pathname === "/music" ? "text-white font-semibold": "text-white/60")}
+          >
+            Music
+          </Link>
         </nav>
     )
 }

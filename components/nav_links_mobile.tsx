@@ -1,7 +1,6 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { CircleUser, Menu, Package2, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
 export default function NavLinksMobile({role}:{role:string}) {
     const pathname = usePathname()
@@ -18,7 +17,7 @@ export default function NavLinksMobile({role}:{role:string}) {
                 role !== "VISITOR" && (
                   <Link
                 href="/dashboard"
-                className={cn(`transition-colors hover:text-foreground`, pathname === "/dashboard" ? "text-white": "text-white/50")}
+                className={cn(`transition-colors hover:text-foreground`, pathname === "/dashboard" ? "text-white": "text-white/60")}
               >
                 Dashboard
               </Link>
@@ -28,7 +27,7 @@ export default function NavLinksMobile({role}:{role:string}) {
                 role !== "VISITOR" && (
                   <Link
                 href="/watchlist"
-                className={cn(`transition-colors hover:text-foreground`, pathname === "/watchlist" ? "text-white": "text-white/50")}
+                className={cn(`transition-colors hover:text-foreground`, pathname === "/watchlist" ? "text-white": "text-white/60")}
               >
                 Watchlist
               </Link>
@@ -36,23 +35,28 @@ export default function NavLinksMobile({role}:{role:string}) {
               }
               <Link
                 href="/books"
-                className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white": "text-white/50")}
+                className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white": "text-white/60")}
               >
                 Books
               </Link>
               <Link
                 href="/movies"
-                className={cn(`transition-colors hover:text-foreground`, pathname === "/movies" ? "text-white": "text-white/50")}
+                className={cn(`transition-colors hover:text-foreground`, pathname === "/movies" ? "text-white": "text-white/60")}
               >
                 Movies
               </Link>
               <Link
                 href="/shows"
-                className={cn(`transition-colors hover:text-foreground`, pathname === "/shows" ? "text-white": "text-white/50")}
+                className={cn(`transition-colors hover:text-foreground`, pathname === "/shows" ? "text-white": "text-white/60")}
               >
                 Shows
               </Link>
-              
+              <Link
+                href="/music"
+                className={cn(`transition-colors hover:text-foreground`, pathname === "/music" ? "text-white": "text-white/60")}
+              >
+                Music
+              </Link>
             </nav>
     );
 }

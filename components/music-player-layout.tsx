@@ -10,6 +10,7 @@ export function MusicPlayerLayoutComponent({musicList}) {
     setCurrentMusic(id)
   }
   const next = () => {
+    console.log((currentMusic + 1) % musicList.length)
     setCurrentMusic((currentMusic + 1) % musicList.length);
   }
   const prev = () => {
