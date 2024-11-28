@@ -5,7 +5,8 @@ import {franc} from "franc";
 
 
 
-export default async function Page({ params }: any) {
+export default async function Page(props: any) {
+  const params = await props.params;
   const authorID = params.authorID;
   const books = await getBooksFromAuthor(authorID);
   const englishBooks = books?.entries.filter((book: any) => franc(book?.title) === "eng");

@@ -4,7 +4,8 @@ import { auth } from "@/auth";
 
 import { MovieCard } from "@/components/movie_card";
 
-export default async function Page({ searchParams }: { searchParams: any }) {
+export default async function Page(props: { searchParams: Promise<any> }) {
+  const searchParams = await props.searchParams;
   const session: any = await auth();
   const role = session?.user?.role || "VISITOR";
   const result = await getMovieByTitle(searchParams.query);

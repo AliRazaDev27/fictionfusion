@@ -2,18 +2,15 @@
 import { signIn } from "@/auth"
 export async function authenticate(formData:FormData) {
         try{
-            await signIn("credentials",formData)
+            const [email,password] = [formData.get("email"),formData.get("password")]
+            console.log(email,password)
+            await signIn(email,password)
             return {
                 success: true
             } 
         }
         catch(error:any){
             console.log(error.message)
-            if(error.message === "NEXT_REDIRECT"){
-                return {
-                    success: true
-                }
-            }
             return {
                 success: false
             }

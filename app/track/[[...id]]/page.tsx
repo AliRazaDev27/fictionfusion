@@ -3,7 +3,8 @@ import { ShowRatingUpdateCard } from "@/components/show_rating_update_card"
 
 import jsdom from "jsdom"
 
-export default async function Page({params}){
+export default async function Page(props) {
+    const params = await props.params;
     const id = params.id[0]
     const show = await getShowByID(id)
     const title = encodeURIComponent(show.name)
@@ -40,7 +41,7 @@ export default async function Page({params}){
 
         showData.push(item)
     }
-     
+
     return(
         <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 py-8">
             {

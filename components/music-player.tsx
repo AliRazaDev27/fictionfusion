@@ -6,8 +6,9 @@ import { IoPlayBack } from "react-icons/io5";
 import { IoPlayForward } from "react-icons/io5";
 import { IoPlaySkipBackSharp } from "react-icons/io5";
 import { IoPlaySkipForward } from "react-icons/io5";
+import { IoSearch } from "react-icons/io5";
+import { IoIosCloseCircle } from "react-icons/io";
 export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, next: Function, prev: Function }) {
-  console.log("musicSource", musicSource)
   const isPlaying = useRef(false);
   const playRef = useRef<HTMLDivElement>(null);
   const pauseRef = useRef<HTMLDivElement>(null);
@@ -23,9 +24,7 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
     animationFrame.current = requestAnimationFrame(updateProgress);
   };
   const play = () => {
-    console.log("play button")
     if (!isPlaying.current) {
-      console.log("isPlaying.current is false")
       isPlaying.current = true;
       if (playRef.current) playRef.current.style.display = "none";
       if (pauseRef.current) pauseRef.current.style.display = "block";
@@ -70,23 +69,52 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
     };
   }, []);
   return (
-    <div className="player">
-      <audio src={musicSource} preload="auto" autoPlay={isPlaying.current} ref={audioPlayer}></audio>
-      <div
-        ref={progressRef}
-        className="progress-bar absolute top-0 left-0 h-full bg-blueviolet z-[-10]"
-      ></div>
-      <div className='flex  h-full w-[300px] text-3xl mx-auto items-center justify-between'>
-        <button onClick={() => prev()}><IoPlaySkipBackSharp /></button>
-        <button onClick={() => seek(-10)}><IoPlayBack /></button>
-        <button onClick={() => play()}>
-          <div>
-            <div ref={pauseRef} style={{ display: "none" }}><IoPause /></div>
-            <div ref={playRef} style={{ display: "block" }}><IoPlay /></div>
+    <div className="flex w-full h-full">
+      <div className="player">
+        <audio src={musicSource} preload="auto" autoPlay={isPlaying.current} ref={audioPlayer}></audio>
+        <div
+          ref={progressRef}
+          className="progress-bar absolute top-0 left-0 h-full bg-blueviolet z-[-10]"
+        ></div>
+        <div className="flex w-full h-full">
+          <div className='flex  h-full w-[300px] text-3xl mx-auto items-center justify-between'>
+            <button onClick={() => prev()}><IoPlaySkipBackSharp /></button>
+            <button onClick={() => seek(-10)}><IoPlayBack /></button>
+            <button onClick={() => play()}>
+              <div>
+                <div ref={pauseRef} style={{ display: "none" }}><IoPause /></div>
+                <div ref={playRef} style={{ display: "block" }}><IoPlay /></div>
+              </div>
+            </button>
+            <button onClick={() => seek(10)}><IoPlayForward /></button>
+            <button onClick={() => next()}><IoPlaySkipForward /></button>
           </div>
-        </button>
-        <button onClick={() => seek(10)}><IoPlayForward /></button>
-        <button onClick={() => next()}><IoPlaySkipForward /></button>
+        </div>
+      </div>
+
+      <div className="md:hidden w-[50px] h-full bg-red-300">
+      <button 
+      className="border border-black w-full h-full flex items-center justify-center"
+      onClick={()=>{
+        const sidebar = document.getElementById("sidebar");
+        const openButton = document.getElementById("sidebar-open");
+        const closeButton = document.getElementById("sidebar-close");
+
+        if(sidebar && openButton && closeButton){
+        if (openButton.style.display === "block") {
+          sidebar.style.transform = "translateX(0%)";
+          openButton.style.display = "none";
+          closeButton.style.display = "block";
+        } else {
+          sidebar.style.transform = "translateX(-100%)";
+          openButton.style.display = "block";
+          closeButton.style.display = "none";
+        }
+      }
+      }}>
+        <IoSearch id="sidebar-open" className="text-2xl"/>
+        <IoIosCloseCircle id="sidebar-close" className="text-3xl hidden"/>
+      </button>
       </div>
     </div>
   )

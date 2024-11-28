@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/sheet";
 import PaginationControll from "@/components/pagination";
 import { getShowList } from "@/actions/userListActions";
-export default async function Page({ searchParams }: { searchParams: any }) {
+export default async function Page(props: { searchParams: Promise<any> }) {
+  const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1;
   const search = searchParams.search;
   const sort = searchParams.sort;

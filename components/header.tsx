@@ -20,6 +20,7 @@ import Link from "next/link"
 
 export default async function Header() {
     const session:any = await auth()
+    console.log(session)
     const role = session?.user?.role || "VISITOR";
     return( 
         <header className="top-0 flex justify-between h-[70px] items-center  bg-transparent px-4 md:px-6">

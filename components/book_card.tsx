@@ -32,10 +32,10 @@ export default function BookCard({ book,role,list }: { book: Book,role:string,li
   if(!rating) rating = (book as any)?.ratings_average;
   if(!rating) rating = "0"
   if(!book?.olid) book.olid = (book as any)?.edition_key;
-  const titleRef:any = useRef()
-  const authorRef:any = useRef()
-  const yearRef:any = useRef()
-const sentenceRef:any = useRef()
+  const titleRef:any = useRef(undefined)
+  const authorRef:any = useRef(undefined)
+  const yearRef:any = useRef(undefined)
+const sentenceRef:any = useRef(undefined)
   const {toast} = useToast()
   const [isPending, startTransition] = useTransition();
   const [currentGalleryImageIndex, setCurrentGalleryImageIndex] = useState(0);

@@ -4,7 +4,8 @@ import BookCard from "@/components/book_card"
 import type { Book } from "@/types"
 export const dynamic = "force-dynamic"
 import { auth } from "@/auth"
-export default async function Page({searchParams}:{searchParams:any}) {
+export default async function Page(props:{searchParams: Promise<any>}) {
+    const searchParams = await props.searchParams;
     const query = searchParams.query
     const unique = new Set()
     const books:any = []
