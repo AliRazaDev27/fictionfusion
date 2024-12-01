@@ -6,21 +6,22 @@ import { IoPlay } from "react-icons/io5";
 import { IoPause } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
 import { MusicCard } from './music-card';
-import { updateMusicMetadata } from '@/actions/musicActions';
+import { fetchLatestMusic, updateMusicMetadata } from '@/actions/musicActions';
 import { useToast } from './ui/use-toast';
-
+import { useRouter } from 'next/navigation';
 
 
 
 export function MusicPlayerLayoutComponent({ music }) {
-  console.log(music)
   const {toast} = useToast()
+  const router = useRouter()
   const [musicList, setMusicList] = useState<Music[] | undefined>(music);
   const [currentMusic, setCurrentMusic] = useState<number>(0);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const [searchResults, setSearchResults] = useState<any>([]);
   const searchIndexRef = useRef<number>(0);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const filterRef = useRef<HTMLInputElement>(null)
   const current = (id: number) => {
     setCurrentMusic(id)
   }
@@ -83,11 +84,41 @@ export function MusicPlayerLayoutComponent({ music }) {
     }
 
   }
+  const applyFilter = ()=>{
+    const title = filterRef.current?.value
+    if(!title) return
+    const filtered = music.filter((music:Music) => music.title.toLowerCase().includes(title.toLowerCase()))
+    setMusicList(filtered)
+  }
+
+  const clearFilter = ()=>{
+    if(filterRef.current) filterRef.current.value = "";
+    setMusicList(music);
+  }
+  const fetchLatest = async () => {
+    await fetchLatestMusic();
+    setTimeout(() => {
+      if(window) window.location.reload();
+    }, 2000);
+  }
+
   return (
     <div className="w-full " style={{ height: `calc(100svh - ${70}px)` }}>
       <div id="desktop-layout" className="relative border border-black w-full flex h-[90%]">
-        <div className="absolute md:static bg-black top-0 bottom-0 transition-transform duration-300 w-full md:max-w-[300px]" style={{ transform: "translateX(-100%)" }} id="sidebar">
-          sidebar
+        <div className="absolute md:static  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full translate-x-full md:translate-x-0"  id="sidebar">
+        <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
+          <input ref={filterRef} type="text" placeholder="Enter title" className="w-full text-black rounded-3xl px-4 py-2 outline-none" />
+          <div className='flex w-full justify-center gap-4'>
+            <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>Clear</button>
+            <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={applyFilter}>Filter</button>
+          </div>
+          <div className='flex justify-center'>
+            <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={fetchLatest}>Fetch Latest</button>
+          </div>
+
+        </div>
+       
+
         </div>
         <div className="md:border-l px-4 flex-1 space-y-4 pt-4  overflow-y-auto" id="content">
             {musicList && musicList.length > 0 && musicList.map((music: Music, index: number) => (
@@ -107,7 +138,7 @@ export function MusicPlayerLayoutComponent({ music }) {
             searchResults && searchResults.map((music: any, index: number) => (
               <div className='flex items-center border gap-2 p-2' key={index}>
                 <div className='min-w-[100px] aspect-square'>
-                  <img src={music.artworkUrl100} alt="artwork" style={{ objectFit: "cover" }} />
+                  <img src={music.artworkUrl100} alt="artwork" style={{ objectFit: "cover" }} loading='lazy' width={100} height={100} />
                 </div>
                 <div className='flex flex-col gap-1'>
                   <p className='text-xl'>{music.trackName}</p>

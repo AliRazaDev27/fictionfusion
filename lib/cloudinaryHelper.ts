@@ -20,3 +20,16 @@ const uploadMusicFileOnCloudinary = async (filePath:string) => {
       message: error});
   }
 }
+const deleteMusicFileOnCloudinary = async (public_id:string) => {
+  try {
+    const result = await cloudinary.uploader.destroy(public_id);
+    return { success: true }
+  }
+  catch (error) {
+    console.log(error)
+    return({
+      success: false,
+      message: error});
+  }
+}
+export { uploadMusicFileOnCloudinary, deleteMusicFileOnCloudinary }

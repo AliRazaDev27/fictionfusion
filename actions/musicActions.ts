@@ -4,6 +4,8 @@ import { MusicTable } from "@/lib/database/musicSchema";
 import { NewMusic, Music } from "@/lib/database/musicSchema";
 import { asc, eq } from "drizzle-orm";
 import { auth } from "@/auth";
+import { deleteMusicFileOnCloudinary } from "@/lib/cloudinaryHelper";
+import { revalidatePath } from "next/cache";
 
 export async function addMusic(music: NewMusic) {
     try {
@@ -63,5 +65,36 @@ export async function updateMusicMetadata(id: number, metadata: { artistName: st
             message: err.message,
             success: false
         }
+    }
+}
+
+export const deleteMusic = async (id: number) => {
+    try {
+        const session: any = await auth();
+        if(!session) throw new Error("Please Sign In first...") 
+        if (session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
+        const musicItem = await db.select().from(MusicTable).where(eq(MusicTable.id, id)).limit(1);
+        const fileUrlPrivate = musicItem[0].fileUrlPrivate
+        if(fileUrlPrivate){
+        await deleteMusicFileOnCloudinary(fileUrlPrivate)
+        }
+        await db.delete(MusicTable).where(eq(MusicTable.id, id));
+        return { success: true }
+    }
+    catch (err:any) {
+        console.log(err)
+        return { success: false, message: err.message }
+    }
+}
+export const fetchLatestMusic = async () => {
+    console.log("fetching latest music")
+    try{
+        const session: any = await auth();
+        if(!session) throw new Error("Please Sign In first...") 
+        if (session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
+        revalidatePath("/music")    
+    }
+    catch(err:any){
+        console.log(err)
     }
 }

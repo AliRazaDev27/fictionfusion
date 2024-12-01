@@ -21,6 +21,7 @@ export const signIn = async (email, password) => {
       user:{
       id: user.id,
       name: user.name,
+      email: user.email,
       role: user.role,
     }
   },
@@ -51,16 +52,12 @@ export const setAuthCookie = async(token) => {
 };
 
 export const clearAuthCookie = async() => {
-  await (await cookies()).set({
-    name: "auth-token",
-    value: "",
-    path: "/",
-    maxAge: 0,
-  });
+  const cookieStore = await cookies();
+  cookieStore.delete('auth-token');
 };
 
-export const signOut = () => {
-  clearAuthCookie();
+export const signOut = async() => {
+  await clearAuthCookie();
 }
 export const auth = async() => {
   const cookieStore = await cookies();
