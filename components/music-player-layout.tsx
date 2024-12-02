@@ -102,10 +102,11 @@ export function MusicPlayerLayoutComponent({ music }) {
     }, 2000);
   }
 
+
   return (
     <div className="w-full " style={{ height: `calc(100svh - ${70}px)` }}>
       <div id="desktop-layout" className="relative border border-black w-full flex h-[90%]">
-        <div className="absolute md:static  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full translate-x-full md:translate-x-0"  id="sidebar">
+        <div className="absolute md:static bg-[#174669]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0"  id="sidebar">
         <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
           <input ref={filterRef} type="text" placeholder="Enter title" className="w-full text-black rounded-3xl px-4 py-2 outline-none" />
           <div className='flex w-full justify-center gap-4'>

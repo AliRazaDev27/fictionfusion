@@ -12,16 +12,3 @@
   background-color: blueviolet;
   transition: width 0.1s linear;
 }
-.music-card-actions-popover::backdrop{
-  backdrop-filter: blur(10px);
-  pointer-events: none;
-}
-.music-card-actions-popover:popover-open{
-  display: flex;
-  gap:14px;
-  padding: 16px 16px;
-  border-radius: 10px;
-  background-color: #111;
-  color:aqua;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
-}
