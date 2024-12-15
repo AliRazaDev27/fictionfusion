@@ -1,7 +1,0 @@
-1 fix layout
-2 fix null images in books olids
-3 populate shows
-4 return books in order
-5 revalidate pages
-6 add dashboard
-7 add show images

@@ -1,4 +1,3 @@
-import { db } from "./index";
 import { integer, pgTable,serial,timestamp,varchar } from "drizzle-orm/pg-core";
 import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 
@@ -10,7 +9,6 @@ export const ListTable = pgTable("lists", {
     items:integer("items").array().default([]),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdateFn(() => new Date()),
-    
 })
 export type NewList = InferInsertModel<typeof ListTable>;
 export type List = InferSelectModel<typeof ListTable>;

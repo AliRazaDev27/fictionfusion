@@ -33,5 +33,5 @@ type PosterSize =
 const tmdb_baseUrl = "https://image.tmdb.org/t/p/" 
  export const getMoviePosterLink = (value:string,size:PosterSize) => {
     if(!value) return "/bookplaceholder.svg"
-    return `${tmdb_baseUrl}w185${value}`
+    return `${tmdb_baseUrl}${size}${value}`
  }   
