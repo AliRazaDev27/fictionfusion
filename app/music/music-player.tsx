@@ -45,7 +45,19 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
   const seek = (value: number) => {
     if (audioPlayer.current) audioPlayer.current.currentTime = audioPlayer.current.currentTime + value;
   }
+  const nextTrack = () => {
+    next()
+  }
+  const prevTrack = () => {
+    prev()
+  }
   useEffect(() => {
+    if('mediaSession' in navigator){
+      navigator.mediaSession.setActionHandler('play', play)
+      navigator.mediaSession.setActionHandler('pause', play)
+      navigator.mediaSession.setActionHandler('previoustrack', prevTrack)
+      navigator.mediaSession.setActionHandler('nexttrack', nextTrack)
+    }
     const playNextSong = () => {
       next()
     }
