@@ -19,7 +19,8 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
     if (progressRef.current && audioPlayer.current) {
       const { currentTime, duration } = audioPlayer.current;
       const progress = (currentTime / duration) * 100;
-      progressRef.current.style.width = `${progress}%`;
+      const updatedWitdh = 100-progress;
+      progressRef.current.style.width = `${updatedWitdh}%`;
     }
     animationFrame.current = requestAnimationFrame(updateProgress);
   };
@@ -83,10 +84,10 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
   return (
     <div className="flex w-full h-full">
       <div className="player">
-        <audio src={musicSource} preload="auto" autoPlay={isPlaying.current} ref={audioPlayer}></audio>
+        <audio src={musicSource} preload="auto" autoPlay={isPlaying.current} ref={audioPlayer}>Audio playback not supported</audio>
         <div
           ref={progressRef}
-          className="progress-bar absolute top-0 left-0 h-full bg-blueviolet z-[-10]"
+          className="progress-bar"
         ></div>
         <div className="flex w-full h-full">
           <div className='flex  h-full w-[300px] text-3xl mx-auto items-center justify-between'>

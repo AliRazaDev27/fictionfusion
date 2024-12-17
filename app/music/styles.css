@@ -6,9 +6,21 @@
 .progress-bar {
   position: absolute;
   top: 0;
-  left: 0;
+  bottom: 0;
+  right: 0;
   height: 100%;
-  width: 0;
-  background-color: blueviolet;
+  width: 100%;
+  z-index: -9;
+  background: linear-gradient(to right, #3793FF 0%, #1c7cbd 100%);
   transition: width 0.1s linear;
+}
+.player::before{
+  content: "";
+  position: absolute;
+  background: linear-gradient(to right, #A531DC 0%, #4300B1 100%);
+  z-index: -10;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
