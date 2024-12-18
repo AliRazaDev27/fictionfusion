@@ -8,12 +8,11 @@ cloudinary.config({
     api_key: process.env.API_KEY,
     api_secret: process.env.API_SECRET,
 });
-export async function POST(request) {
+export async function POST() {
     const cookieStore = await cookies();
-    const authToken = cookieStore.get("authToken");
+    const authToken = cookieStore.get("auth-token");
     if (authToken && authToken.value) {
         const timestamp = Math.round(new Date().getTime() / 1000);
-
         // Generate the signature with required parameters
         const signature = cloudinary.utils.api_sign_request(
             { timestamp },

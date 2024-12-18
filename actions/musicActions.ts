@@ -9,12 +9,14 @@ import { revalidatePath } from "next/cache";
 
 export async function addMusic(music: NewMusic) {
     try {
+        const session: any = await auth();
+        if (session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
         await db.insert(MusicTable).values(music);
         return { success: true }
     }
-    catch (err) {
+    catch (err:any) {
         console.log(err)
-        return { success: false }
+        return { success: false, message: err.message }
     }
 }
 export async function getMusic() {

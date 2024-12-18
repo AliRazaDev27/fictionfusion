@@ -19,7 +19,7 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
     if (progressRef.current && audioPlayer.current) {
       const { currentTime, duration } = audioPlayer.current;
       const progress = (currentTime / duration) * 100;
-      const updatedWitdh = 100 - progress;
+      const updatedWitdh = 100-progress;
       progressRef.current.style.width = `${updatedWitdh}%`;
     }
     animationFrame.current = requestAnimationFrame(updateProgress);
@@ -53,7 +53,7 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
     prev()
   }
   useEffect(() => {
-    if ('mediaSession' in navigator) {
+    if('mediaSession' in navigator){
       navigator.mediaSession.setActionHandler('play', play)
       navigator.mediaSession.setActionHandler('pause', play)
       navigator.mediaSession.setActionHandler('previoustrack', prevTrack)
@@ -106,31 +106,32 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
       </div>
 
       <div className="md:hidden w-[50px] h-full bg-red-300">
-        <button
-          className="border border-black w-full h-full flex items-center justify-center"
-          onClick={() => {
-            const sidebar = document.getElementById("sidebar");
-            const openButton = document.getElementById("sidebar-open");
-            const closeButton = document.getElementById("sidebar-close");
+      <button 
+      className="border border-black w-full h-full flex items-center justify-center"
+      onClick={()=>{
+        const sidebar = document.getElementById("sidebar");
+        const openButton = document.getElementById("sidebar-open");
+        const closeButton = document.getElementById("sidebar-close");
 
-            if (sidebar && openButton && closeButton) {
-              if (openButton.style.display === "block" || !openButton.style.display) {
-                openButton.style.display = "none";
-                closeButton.style.display = "block";
-              } else {
-                sidebar.style.transform = "translateX(-100%)";
-                openButton.style.display = "block";
-                closeButton.style.display = "none";
-              }
-            }
-          }}>
-          <span id="sidebar-open" className="text-2xl block">
-            <IoSearch />
-          </span>
-          <span id="sidebar-close" className="text-3xl hidden">
-            <IoIosCloseCircle />
-          </span>
-        </button>
+        if(sidebar && openButton && closeButton){
+        if (openButton.style.display === "block" || !openButton.style.display) {
+          sidebar.style.transform = "translateX(0%)";
+          openButton.style.display = "none";
+          closeButton.style.display = "block";
+        } else {
+          sidebar.style.transform = "translateX(-100%)";
+          openButton.style.display = "block";
+          closeButton.style.display = "none";
+        }
+      }
+      }}>
+        <span id="sidebar-open" className="text-2xl block">
+        <IoSearch/>
+        </span>
+<span id="sidebar-close" className="text-3xl hidden">
+        <IoIosCloseCircle/>
+</span>
+      </button>
       </div>
     </div>
   )

@@ -35,3 +35,29 @@ const tmdb_baseUrl = "https://image.tmdb.org/t/p/"
     if(!value) return "/bookplaceholder.svg"
     return `${tmdb_baseUrl}${size}${value}`
  }   
+
+async function getSignedUrl() {
+  const response = await fetch('/api/getSignedUrl', {
+    method: 'POST',
+  });
+  return response.json();
+}
+
+export async function uploadToCloudinary(file) {
+  const { signature, timestamp, cloud_name, api_key } = await getSignedUrl();
+  if(!signature || !timestamp || !cloud_name || !api_key) return
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('api_key', api_key);
+  formData.append('timestamp', timestamp);
+  formData.append('signature', signature);
+
+  const cloudinaryUploadUrl = `https://api.cloudinary.com/v1_1/${cloud_name}/auto/upload`;
+
+  const response = await fetch(cloudinaryUploadUrl, {
+    method: 'POST',
+    body: formData,
+  });
+
+  return response.json();
+}

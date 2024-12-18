@@ -11,10 +11,12 @@ import { useToast } from '@/components/ui/use-toast';
 import CreatePlaylist from './create-playlist';
 import PlaylistContext from './music-context';
 import { BiSolidSelectMultiple } from "react-icons/bi";
-import { MdDelete } from "react-icons/md";
+import { MdClear, MdDelete } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
 import { Input } from '@/components/ui/input';
 import { addToPlaylist, removeFromPlaylist } from '@/actions/playlistActions';
+import { FaFilter } from "react-icons/fa";
+import { AddMusicFile } from './add-music-file';
 
 
 
@@ -22,7 +24,7 @@ import { addToPlaylist, removeFromPlaylist } from '@/actions/playlistActions';
 
 export function MusicPlayerLayoutComponent({ music, list }) {
   const { toast } = useToast()
-  const [playlist,setPlaylist] = useState(list)
+  const [playlist, setPlaylist] = useState(list)
   const [musicList, setMusicList] = useState<Music[] | undefined>(music);
   const [currentMusic, setCurrentMusic] = useState<number>(0);
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -118,61 +120,61 @@ export function MusicPlayerLayoutComponent({ music, list }) {
       selected.current = [...selected.current, id]
     }
   }
-  async function saveToPlaylist(id:number) {
+  async function saveToPlaylist(id: number) {
     // start with easist solution
-    if(selected.current && selected.current.length > 0){
-     const result = await addToPlaylist(id,selected.current)  
-     if(result?.success && result.items){
-      toast({
-        title: "Success",
-        description: "Added to playlist",
-        className: "bg-green-600 text-white",
-        duration: 1500
-      })
-        const thisList  = list.find((list) => list.id === id)
+    if (selected.current && selected.current.length > 0) {
+      const result = await addToPlaylist(id, selected.current)
+      if (result?.success && result.items) {
+        toast({
+          title: "Success",
+          description: "Added to playlist",
+          className: "bg-green-600 text-white",
+          duration: 1500
+        })
+        const thisList = list.find((list) => list.id === id)
         thisList.items = result.items
         const updatedPlaylist = list.map((list) => list.id === id ? thisList : list)
         setPlaylist(updatedPlaylist)
-     }
-     else{
-      toast({
-        title: "Error",
-        description: result?.message,
-        className: "bg-red-600 text-white",
-        duration: 1500
-      })
-     }
+      }
+      else {
+        toast({
+          title: "Error",
+          description: result?.message,
+          className: "bg-red-600 text-white",
+          duration: 1500
+        })
+      }
     }
   }
-  async function deleteFromPlaylist(id:number){
-    if(selected.current && selected.current.length > 0){
-     const result = await removeFromPlaylist(id,selected.current)  
-     if(result?.success && result.items){
-      toast({
-        title: "Success",
-        description: "Removed from playlist",
-        className: "bg-green-600 text-white",
-        duration: 1500
-      })
-        const thisList  = list.find((list) => list.id === id)
+  async function deleteFromPlaylist(id: number) {
+    if (selected.current && selected.current.length > 0) {
+      const result = await removeFromPlaylist(id, selected.current)
+      if (result?.success && result.items) {
+        toast({
+          title: "Success",
+          description: "Removed from playlist",
+          className: "bg-green-600 text-white",
+          duration: 1500
+        })
+        const thisList = list.find((list) => list.id === id)
         thisList.items = result.items
         const updatedPlaylist = list.map((list) => list.id === id ? thisList : list)
         setPlaylist(updatedPlaylist)
-     }
-     else{
-      toast({
-        title: "Error",
-        description: result?.message,
-        className: "bg-red-600 text-white",
-        duration: 1500
-      })
-     }
+      }
+      else {
+        toast({
+          title: "Error",
+          description: result?.message,
+          className: "bg-red-600 text-white",
+          duration: 1500
+        })
+      }
     }
   }
-  function loadPlaylist(id:number){
+  function loadPlaylist(id: number) {
     const playlist = list.find((list) => list.id === id)
     const filtered = music.filter((music: Music) => playlist?.items?.includes(music.id))
-    if(filtered.length > 0) setMusicList(filtered)  
+    if (filtered.length > 0) setMusicList(filtered)
   }
 
 
@@ -180,50 +182,55 @@ export function MusicPlayerLayoutComponent({ music, list }) {
     <PlaylistContext.Provider value={playlist}>
       <div className="w-full " style={{ height: `calc(100svh - ${70}px)` }}>
         <div id="desktop-layout" className="relative border border-black w-full flex h-[90%]">
-          <div className="absolute md:static bg-[#174669]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0" id="sidebar">
+          <div id="sidebar" className="absolute md:static bg-[#174669]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0">
             <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
               <input ref={filterRef} type="text" placeholder="Enter title" className="w-full text-black rounded-3xl px-4 py-2 outline-none" />
               <div className='flex w-full justify-center gap-4'>
-                <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>Clear</button>
-                <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={applyFilter}>Filter</button>
-              </div>
-              <div className='flex justify-center'>
-                <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={fetchLatest}>Fetch Latest</button>
-              </div>
-
-            </div>
-            <div className='flex flex-col gap-4 w-full px-2 sm:px-4 py-4'>
-              <div className='flex justify-between items-center'>
-                <p className='text-xl font-medium text-white'>Playlists</p>
-              <div className='flex items-center gap-2'>
-                <CreatePlaylist addPlaylist={setPlaylist}/>
-                <button className='bg-black hover:bg-green-700 border border-green-700 text-white px-2 py-2 rounded-full' onClick={() => {
-                  selected.current = []
-                  const selectionElement = document.querySelectorAll('.selection-box')
-                  selectionElement.forEach((element:any) => {
-                    element.classList.toggle('hidden')
-                    element.checked = false
-                  })
-                }}>
-                  <BiSolidSelectMultiple className='size-6' />
+                <div>
+                  <AddMusicFile />
+                </div>
+                <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
+                  <MdClear />
+                </button>
+                <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={applyFilter}>
+                  <FaFilter />
                 </button>
               </div>
+
+
+            </div>
+            <div id="playlists" className='flex flex-col gap-4 w-full px-2 sm:px-4 py-4'>
+              <div className='flex justify-between items-center'>
+                <p className='text-xl font-medium text-white'>Playlists</p>
+                <div className='flex items-center gap-2'>
+                  <CreatePlaylist addPlaylist={setPlaylist} />
+                  <button className='bg-black hover:bg-green-700 border border-green-700 text-white px-2 py-2 rounded-full' onClick={() => {
+                    selected.current = []
+                    const selectionElement = document.querySelectorAll('.selection-box')
+                    selectionElement.forEach((element: any) => {
+                      element.classList.toggle('hidden')
+                      element.checked = false
+                    })
+                  }}>
+                    <BiSolidSelectMultiple className='size-6' />
+                  </button>
+                </div>
               </div>
               <div className='flex flex-col gap-2'>
                 {
                   playlist && playlist.length > 0 && playlist.map((playlist: any, index: number) => (
                     <div key={index} className='w-full ps-4 flex items-center justify-between'>
                       <button className='bg-black  hover:bg-green-700 border border-green-700 text-white px-4 py-2 rounded-xl'
-                      onClick={()=>loadPlaylist(playlist.id)}
+                        onClick={() => loadPlaylist(playlist.id)}
                       >{playlist.listName}</button>
                       <div className='flex gap-2 items-center'>
                         <button className='bg-black hover:bg-green-700 border border-green-700 text-white px-2 py-2 rounded-full'
-                        onClick={()=>deleteFromPlaylist(playlist.id)}>
+                          onClick={() => deleteFromPlaylist(playlist.id)}>
                           <MdDelete className='size-6' />
                         </button>
 
                         <button className='bg-black hover:bg-green-700 border border-green-700 text-white px-2 py-2 rounded-full'
-                        onClick={()=>saveToPlaylist(playlist.id)}>
+                          onClick={() => saveToPlaylist(playlist.id)}>
                           <FaSave className='size-6' />
                         </button>
 
