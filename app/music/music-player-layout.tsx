@@ -236,7 +236,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
 
 
           </div>
-          <div className="w-full md:border-l px-4 flex-1 space-y-4 pt-4  overflow-y-auto overflow-x-clip" id="content">
+          <div id="content" className="w-full md:border-l px-4 flex-1 space-y-4 pt-4  overflow-y-auto overflow-x-clip">
             {musicList && musicList.length > 0 && musicList.map((music: Music, index: number) => (
               <div key={index} className='w-full  flex  items-center gap-4'>
                 <Input type="checkbox" value={music.id} onChange={() => handleSelection(music.id)} className='size-5 shrink-0 selection-box hidden' />
