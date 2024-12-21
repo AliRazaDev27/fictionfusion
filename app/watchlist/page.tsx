@@ -54,7 +54,7 @@ export default  function Page() {
 
    
     return(
-        <div className="w-full min-h-[90vh]">
+        <div className="w-full" style={{minHeight:"calc(100vh - 70px)",overflowY:"auto"}}>
         {data.length === 0 && <div className="w-full text-center  text-5xl text-white">Loading Please Wait...</div>}    
 
             <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">

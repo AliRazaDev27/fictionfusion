@@ -23,16 +23,18 @@ import { AddMusicFile } from './add-music-file';
 
 
 export function MusicPlayerLayoutComponent({ music, list }) {
-  const { toast } = useToast()
-  const [playlist, setPlaylist] = useState(list)
   const [musicList, setMusicList] = useState<Music[] | undefined>(music);
+  const [playlist, setPlaylist] = useState(list)
+  //rather than direct array index, maybe use the music.id instead?
   const [currentMusic, setCurrentMusic] = useState<number>(0);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const [searchResults, setSearchResults] = useState<any>([]);
+  // no idea what this is for maybe refactor to make it obvious.
   const searchIndexRef = useRef<number>(0);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const filterRef = useRef<HTMLInputElement>(null)
   const selected = useRef<number[]>([])
+  const { toast } = useToast()
   const current = (id: number) => {
     setCurrentMusic(id)
   }
@@ -106,12 +108,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
     if (filterRef.current) filterRef.current.value = "";
     setMusicList(music);
   }
-  const fetchLatest = async () => {
-    await fetchLatestMusic();
-    setTimeout(() => {
-      if (window) window.location.reload();
-    }, 2000);
-  }
+
   const handleSelection = (id) => {
     if (selected.current.includes(id)) {
       selected.current = selected.current.filter((item) => item !== id)

@@ -11,7 +11,15 @@ export default function MyDramaShowCard({item}:any) {
     const cardRef = useRef<HTMLDivElement>(null);
     const { toast } = useToast()
     const handleClick = async () => {
-        if (cardRef.current) cardRef.current.style.display = "none";
+        if (cardRef.current){
+          cardRef.current.style.opacity = "0.5";
+          cardRef.current.style.scale = "0.0";
+          setTimeout(() => {
+            if (cardRef.current) {
+              cardRef.current.style.display = "none";
+            }
+          }, 500);
+        }
         const result = await addItemToIgnoreList(item.title);
         if (result.success) {
           toast({
@@ -33,7 +41,7 @@ export default function MyDramaShowCard({item}:any) {
         }
     }
     return(
-        <div ref={cardRef} className="bg-sky-950 relative flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center">
+        <div ref={cardRef} className="bg-sky-950 relative flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center transition-all duration-500">
       <div className="relative overflow-hidden w-[60%]  mx-auto aspect-[2/3]">
         <Image src={item.image} alt="cover" fill className="bg-cover" />
       </div>
