@@ -24,3 +24,6 @@
   left: 0;
   right: 0;
 }
+.playlist-toggle{
+  background: linear-gradient(220.55deg, #A531DC 0%, #4300B1 100%) !important;
+}

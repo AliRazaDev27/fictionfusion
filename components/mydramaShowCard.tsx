@@ -1,8 +1,5 @@
 "use client";
 import Image from "next/image";
-import RatingStar from "./ratingStar";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
 import { addItemToIgnoreList } from "@/actions/ignorelistActions";
 import { useToast } from "./ui/use-toast";
 import {  useRef } from "react";
@@ -41,38 +38,33 @@ export default function MyDramaShowCard({item}:any) {
         }
     }
     return(
-        <div ref={cardRef} className="bg-sky-950 relative flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center transition-all duration-500">
-      <div className="relative overflow-hidden w-[60%]  mx-auto aspect-[2/3]">
+        <div ref={cardRef} className="bg-sky-950 relative flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center transition-all duration-500"
+        style={{background: 'linear-gradient(220.55deg, #B9A14C 0%, #000000 100%)'}}>
+      <div className="relative overflow-hidden w-[95%]  mx-auto aspect-[2/3]">
         <Image src={item.image} alt="cover" fill className="bg-cover" />
       </div>
       {
-        item.ranking && <div className="absolute top-2 right-2 text-white bg-orange-500 px-2 py-1 rounded-xl">{item.ranking}</div>
+        item.ranking && <div className="absolute top-0 right-0 text-lg text-white bg-orange-500 px-4 py-2 rounded-bl-xl">{item.ranking}</div>
+      }
+      {
+        item.rating && <div className="absolute top-0 left-0 text-lg text-white bg-orange-500 px-4 py-2 rounded-br-xl">{item.rating}</div>
       }
       <a
         href={`https://mydramalist.com${item.link}`}
         target="_blank"
-        className="text-xl text-white"
+        className="text-xl font-bold text-white "
       >
         {item.title}
       </a>
-      {item.rating && (
-        <div className="flex items-center gap-4">
-          <RatingStar rating={item.rating} max={10} />
-          <Badge className="bg-orange-500 text-white text-lg">
-            {item.rating}
-          </Badge>
-        </div>
-        
-      )}
       {
         item?.info && <div className="text-neutral-300">{item?.info}</div>
       }
         {
           item?.description && <div className="text-white text-lg line-clamp-4">{item?.description}</div>
         }
-      <Button className="hover:bg-orange-600" onClick={handleClick}>
+      <button className="bg-black px-4 py-2 text-white rounded-xl hover:bg-orange-600" onClick={handleClick}>
         Ignore
-      </Button>
+      </button>
     </div>
     )
 }

@@ -26,7 +26,9 @@ export async function getWatchlist(url:string) {
         if (infoElement) item.info = infoElement.innerHTML;
         if (descriptionElement) item.description = descriptionElement.innerHTML;
         const imageElement = show.querySelector("[data-src]");
-        if (imageElement) item.image = imageElement.getAttribute("data-src");
+        if (imageElement){
+           item.image = imageElement.getAttribute("data-src");
+        }
     
         return item;
     });

@@ -24,8 +24,8 @@ export async function getMusic() {
         const music = await db.select().from(MusicTable).orderBy(asc(MusicTable.id));
         return { success: true, music }
     }
-    catch (err) {
-        console.log(err)
+    catch (err:any) {
+        console.log(err.message)
         return { success: false }
     }
 }

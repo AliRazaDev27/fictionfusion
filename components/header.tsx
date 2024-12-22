@@ -1,15 +1,13 @@
-import { CircleUser, Menu, Package2, Search } from "lucide-react"
+import { CircleUser, Menu} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
-  
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent,SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { signOut } from "@/auth"
 import NavLinks from "./nav_links"
@@ -20,9 +18,7 @@ import Link from "next/link"
 
 export default async function Header() {
     const session:any = await auth()
-    console.log(session)
     const role = session?.user?.role || "VISITOR";
-    console.log(role)
     return( 
         <header className="top-0 flex justify-between h-[70px] items-center  bg-transparent px-4 md:px-6">
           <div className="hidden md:block">

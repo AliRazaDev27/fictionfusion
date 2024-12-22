@@ -1,23 +1,24 @@
 'use client'
 import { useState, useRef } from 'react'
+import { useToast } from '@/components/ui/use-toast';
+import PlaylistContext from './music-context';
+import { updateMusicMetadata } from '@/actions/musicActions';
+import { addToPlaylist, removeFromPlaylist } from '@/actions/playlistActions';
 import { Music } from "@/lib/database/musicSchema";
 import { MusicPlayer } from './music-player';
-import { IoPlay } from "react-icons/io5";
-import { IoPause } from "react-icons/io5";
-import { IoIosCloseCircle } from "react-icons/io";
 import { MusicCard } from './music-card';
-import { fetchLatestMusic, updateMusicMetadata } from '@/actions/musicActions';
-import { useToast } from '@/components/ui/use-toast';
+import { AddMusicFile } from './add-music-file';
 import CreatePlaylist from './create-playlist';
-import PlaylistContext from './music-context';
+
+import { Input } from '@/components/ui/input';
 import { BiSolidSelectMultiple } from "react-icons/bi";
 import { MdClear, MdDelete } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
-import { Input } from '@/components/ui/input';
-import { addToPlaylist, removeFromPlaylist } from '@/actions/playlistActions';
 import { FaFilter } from "react-icons/fa";
-import { AddMusicFile } from './add-music-file';
-
+import { IoPlay } from "react-icons/io5";
+import { IoPause } from "react-icons/io5";
+import { IoIosCloseCircle } from "react-icons/io";
+import { GradientChecker } from '@/components/gradient-checker';
 
 
 
@@ -107,6 +108,8 @@ export function MusicPlayerLayoutComponent({ music, list }) {
   const clearFilter = () => {
     if (filterRef.current) filterRef.current.value = "";
     setMusicList(music);
+    const playlistButtons = document.querySelectorAll('.playlist-toggle')
+    playlistButtons.forEach((button: any) => button.classList.remove('playlist-toggle'))
   }
 
   const handleSelection = (id) => {
@@ -217,8 +220,14 @@ export function MusicPlayerLayoutComponent({ music, list }) {
                 {
                   playlist && playlist.length > 0 && playlist.map((playlist: any, index: number) => (
                     <div key={index} className='w-full ps-4 flex items-center justify-between'>
-                      <button className='bg-black  hover:bg-green-700 border border-green-700 text-white px-4 py-2 rounded-xl'
-                        onClick={() => loadPlaylist(playlist.id)}
+                      <button
+                       className='bg-black hover:scale-105 shadow shadow-black text-white px-4 py-2 rounded-xl'
+                        onClick={(event) => {
+                          loadPlaylist(playlist.id)
+                          const playlistButtons = document.querySelectorAll('.playlist-toggle')
+                          playlistButtons.forEach((button: any) => button.classList.remove('playlist-toggle'));
+                          (event.target as HTMLElement).classList.toggle('playlist-toggle')
+                        }}
                       >{playlist.listName}</button>
                       <div className='flex gap-2 items-center'>
                         <button className='bg-black hover:bg-green-700 border border-green-700 text-white px-2 py-2 rounded-full'
