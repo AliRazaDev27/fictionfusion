@@ -181,7 +181,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
     <PlaylistContext.Provider value={playlist}>
       <div className="w-full " style={{ height: `calc(100svh - ${70}px)` }}>
         <div id="desktop-layout" className="relative border border-black w-full flex h-[90%]">
-          <div id="sidebar" className="absolute md:static bg-[#174669]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0">
+          <div id="sidebar" className="absolute md:static bg-[#082635]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0">
             <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
               <input ref={filterRef} type="text" placeholder="Enter title" className="w-full text-black rounded-3xl px-4 py-2 outline-none" />
               <div className='flex w-full justify-center gap-4'>
@@ -258,7 +258,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
           </div>
         </div>
         <div id="music-player" className=" border h-[10%]">
-          <MusicPlayer musicSource={musicList && musicList[currentMusic].fileUrlPublic || ""} next={next} prev={prev} />
+          <MusicPlayer musicSource={musicList && musicList[currentMusic]?.fileUrlPublic || ""} next={next} prev={prev} metadata={musicList && musicList[currentMusic] || { title: "", artist: "", coverArt: "" }}/>
         </div>
         <div id="metadata-search" className='fixed bg-emerald-900 top-0 bottom-0 left-0 right-0 w-full md:w-[600px] mx-auto ' style={{ display: "none" }} ref={searchContainerRef}>
           <div className='absolute text-xl text-black hover:text-red-600 font-extrabold top-3 right-8 cursor-pointer' onClick={(e) => { if (searchContainerRef.current) searchContainerRef.current.style.display = "none" }}>
@@ -316,4 +316,10 @@ export function MusicPlayerLayoutComponent({ music, list }) {
       </div>
     </PlaylistContext.Provider>
   )
+}
+
+type Metadata = {
+  title: string;
+  artist: string;
+  coverArt: string | null;
 }

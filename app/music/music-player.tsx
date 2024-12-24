@@ -8,7 +8,7 @@ import { IoPlaySkipBackSharp } from "react-icons/io5";
 import { IoPlaySkipForward } from "react-icons/io5";
 import { IoSearch } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
-export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, next: Function, prev: Function }) {
+export function MusicPlayer({ musicSource, next, prev,metadata }: { musicSource: string, next: Function, prev: Function,metadata: Metadata }) {
   const isPlaying = useRef(false);
   const playRef = useRef<HTMLDivElement>(null);
   const pauseRef = useRef<HTMLDivElement>(null);
@@ -54,6 +54,16 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
   }
   useEffect(() => {
     if('mediaSession' in navigator){
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: metadata.title,
+        artist: metadata.artist,
+        artwork: [
+          { src: metadata.coverArt || "/music-player.png", sizes: '96x96', type: 'image/png' },
+          { src: metadata.coverArt || "/music-player.png", sizes: '128x128', type: 'image/png' },
+          { src: metadata.coverArt || "/music-player.png", sizes: '192x192', type: 'image/png' },
+          { src: metadata.coverArt || "/music-player.png", sizes: '256x256', type: 'image/png' },
+        ]
+      })
       navigator.mediaSession.setActionHandler('play', play)
       navigator.mediaSession.setActionHandler('pause', play)
       navigator.mediaSession.setActionHandler('previoustrack', prevTrack)
@@ -68,6 +78,13 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
     return () => {
       if (audioPlayer.current) {
         audioPlayer.current.removeEventListener("ended", playNextSong)
+      }
+      if('mediaSession' in navigator){
+        navigator.mediaSession.metadata = null
+        navigator.mediaSession.setActionHandler('play', null)
+        navigator.mediaSession.setActionHandler('pause', null)
+        navigator.mediaSession.setActionHandler('previoustrack', null)
+        navigator.mediaSession.setActionHandler('nexttrack', null)
       }
     }
   }, [musicSource, next, prev])
@@ -135,4 +152,10 @@ export function MusicPlayer({ musicSource, next, prev }: { musicSource: string, 
       </div>
     </div>
   )
+}
+
+type Metadata = {
+  title: string;
+  artist: string;
+  coverArt: string|null;
 }
