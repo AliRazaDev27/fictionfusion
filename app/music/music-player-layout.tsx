@@ -18,7 +18,6 @@ import { FaFilter } from "react-icons/fa";
 import { IoPlay } from "react-icons/io5";
 import { IoPause } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
-import { GradientChecker } from '@/components/gradient-checker';
 
 
 

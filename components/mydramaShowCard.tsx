@@ -38,16 +38,16 @@ export default function MyDramaShowCard({item}:any) {
         }
     }
     return(
-        <div ref={cardRef} className="bg-sky-950 relative flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center transition-all duration-500"
+        <div ref={cardRef} className="bg-sky-950 relative flex flex-col gap-3 items-center justify-between rounded-lg  px-2 py-3 text-center overflow-hidden transition-all duration-500"
         style={{background: 'linear-gradient(220.55deg, #B9A14C 0%, #000000 100%)'}}>
-      <div className="relative overflow-hidden w-[95%]  mx-auto aspect-[2/3]">
-        <Image src={item.image} alt="cover" fill className="bg-cover" />
+      <div className="relative overflow-hidden w-[90%]  mx-auto aspect-[2/3]">
+        <Image src={item.image} alt="cover" fill quality={100} className="bg-cover" />
       </div>
       {
-        item.ranking && <div className="absolute top-0 right-0 text-lg text-white bg-orange-500 px-4 py-2 rounded-bl-xl">{item.ranking}</div>
+        item.ranking && <div className="absolute top-0 right-0 text-lg text-white bg-orange-500 px-4 py-2 rounded-bl-3xl">{item.ranking}</div>
       }
       {
-        item.rating && <div className="absolute top-0 left-0 text-lg text-white bg-orange-500 px-4 py-2 rounded-br-xl">{item.rating}</div>
+        item.rating && <div className="absolute top-0 left-0 text-lg text-white bg-orange-500 px-4 py-2 rounded-br-3xl">{item.rating}</div>
       }
       <a
         href={`https://mydramalist.com${item.link}`}

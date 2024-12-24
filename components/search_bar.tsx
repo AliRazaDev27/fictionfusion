@@ -56,7 +56,7 @@ export function SearchBar() {
     };
   }, []);
   return (
-    <form className="ml-auto  flex-1 sm:flex-initial">
+    <form className="ml-auto flex-1 sm:flex-initial">
         <DropdownMenu open={open}>
         {/*  TODO: Add search mode for db and api */}
         <div className=" flex relative group  border border-black/40 rounded-lg items-center group">

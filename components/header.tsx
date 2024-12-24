@@ -15,12 +15,12 @@ import NavLinksMobile from "./nav_links_mobile"
 import { SearchBar } from "./search_bar"
 import { auth } from "@/auth"
 import Link from "next/link"
-
+export const dynamic = 'force-dynamic'
 export default async function Header() {
     const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
     return( 
-        <header className="top-0 flex justify-between h-[70px] items-center  bg-transparent px-4 md:px-6">
+        <header className="top-0 relative z-50 flex justify-between h-[70px] items-center  bg-transparent px-4 md:px-6">
           <div className="hidden md:block">
           <Link
             href="/"
@@ -47,7 +47,7 @@ export default async function Header() {
             <NavLinksMobile role={role}/>
           </SheetContent>
         </Sheet>
-        <div className="flex  items-center gap-1  md:gap-2 lg:gap-4">
+        <div className="relative flex  items-center gap-1  md:gap-2 lg:gap-4">
           <SearchBar/>
           {role === "VISITOR" ? 
         <Link href="/login" className="px-4 py-2   rounded-full bg-black/90 hover:bg-black text-white">Login</Link>:
@@ -61,8 +61,9 @@ export default async function Header() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem><a href="/profile">Profile</a></DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link className="hover:text-orange-500 hover:bg-black px-4 py-2 rounded-lg  font-medium" href="/dashboard">Dashboard</Link>
+                </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
               <form action={async () => {

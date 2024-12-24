@@ -1,17 +1,8 @@
-"use client"
-import { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import { BookOpen, Film, Tv, ChevronDown } from "lucide-react"
+import { BookOpen, Film, Tv } from "lucide-react"
 import Link from "next/link"
 
+export const dynamic = 'force-static'
 export default function LandingPage() {
-  const [activeFeature, setActiveFeature] = useState(0)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveFeature((prev) => (prev + 1) % 3)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
 
   return (
     <div className="flex flex-col min-h-screen  text-white">
@@ -33,19 +24,13 @@ export default function LandingPage() {
             <FeatureCard 
               key={feature.title} 
               {...feature} 
-              isActive={activeFeature === index}
             />
            
           ))}
         </div>
 
-        <Button className="bg-[#f97316] hover:bg-[#ea580c] text-lg py-6 px-8 rounded-full transition-all duration-300 transform hover:scale-105 ">
-          <Link href="/login">Get Started</Link>
-        </Button>
+          <Link className="text-lg font-semibold  text-orange-500 bg-black hover:text-white hover:bg-orange-600 rounded-full px-6 py-3 transition-colors duration-100" href="/login">Get Started</Link>
 
-        <div className="mt-16 animate-bounce">
-         <button onClick={()=>window.scrollTo({top: 500, behavior: 'smooth'})}><ChevronDown className="h-8 w-8 text-[#f97316]" /></button>
-        </div>
       </main>
 
       <section className="py-16  backdrop-blur-lg">
@@ -75,11 +60,11 @@ export default function LandingPage() {
   )
 }
 
-function FeatureCard({ icon, title, description, isActive, linkTo}: { icon: React.ReactNode; title: string; description: string; isActive: boolean, linkTo?: string }) {
+function FeatureCard({ icon, title, description, linkTo}: { icon: React.ReactNode; title: string; description: string; linkTo?: string }) {
   return (
-    <div className={`flex flex-col items-center p-6 rounded-lg transition-all duration-300 transform ${isActive ? 'bg-[#f97316] scale-105' : 'bg-[#2a4a9e] hover:bg-[#3a5abe]'}`}>
+    <div className={`flex flex-col items-center p-6 rounded-lg transition-all duration-300 transform bg-[#2a4a9e] hover:bg-[#3a5abe]`}>
       {icon}
-      {linkTo ? <Link href={linkTo} className='underline underline-offset-4 decoration-2 hover:no-underline  hover:bg-black hover:text-white rounded-full px-4 py-2 mt-1 transition-colors duration-500'>{title}</Link>: <h2 className="mt-4 text-xl font-semibold">{title}</h2>}
+      {linkTo ? <Link href={linkTo} className='text-lg font-semibold  text-orange-500 hover:bg-black hover:text-white rounded-full px-4 py-2 mt-1 transition-colors duration-500'>{title}</Link>: <h2 className="mt-4 text-xl font-semibold">{title}</h2>}
       <p className="mt-2 text-sm text-neutral-300">{description}</p>
     </div> 
   )

@@ -1,56 +1,46 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { CircleUser, Menu, Package2, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
+
+const links = [
+  { href: "/books", label: "Books" },
+  { href: "/movies", label: "Movies" },
+  { href: "/shows", label: "Shows" },
+  { href: "/music", label: "Music" },
+]
 
 export default function NavLinks({role}:{role:string}) {
     const pathname = usePathname()
   
     return (
-        <nav className="hidden translate-x-8  text-lg font-medium md:flex md:flex-row md:items-center md:gap-2  lg:gap-4">
+        <nav className="hidden text-lg font-medium md:flex md:flex-row md:items-center md:gap-4  lg:gap-4">
          
           { role !== "VISITOR" && (
             <Link
-            href="/dashboard"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/dashboard" ? "text-white font-semibold": "text-white/60 ")}
-          >
-            Dashboard
-          </Link>)
-          }
-          { role !== "VISITOR" && (
-            <Link
             href="/watchlist"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/watchlist" ? "text-white font-semibold": "text-white/60 ")}
+            className={cn(`transition-colors duration-100 hover:text-orange-500 text-xl`, pathname === "/watchlist" ? "text-white font-semibold": "text-white/60 ")}
           >
             Watchlist
           </Link>)
           }
+          <div className="relative group">
+<p className="text-white/60 text-xl">Explore</p>
+<div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-gradient-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 rounded-lg">
+  <div className="flex flex-col items-center gap-4">
+          { links.map(({ href, label }) => (
           <Link
-            href="/books"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white font-semibold": "text-white/60")}
+            key={href}
+            href={href}
+            className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === href ? "text-white font-semibold": "text-white/60")}
           >
-            Books
+            {label}
           </Link>
-          <Link
-            href="/movies"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/movies" ? "text-white font-semibold": "text-white/60")}
-          >
-            Movies
-          </Link>
-          <Link
-            href="/shows"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/shows" ? "text-white font-semibold": "text-white/60")}
-          >
-            Shows
-          </Link>
-          
-          <Link
-            href="/music"
-            className={cn(`transition-colors hover:text-foreground`, pathname === "/music" ? "text-white font-semibold": "text-white/60")}
-          >
-            Music
-          </Link>
+          ) )
+}
+          </div>
+</div>
+          </div>
         </nav>
     )
 }
