@@ -23,7 +23,7 @@ export const BookTable = pgTable("books", {
   cover_edition_key: char("cover_edition_key", { length: 11 }).notNull(),
   first_publish_year: char("first_publish_year", { length: 4 }).notNull(),
   first_sentence: text("first_sentence"),
-  olid: varchar("olid", { length: 20 }).notNull().array(),
+  description: text("description"),
   number_of_pages: integer("number_of_pages"),
   rating: decimal("rating"),
 });
@@ -88,27 +88,6 @@ export const getFilteredBooks = async (
   ])
   console.log("time taken", performance.now() - start);
   return { data: data, total: total[0].count };
-};
-export const deleteImageFromOlid = async (value: string, id: number) => {
-  try {
-    const book = await db
-      .select({ olid: BookTable.olid })
-      .from(BookTable)
-      .where(eq(BookTable.id, id))
-      .limit(1);
-    const olid = book[0].olid;
-    if (olid === null) return;
-    if(olid.length === 0) return;
-    let updatedOlid = olid.filter((item: string) => item !== value);
-    await db
-      .update(BookTable)
-      .set({ olid: updatedOlid })
-      .where(eq(BookTable.id, id));
-    return { success: true };
-  } catch (err:any) {
-    console.log(err);
-    return { success: false, message: err.message };
-  }
 };
 
 export const setCoverImage = async (value: string, id: number) => {

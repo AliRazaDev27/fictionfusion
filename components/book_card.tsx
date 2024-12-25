@@ -4,9 +4,8 @@ import {useState,useRef, MutableRefObject, useTransition} from "react";
 import placeholder from "@/public/bookplaceholder.svg";
 import { getAuthorId, getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
 import RatingStar from "./ratingStar";
-import { FaBookOpen, FaTrashCan } from "react-icons/fa6";
+import { FaBookOpen } from "react-icons/fa6";
 import { Book } from "@/types";
-import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IoPersonCircle } from "react-icons/io5";
 
@@ -18,11 +17,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { FaArrowCircleLeft, FaArrowCircleRight,  FaPen,  FaTrash } from "react-icons/fa";
-import { deleteImageFromGallery, setBookCoverImage, updateBookInfo } from "@/actions/bookActions";
+import { FaPen,  FaTrash } from "react-icons/fa";
+import { updateBookInfo } from "@/actions/bookActions";
 import { useToast } from "./ui/use-toast";
 import Link from "next/link";
-import { removeEmptyImages } from "@/actions/cleaner";
 import { Badge } from "./ui/badge";
 import { AddToList } from "./add_to_list";
 
@@ -31,7 +29,6 @@ export default function BookCard({ book,role,list }: { book: Book,role:string,li
   let rating = book?.rating;
   if(!rating) rating = (book as any)?.ratings_average;
   if(!rating) rating = "0"
-  if(!book?.olid) book.olid = (book as any)?.edition_key;
   const titleRef:any = useRef(undefined)
   const authorRef:any = useRef(undefined)
   const yearRef:any = useRef(undefined)
@@ -39,65 +36,6 @@ const sentenceRef:any = useRef(undefined)
   const {toast} = useToast()
   const [isPending, startTransition] = useTransition();
   const [currentGalleryImageIndex, setCurrentGalleryImageIndex] = useState(0);
-  function nextGalleryImage() {  
-    if((currentGalleryImageIndex+1) === book?.olid?.length){
-      console.log("last image")
-    }
-    else{
-      setCurrentGalleryImageIndex(currentGalleryImageIndex + 1);
-    }
-    
-  }
-  function previousGalleryImage() {
-    if(currentGalleryImageIndex === 0){
-      console.log("first image")
-    }
-    else{
-      setCurrentGalleryImageIndex(currentGalleryImageIndex - 1);
-    }
-  }
-  async function saveImageAsCover(){
-    console.log(book.cover_edition_key)
-    const imageIndex = book?.olid && book?.olid[currentGalleryImageIndex]
-    if(!imageIndex) return
-    const result = await setBookCoverImage(imageIndex,book.id)
-    if(result.success){
-      toast({
-        title: "Image Saved Successfully",
-        className: "bg-green-600 text-white",
-        duration: 1500
-      })
-    }
-    else{
-      toast({
-        title: "Image Saving Failed",
-        description: result.message,
-        className: "bg-red-600 text-white",
-        duration: 1500
-      })
-    }
-  }
-  async function deleteImage(){
-    const imageIndex = book?.olid && book?.olid[currentGalleryImageIndex]
-    if(!imageIndex) return
-      const result = await deleteImageFromGallery(imageIndex,book.id)
-      if(result?.success){
-        toast({
-          title: "Image Deleted Successfully",
-          className: "bg-green-600 text-white",
-          duration: 1500
-        })
-      }
-      else{
-        toast({
-          title: "Image Deletion Failed",
-          description: result?.message,
-          className: "bg-red-600 text-white",
-          duration: 1500
-        })
-      }
-      
-  }
   async function updateBook(){
     let title = titleRef?.current?.value
     let author = authorRef?.current?.value
@@ -121,25 +59,6 @@ const sentenceRef:any = useRef(undefined)
       })
     }
   }
-  async function handleClean(id:number,olid:string[]|null){
-    startTransition(async() => {
-      const result = await removeEmptyImages(id,olid)
-      if(result?.success){
-        toast({
-          title: "Images Cleaned Successfully",
-          className: "bg-green-600 text-white",
-          duration: 1500
-        })
-      }
-      else{
-        toast({
-          title: "Images Cleaning Failed",
-          className: "bg-red-600 text-white",
-          duration: 1500
-        })
-      }
-    })
-  }
   return (
     <div className="flex  flex-col md:flex-row gap-8 max-md:items-center  my-8 ">
       <div
@@ -158,38 +77,6 @@ const sentenceRef:any = useRef(undefined)
             e.currentTarget.src = placeholder.src;
           }}
         />
-        <Dialog>
-        <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 ${book?.olid?.length === 0 ? "hidden" : ""}`}><DialogTrigger className="hover:bg-black bg-black/80 text-white px-4 py-2 rounded-xl">Open Gallery</DialogTrigger></div>
-        <DialogContent>
-    <DialogHeader>
-      <DialogTitle className="text-2xl font-light">Gallery {currentGalleryImageIndex + 1} / {book?.olid && book?.olid.length}</DialogTitle>
-      <DialogDescription>
-        <div className="relative flex justify-center w-full h-full overflow-hidden">
-        <div className="w-80 aspect-[3/4] relative">
-          {/* <img src={getOpenLibraryCoverLink("olid", book?.olid && book.olid[currentGalleryImageIndex], "M")} alt="gallery" className="w-full h-full"/> */}
-          <Image
-           src={getOpenLibraryCoverLink("olid", book?.olid && book.olid[currentGalleryImageIndex], "M")}
-            alt="gallery"
-            placeholder="blur"
-            blurDataURL="/bookplaceholder.svg"
-            fill
-            unoptimized
-             className="bg-cover"/>
-        </div>
-        <div className="absolute top-1/2 right-0  -translate-y-1/2"><button onClick={nextGalleryImage}><FaArrowCircleRight className="size-8 hover:text-black/80"/></button></div>
-        <div className="absolute top-1/2 left-0  -translate-y-1/2"><button onClick={previousGalleryImage}><FaArrowCircleLeft className="size-8 hover:text-black/80 "/></button></div>
-        {role === "ADMIN" && (
-          <div>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 "><Button onClick={saveImageAsCover} className="hover:bg-black">Save as Cover</Button></div>
-            <div className="absolute top-0 right-4"><button onClick={deleteImage}><FaTrashCan className="size-8 hover:text-black/80"/></button></div>
-          </div>
-        )}
-        </div>
-
-      </DialogDescription>
-    </DialogHeader>
-  </DialogContent>
-        </Dialog>
       </div>
       <div className="flex flex-col justify-evenly w-full min-h-80  shadow-md shadow-black px-4 bg-white/80 rounded-2xl">
         <div className="flex justify-between items-center">
@@ -248,7 +135,6 @@ const sentenceRef:any = useRef(undefined)
         <p className="line-clamp-3">{book.first_sentence}</p>
         <div className="flex gap-4">
         {role!=="VISITOR" &&  <AddToList list={list} item={book.id}/>}
-        {role==="ADMIN" && <Button className="w-max px-4 py-2" onClick={()=>handleClean(book.id,book.olid)} disabled={isPending}>Clean</Button>}
         </div>
       </div>
     </div>
