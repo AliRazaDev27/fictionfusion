@@ -10,37 +10,36 @@ const links = [
   { href: "/music", label: "Music" },
 ]
 
-export default function NavLinks({role}:{role:string}) {
-    const pathname = usePathname()
-  
-    return (
-        <nav className="hidden text-lg font-medium md:flex md:flex-row md:items-center md:gap-4  lg:gap-4">
-         
-          { role !== "VISITOR" && (
-            <Link
-            href="/watchlist"
-            className={cn(`transition-colors duration-100 hover:text-orange-500 text-xl`, pathname === "/watchlist" ? "text-white font-semibold": "text-white/60 ")}
-          >
-            Watchlist
-          </Link>)
-          }
-          <div className="relative group">
-<p className="text-white/60 text-xl">Explore</p>
-<div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-gradient-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 rounded-lg">
-  <div className="flex flex-col items-center gap-4">
-          { links.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === href ? "text-white font-semibold": "text-white/60")}
-          >
-            {label}
-          </Link>
-          ) )
-}
+export default function NavLinks({ role }: { role: string }) {
+  const pathname = usePathname()
+
+  return (
+    <nav className="hidden text-lg font-medium md:flex md:flex-row md:items-center md:gap-4  lg:gap-4">
+
+      <Link
+        href="/watchlist"
+        className={cn(`transition-colors duration-100 hover:text-orange-500 text-xl`, pathname === "/watchlist" ? "text-white font-semibold" : "text-white/60 ")}
+      >
+        Watchlist
+      </Link>
+
+      <div className="relative group">
+        <p className="text-white/60 text-xl">Explore</p>
+        <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-gradient-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 rounded-lg">
+          <div className="flex flex-col items-center gap-4">
+            {links.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === href ? "text-white font-semibold" : "text-white/60")}
+              >
+                {label}
+              </Link>
+            ))
+            }
           </div>
-</div>
-          </div>
-        </nav>
-    )
+        </div>
+      </div>
+    </nav>
+  )
 }
