@@ -30,7 +30,7 @@ export default async function Header() {
           </Link>
           </div>
 
-        <NavLinks role={role}/>
+        <NavLinks/>
         <Sheet>
           <SheetTrigger asChild>
             <Button
