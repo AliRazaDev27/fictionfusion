@@ -25,7 +25,7 @@ export function AddTask() {
     return (
         <>
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger className="text-white/60 hover:text-orange-500 text-nowrap transition-colors duration-100">Add Task</DialogTrigger>
+            <DialogTrigger className="text-white/60 hover:text-orange-500 text-nowrap transition-colors duration-100">Add</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Calender</DialogTitle>
