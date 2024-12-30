@@ -1,7 +1,7 @@
 import { ViewAllTasks } from "@/actions/taskActions";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { IoRefreshCircle } from "react-icons/io5";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Task } from "@/lib/database/taskSchema";
 
 export function ViewTasks() {
@@ -12,6 +12,10 @@ export function ViewTasks() {
             setTasks(result.tasks);
         }
     }
+    useEffect(() => {
+        const load = async() => {await loadTasks();}
+        load();
+    },[])
     return (
     <Dialog>
         <DialogTrigger className="text-white/60 hover:text-orange-500 text-nowrap transition-colors duration-100" onClick={() => {console.log(new Date())}}>View</DialogTrigger>

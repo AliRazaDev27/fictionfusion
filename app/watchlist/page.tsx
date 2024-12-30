@@ -24,6 +24,7 @@ export default  function Page() {
                 );
                 const results = await Promise.all(promises);
                 let mergedResults = results.flat();
+                if(mergedResults.length === 0) setPage((prev) => prev + 1);
                 setData([...data, ...mergedResults]);
                 setIsFetching(false);
             }

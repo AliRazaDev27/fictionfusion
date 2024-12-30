@@ -44,7 +44,7 @@ export default async function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[200px] bg-gradient-to-b from-gray-950 to-blue-950 ">
-            <NavLinksMobile role={role}/>
+            <NavLinksMobile/>
           </SheetContent>
         </Sheet>
         <div className="relative flex  items-center gap-1  md:gap-2 lg:gap-4">

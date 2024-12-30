@@ -1,5 +1,4 @@
 "use server"
-import { get } from "http";
 import jsdom from "jsdom"
 import { getIgnoreList } from "./ignorelistActions";
 export async function getWatchlist(url:string) {
