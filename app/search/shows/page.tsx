@@ -15,7 +15,11 @@ export default async function Page(props:{searchParams: Promise<any>}) {
             {result.map((show:{show:Show}) =>(
                 <div key={show.show.id} className="relative ">
                     <ShowCard show={show.show}/>
-                    {role !== "VISITOR" && <AddShowToDB show={show.show}/>}
+                    {role !== "VISITOR" && 
+                    <div className="absolute top-2 right-2">
+                    <AddShowToDB show={show.show}/>
+                    </div>
+                    }
                 </div>
             )      
              )}

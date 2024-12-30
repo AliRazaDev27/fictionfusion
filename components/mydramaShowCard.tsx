@@ -3,6 +3,7 @@ import Image from "next/image";
 import { addItemToIgnoreList } from "@/actions/ignorelistActions";
 import { useToast } from "./ui/use-toast";
 import {  useRef } from "react";
+import { AddShowToDB } from "./add_show_to_db";
 
 export default function MyDramaShowCard({item}:any) {
     const cardRef = useRef<HTMLDivElement>(null);
@@ -62,9 +63,12 @@ export default function MyDramaShowCard({item}:any) {
         {
           item?.description && <div className="text-white text-lg line-clamp-4">{item?.description}</div>
         }
+        <div className="flex gap-4">
       <button className="bg-black px-4 py-2 text-white rounded-xl hover:bg-orange-600" onClick={handleClick}>
         Ignore
       </button>
+<AddShowToDB show={item}/>
+        </div>
     </div>
     )
 }

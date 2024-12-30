@@ -1,6 +1,5 @@
 "use client"
 import { addShow } from "@/actions/showActions";
-import { Button } from "./ui/button";
 import { Show } from "@/types";
 import { useToast } from "./ui/use-toast"; 
 
@@ -26,6 +25,6 @@ export function AddShowToDB({show}:{show:Show}) {
         }
     }
     return(
- <Button className="absolute top-5 right-8" onClick={handleAdd}>Add to DB</Button>           
+ <button className="bg-black px-4 py-2 text-white rounded-xl hover:bg-orange-600" onClick={handleAdd}>Add to DB</button>           
     )
 }

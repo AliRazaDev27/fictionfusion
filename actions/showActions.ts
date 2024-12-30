@@ -23,6 +23,8 @@ export async function searchShowByTitle(title: string) {
     return response;
 }
 export async function addShow(show: Show) {
+  const session:any = await auth()
+    if(session?.user?.role !== "ADMIN") return {success:false, message:"Not Authorized"}
     const result = await addShowTODatabase(show);
     if(result.success){
         revalidatePath("/shows")

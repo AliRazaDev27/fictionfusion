@@ -9,23 +9,13 @@ export default  function Page() {
     const [page,setPage] = useState(1)
     const [isFetching, setIsFetching] = useState(false);
     const observerRef = useRef<IntersectionObserver | null>(null);
-    const getPageRange = (page: number): number[] => {
-        const startPage = (page - 1) * 3 + 1;
-        const endPage = startPage + 2;
-        return Array.from({ length: 3 }, (_, i) => startPage + i); // [startPage, startPage+1, ..., endPage]
-    };
     useEffect(
         () => {
             const fetcher = async () => {
                 setIsFetching(true);
-                const pageRange = getPageRange(page)
-                const promises = pageRange.map(pg =>
-                    getWatchlist(`https://mydramalist.com/shows/top?page=${pg}`)
-                );
-                const results = await Promise.all(promises);
-                let mergedResults = results.flat();
-                if(mergedResults.length === 0) setPage((prev) => prev + 1);
-                setData([...data, ...mergedResults]);
+                const result = await getWatchlist(`https://mydramalist.com/shows/top?page=${page}`)
+                if(result.length === 0) setPage((prev) => prev + 1);
+                setData([...data, ...result]);
                 setIsFetching(false);
             }
             fetcher()
