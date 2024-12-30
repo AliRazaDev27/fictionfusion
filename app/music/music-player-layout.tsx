@@ -227,7 +227,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
                           playlistButtons.forEach((button: any) => button.classList.remove('playlist-toggle'));
                           (event.target as HTMLElement).classList.toggle('playlist-toggle')
                         }}
-                      >{playlist.listName}</button>
+                      ><p>{playlist.listName} - <span className='font-light text-sm'>{playlist.items.length}</span></p></button>
                       <div className='flex gap-2 items-center'>
                         <button className='bg-black hover:bg-green-700 border border-green-700 text-white px-2 py-2 rounded-full'
                           onClick={() => deleteFromPlaylist(playlist.id)}>
