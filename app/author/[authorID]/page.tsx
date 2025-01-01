@@ -1,5 +1,4 @@
 import { getAuthorInfo, getBooksFromAuthor } from "@/actions/authorActions";
-import { searchBookByTitle } from "@/actions/bookActions";
 import Link from "next/link";
 import {franc} from "franc";
 
@@ -12,7 +11,6 @@ export default async function Page(props: any) {
   const englishBooks = books?.entries.filter((book: any) => franc(book?.title) === "eng");
   const uniqueTitle = new Set(englishBooks?.map((book: any) => book?.title));
   const uniqueBooks = Array.from(uniqueTitle);
-  console.log(uniqueBooks)
   const author = await getAuthorInfo(authorID);
   return (
     <div className=" grid grid-cols-1 md:grid-cols-2 gap-4 py-8 text-white">

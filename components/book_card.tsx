@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import {useState,useRef, MutableRefObject, useTransition} from "react";
+import {useRef} from "react";
 import placeholder from "@/public/bookplaceholder.svg";
 import { getAuthorId, getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
 import RatingStar from "./ratingStar";
@@ -34,8 +34,6 @@ export default function BookCard({ book,role,list }: { book: Book,role:string,li
   const yearRef:any = useRef(undefined)
 const sentenceRef:any = useRef(undefined)
   const {toast} = useToast()
-  const [isPending, startTransition] = useTransition();
-  const [currentGalleryImageIndex, setCurrentGalleryImageIndex] = useState(0);
   async function updateBook(){
     let title = titleRef?.current?.value
     let author = authorRef?.current?.value
@@ -69,7 +67,7 @@ const sentenceRef:any = useRef(undefined)
           src={getOpenLibraryCoverLink("olid", book.cover_edition_key, "M")}
           alt="cover"
           fill
-          unoptimized
+          quality={100}
           placeholder="blur"
           blurDataURL="/bookplaceholder.svg"
           style={{ objectFit: "cover" }}

@@ -1,8 +1,10 @@
 import { sendEmail } from "@/actions/emailActions";
-import { ViewAllTasks } from "@/actions/taskActions";
+import { _ViewAllTasks } from "@/actions/taskActions";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const tasks = await ViewAllTasks();
+  const tasks = await _ViewAllTasks();
   if(tasks.tasks && tasks.tasks.length > 0){
   for(const task of tasks.tasks){
       if(task.taskTime === new Date().toDateString()){

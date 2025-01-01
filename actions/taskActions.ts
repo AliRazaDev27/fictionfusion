@@ -32,3 +32,8 @@ export async function ViewAllTasks(){
     const tasks = await db.select().from(TaskTable)
     return {tasks, message: "Tasks fetched successfully."};
 }
+
+export async function _ViewAllTasks(){
+    const tasks = await db.select().from(TaskTable)
+    return {tasks, message: "Tasks fetched successfully."};
+}
