@@ -3,7 +3,7 @@ import { InferSelectModel, InferInsertModel } from "drizzle-orm";
 
 export const ListTable = pgTable("lists", {
     id: serial("id").primaryKey(),
-    listName: varchar("listname", { length: 255 }).notNull(),
+    listName: varchar("listname", { length: 255 }).unique().notNull(),
     creator: varchar("creator", { length: 255 }).notNull(),
     type: varchar("type", { length: 255 }).notNull(),
     items:integer("items").array().default([]),

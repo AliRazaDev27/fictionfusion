@@ -8,7 +8,28 @@ import { IoPlaySkipBackSharp } from "react-icons/io5";
 import { IoPlaySkipForward } from "react-icons/io5";
 import { IoSearch } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
-export function MusicPlayer({ musicSource, next, prev,metadata }: { musicSource: string, next: Function, prev: Function,metadata: Metadata }) {
+import { useMusicStore } from "./music-context";
+export function MusicPlayer() {
+  const music = useMusicStore((state:any)=>state.music)
+  const current = useMusicStore((state:any)=>state.current)
+  const musicSource = music && music[current]?.fileUrlPublic || undefined; 
+  const metadata:Metadata = music && music[current] || {title: "", artist: "", coverArt: null}  
+  console.log(`metadata:${metadata}`)
+  const setCurrent = useMusicStore((state:any)=>state.setCurrent)
+  const next = ()=>{
+if(!music) return
+    const nextIndex = (current + 1) % music.length;
+    setCurrent(nextIndex);
+  }
+  const prev = ()=>{
+if(!music) return
+
+    const prevIndex = (current - 1 + music.length) % music.length
+    setCurrent(prevIndex);
+
+  }
+
+
   const isPlaying = useRef(false);
   const playRef = useRef<HTMLDivElement>(null);
   const pauseRef = useRef<HTMLDivElement>(null);
@@ -30,7 +51,9 @@ export function MusicPlayer({ musicSource, next, prev,metadata }: { musicSource:
       if (playRef.current) playRef.current.style.display = "none";
       if (pauseRef.current) pauseRef.current.style.display = "block";
       if (audioPlayer.current) {
-        if (audioPlayer.current.src !== musicSource) audioPlayer.current.src = musicSource
+        if (audioPlayer.current.src !== musicSource){
+          if(musicSource) audioPlayer.current.src = musicSource;
+        }
         audioPlayer.current.play();
       }
       animationFrame.current = requestAnimationFrame(updateProgress);
@@ -53,6 +76,7 @@ export function MusicPlayer({ musicSource, next, prev,metadata }: { musicSource:
     prev()
   }
   useEffect(() => {
+    if(!music) return;
     if('mediaSession' in navigator){
       navigator.mediaSession.metadata = new MediaMetadata({
         title: metadata.title,
@@ -87,7 +111,7 @@ export function MusicPlayer({ musicSource, next, prev,metadata }: { musicSource:
         navigator.mediaSession.setActionHandler('nexttrack', null)
       }
     }
-  }, [musicSource, next, prev])
+  }, [musicSource, next, prev,music,current])
 
   useEffect(() => {
     return () => {
@@ -101,7 +125,7 @@ export function MusicPlayer({ musicSource, next, prev,metadata }: { musicSource:
   return (
     <div className="flex w-full h-full">
       <div className="player">
-        <audio src={musicSource} preload="auto" autoPlay={isPlaying.current} ref={audioPlayer}>Audio playback not supported</audio>
+        <audio src={musicSource || undefined} preload="auto" autoPlay={isPlaying.current} ref={audioPlayer}>Audio playback not supported</audio>
         <div
           ref={progressRef}
           className="progress-bar"

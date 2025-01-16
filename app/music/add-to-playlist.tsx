@@ -9,12 +9,11 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useContext } from "react";
-import PlaylistContext from "./music-context";
+import { useMusicStore }  from "./music-context";
 import { List } from "@/lib/database/listSchema";
 
 export function AddToPlaylist({index}: {index: number}) {
-    const list = useContext<List[]>(PlaylistContext)
+    const list = useMusicStore((state:any) => state.playlist)
     return (
         <Dialog>
             <DialogTrigger className="bg-gray-700 hover:bg-gray-800 p-3 rounded-xl">

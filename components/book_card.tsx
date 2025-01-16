@@ -23,6 +23,8 @@ import { useToast } from "./ui/use-toast";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { AddToList } from "./add_to_list";
+import { MdMore } from "react-icons/md";
+import { desc } from "drizzle-orm";
 
 export default function BookCard({ book,role,list }: { book: Book,role:string,list?:any }) {
   
@@ -58,10 +60,9 @@ const sentenceRef:any = useRef(undefined)
     }
   }
   return (
-    <div className="flex  flex-col md:flex-row gap-8 max-md:items-center  my-8 ">
+    <div className="relative group/bookcard border">
       <div
-        className="min-w-[300px] md:aspect-[3/4] rounded-2xl overflow-hidden"
-        style={{ position: "relative", height: "400px" }}
+        className="aspect-[3/4] rounded-2xl overflow-hidden"
       >
         <Image
           src={getOpenLibraryCoverLink("olid", book.cover_edition_key, "M")}
@@ -76,9 +77,9 @@ const sentenceRef:any = useRef(undefined)
           }}
         />
       </div>
-      <div className="flex flex-col justify-evenly w-full min-h-80  shadow-md shadow-black px-4 bg-white/80 rounded-2xl">
+      <div className="absolute overflow-hidden top-0 left-0 w-full h-full  scale-0 group-hover/bookcard:scale-100 transition-all duration-500 group-hover/bookcard:flex flex-col gap-5 shadow-md shadow-black px-4 py-4 bg-white/70 rounded-2xl">
         <div className="flex justify-between items-center">
-        <h1 className="text-xl md:text-3xl  font-medium italic">{book.title}</h1>
+        <h1 className="text-xl sm:text-2xl lg:text-xl  font-semibold italic">{book.title}</h1>
         <div className="flex gap-4 items-center">
           {
             role === "ADMIN" && (
@@ -116,21 +117,36 @@ const sentenceRef:any = useRef(undefined)
               </Avatar>
             </div>
             {/* TODO: some beautiful animation here */}
-            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="px-2 py-1  hover:bg-blue-600 hover:no-underline hover:rounded-2xl text-xl underline underline-offset-4 transition-color duration-500">{book.author_name}</Link>
+            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="px-2 py-1  hover:bg-blue-600 hover:no-underline hover:rounded-2xl text-base underline underline-offset-4 transition-color duration-500">{book.author_name}</Link>
           </div>
-          <p className="font-semibold">{book.first_publish_year}</p>
         </div>
-        <div className="flex gap-8">
+        <div className="flex justify-evenly items-center">
+          <p className="font-semibold">{book.first_publish_year}</p>
           <div className="flex gap-2 items-center">
             <Badge className="text-sm">{Number(rating).toFixed(2)}</Badge>
-            <RatingStar rating={Number(rating)} />
           </div>
           <div className="flex justify-center items-center gap-2">
             <p className="text-md">{book.number_of_pages} </p>
             <FaBookOpen />
           </div>
         </div>
-        <p className="line-clamp-3">{book.first_sentence}</p>
+        <div>
+        <p className="">{book.first_sentence}</p>
+        <div className="border w-min border-black ">
+        <button onClick={()=>{
+            const description = document.getElementById("description")
+            description?.classList.toggle("scale-0")
+            description?.classList.toggle("scale-100")
+            // description?.classList.toggle("hidden")
+            description?.classList.toggle("flex")
+        }}>
+        <MdMore/>
+        </button>
+        <div id="description" className="absolute top-0 left-0 w-full h-full hidden scale-0  flex-col gap-5 shadow-md shadow-black px-4 py-4 bg-white/70 rounded-2xl">
+        <p className="">{book?.description}</p>
+        </div>
+        </div>
+        </div>
         <div className="flex gap-4">
         {role!=="VISITOR" &&  <AddToList list={list} item={book.id}/>}
         </div>

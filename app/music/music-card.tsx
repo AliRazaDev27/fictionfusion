@@ -19,19 +19,23 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useMusicStore } from "./music-context";
+import Image from "next/image";
 
 
 interface MusicCardProps {
   music: Music;
   index: number;
-  current: (index: number) => void;
-  currentMusic: number;
   handleSearch: (searchTerm: string, musicId: number) => Promise<void>
 }
-export const MusicCard = forwardRef<HTMLDivElement, MusicCardProps>(({ music, index, current, currentMusic, handleSearch }, ref) => {
+export const MusicCard = forwardRef<HTMLDivElement, MusicCardProps>(({ music, index, handleSearch }, ref) => {
+  const currentMusic = useMusicStore((state: any) => state.current)
+  const current = useMusicStore((state: any) => state.setCurrent)
+
   const metadataSearchContainerRef = useRef<HTMLDivElement>(null);
   const metadataSearchInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast()
+
 
   const searchTermInput = (e: any) => {
     e.stopPropagation()
@@ -80,7 +84,8 @@ export const MusicCard = forwardRef<HTMLDivElement, MusicCardProps>(({ music, in
   return (
     <div ref={ref} id={`music-card-${music.id}`} className='w-full flex  gap-2 overflow-hidden text-white font-semibold text-xl px-2 py-2 border-2 hover:bg-blue-700 border-blue-500 cursor-pointer rounded-xl' style={{ backgroundColor: index === currentMusic ? "rgba(0, 122, 255, 1)" : "" }} key={music.id} onClick={selectMusic}>
       <div className='shrink-0 w-[100px] h-[100px] rounded-3xl overflow-hidden'>
-        <img src={music.coverArt || `/music-player.png`} alt="cover-art" className='w-full h-full object-cover' width={100} height={100} />
+        <img src={music.coverArt || `/music-player.png`} loading="lazy" alt="cover-art" className='w-full h-full object-cover' width={100} height={100} />
+{/* <Image src={music.coverArt || `/music-player.png`} alt="cover-art" className='w-full h-full object-cover' width={100} height={100}/>  */}
       </div>
       <div className='flex flex-col gap-2'>
         <p>{music.title}</p>

@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Label } from "./ui/label"
-import { SheetClose } from "./ui/sheet"
 import { getSortOptions } from "@/lib/utils"
 
 export function SearchControlls({type}:{type:string}) {
@@ -17,7 +16,6 @@ export function SearchControlls({type}:{type:string}) {
   const router = useRouter()
   const [sortOption, setSortOption] = useState(sortTerm || "year_newest")
   const [search, setSearch] = useState(searchTerm || "")
-  const buttonRef = useRef<HTMLButtonElement>(null)
  const sortOptions = getSortOptions(type)
   
  
@@ -27,13 +25,11 @@ export function SearchControlls({type}:{type:string}) {
       search: search,
       sort: sortOption,
     }
-    buttonRef.current?.click()
     router.push(`${path.toString()}?${new URLSearchParams(data).toString()}`)
   }
   function handleReset() {
     setSearch("")
     setSortOption("")
-    buttonRef.current?.click()
     router.push(`${path}`)
     router.refresh()
   }
@@ -42,7 +38,6 @@ export function SearchControlls({type}:{type:string}) {
     (<div
       className="flex flex-col items-center gap-4 bg-background p-4 w-full mx-auto rounded-lg shadow-lg">
       <div className="relative flex-1">
-        <SheetClose ref={buttonRef}/>
         <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="search"
@@ -52,7 +47,6 @@ export function SearchControlls({type}:{type:string}) {
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.currentTarget.blur();
-              buttonRef.current?.click()
               handleFilter();
             }
           }}

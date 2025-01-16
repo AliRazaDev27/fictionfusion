@@ -36,12 +36,8 @@ export const addBook = async (book: NewBook) => {
   return insertResult;
 };
 
-export const getBookTable = async () => {
-  const selectResult = await db.select().from(BookTable).limit(10);
-  return selectResult;
-};
-export const getBook = async () => {
-  const selectResult = await db.select().from(BookTable).limit(1);
+export const getAllBooks = async () => {
+  const selectResult = await db.select().from(BookTable);
   return selectResult;
 };
 export const getPaginatedBooks = async (limit: number, offset: number) => {
@@ -131,3 +127,16 @@ export const bookSortOption: SortBook = {
   pages_max: desc(BookTable.number_of_pages),
   pages_min: asc(BookTable.number_of_pages),
 };
+
+export const updateDescription = async (bookID: number,description: string) => {
+  try {
+    await db
+      .update(BookTable)
+      .set({ description: description })
+      .where(eq(BookTable.id, bookID));
+    return { success: true };
+  } catch (err: any) {
+    console.log(err);
+    return { success: false, message: err.message };
+  }
+}

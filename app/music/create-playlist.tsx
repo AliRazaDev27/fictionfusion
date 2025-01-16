@@ -13,10 +13,10 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { createPlaylist, getAllMusicPlaylists } from "@/actions/playlistActions";
 import { useToast } from "@/components/ui/use-toast";
-import { useContext } from "react";
-import PlaylistContext from "./music-context";
+import { useMusicStore } from "./music-context";
 export default function Create({addPlaylist}) {
-    const playlist = useContext(PlaylistContext)
+    const playlist = useMusicStore((state:any) => state.playlist);
+    console.log(`context playlist`, playlist);
     const [title, setTitle] = useState('');
     const { toast } = useToast();
     async function createMusicPlaylist() {

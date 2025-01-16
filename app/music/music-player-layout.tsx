@@ -1,7 +1,7 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, use, Suspense } from 'react'
 import { useToast } from '@/components/ui/use-toast';
-import PlaylistContext from './music-context';
+import { useMusicStore } from './music-context';
 import { updateMusicMetadata } from '@/actions/musicActions';
 import { addToPlaylist, removeFromPlaylist } from '@/actions/playlistActions';
 import { Music } from "@/lib/database/musicSchema";
@@ -18,44 +18,28 @@ import { FaFilter } from "react-icons/fa";
 import { IoPlay } from "react-icons/io5";
 import { IoPause } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
+import { List } from '@/lib/database/listSchema';
+import { MusicList } from './components/music-list';
 
 
 
 
 export function MusicPlayerLayoutComponent({ music, list }) {
-  const [musicList, setMusicList] = useState<Music[] | undefined>(music);
-  const [playlist, setPlaylist] = useState(list)
-  //rather than direct array index, maybe use the music.id instead?
-  const [currentMusic, setCurrentMusic] = useState<number>(0);
+  // const list_p = use<any>(list)
+  // const list_d = list_p.lists;
+  // const [playlist, setPlaylist] = useState<List[]>(list_d);
+  const playlist = Array<any>();
+  const setPlaylist = (state)=>{};
+
+  const _addToPlaylist = useMusicStore((state:any) => state.addPlaylist)
+  _addToPlaylist(playlist);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const [searchResults, setSearchResults] = useState<any>([]);
-  // no idea what this is for maybe refactor to make it obvious.
   const searchIndexRef = useRef<number>(0);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const filterRef = useRef<HTMLInputElement>(null)
   const selected = useRef<number[]>([])
   const { toast } = useToast()
-  const current = (id: number) => {
-    setCurrentMusic(id)
-  }
-  const next = () => {
-    if (!musicList) return
-    const nextIndex = (currentMusic + 1) % musicList.length;
-    setCurrentMusic(nextIndex);
-    cardRefs.current[nextIndex]?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  }
-  const prev = () => {
-    if (!musicList) return
-    const prevIndex = (currentMusic - 1 + musicList.length) % musicList.length
-    setCurrentMusic(prevIndex);
-    cardRefs.current[prevIndex]?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  }
   const handleSearch = async (searchTerm: string, id: number) => {
     const title = encodeURIComponent(searchTerm)
     const result = await fetch(`https://itunes.apple.com/search?term=${title}`)
@@ -74,42 +58,41 @@ export function MusicPlayerLayoutComponent({ music, list }) {
     searchIndexRef.current = id
     setSearchResults(response.results)
   }
-  const updateMusic = async (music: any) => {
-    if (!musicList) return
-    if (searchContainerRef.current) searchContainerRef.current.style.display = "none"
-    const { artistName, artworkUrl100, collectionName, releaseDate, trackName, trackTimeMillis } = music
-    const result = await updateMusicMetadata(searchIndexRef.current, { artistName, artworkUrl100, collectionName, releaseDate, trackName, trackTimeMillis })
-    if (result.success) {
-      const index = musicList.findIndex((music: Music) => music.id === searchIndexRef.current)
-      if (result.data && result.data[0]) {
-        if (musicList?.length) {
-          setMusicList((musicList) => musicList!.map((music: Music) => music.id === searchIndexRef.current ? result.data[0] : music))
-        }
-      }
-    }
-    else {
-      toast({
-        title: "Error Updating Metadata",
-        description: result.message,
-        className: "bg-red-600 text-white",
-        duration: 2000
-      })
-    }
+  // const updateMusic = async (music: any) => {
+  //   if (!musicList) return
+  //   if (searchContainerRef.current) searchContainerRef.current.style.display = "none"
+  //   const { artistName, artworkUrl100, collectionName, releaseDate, trackName, trackTimeMillis } = music
+  //   const result = await updateMusicMetadata(searchIndexRef.current, { artistName, artworkUrl100, collectionName, releaseDate, trackName, trackTimeMillis })
+  //   if (result.success) {
+  //     const index = musicList.findIndex((music: Music) => music.id === searchIndexRef.current)
+  //     if (result.data && result.data[0]) {
+  //       if (musicList?.length) {
+  //         setMusicList((musicList) => musicList!.map((music: Music) => music.id === searchIndexRef.current ? result.data[0] : music))
+  //       }
+  //     }
+  //   }
+  //   else {
+  //     toast({
+  //       title: "Error Updating Metadata",
+  //       description: result.message,
+  //       className: "bg-red-600 text-white",
+  //       duration: 2000
+  //     })
+  //   }
+  // }
+  // const applyFilter = () => {
+  //   const title = filterRef.current?.value
+  //   if (!title) return
+  //   const filtered = music.filter((music: Music) => music.title.toLowerCase().includes(title.toLowerCase()))
+  //   setMusicList(filtered)
+  // }
 
-  }
-  const applyFilter = () => {
-    const title = filterRef.current?.value
-    if (!title) return
-    const filtered = music.filter((music: Music) => music.title.toLowerCase().includes(title.toLowerCase()))
-    setMusicList(filtered)
-  }
-
-  const clearFilter = () => {
-    if (filterRef.current) filterRef.current.value = "";
-    setMusicList(music);
-    const playlistButtons = document.querySelectorAll('.playlist-toggle')
-    playlistButtons.forEach((button: any) => button.classList.remove('playlist-toggle'))
-  }
+  // const clearFilter = () => {
+  //   if (filterRef.current) filterRef.current.value = "";
+  //   setMusicList(music);
+  //   const playlistButtons = document.querySelectorAll('.playlist-toggle')
+  //   playlistButtons.forEach((button: any) => button.classList.remove('playlist-toggle'))
+  // }
 
   const handleSelection = (id) => {
     if (selected.current.includes(id)) {
@@ -170,15 +153,14 @@ export function MusicPlayerLayoutComponent({ music, list }) {
       }
     }
   }
-  function loadPlaylist(id: number) {
-    const playlist = list.find((list) => list.id === id)
-    const filtered = music.filter((music: Music) => playlist?.items?.includes(music.id))
-    if (filtered.length > 0) setMusicList(filtered)
-  }
+  // function loadPlaylist(id: number) {
+  //   const playlist = list.find((list) => list.id === id)
+  //   const filtered = music.filter((music: Music) => playlist?.items?.includes(music.id))
+  //   if (filtered.length > 0) setMusicList(filtered)
+  // }
 
 
   return (
-    <PlaylistContext.Provider value={playlist}>
       <div className="w-full " style={{ height: `calc(100svh - ${70}px)` }}>
         <div id="desktop-layout" className="relative border border-black w-full flex h-[90%]">
           <div id="sidebar" className="absolute md:static bg-[#082635]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0">
@@ -188,12 +170,12 @@ export function MusicPlayerLayoutComponent({ music, list }) {
                 <div>
                   <AddMusicFile />
                 </div>
-                <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
+                {/* <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
                   <MdClear />
-                </button>
-                <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={applyFilter}>
+                </button> */}
+                {/* <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={applyFilter}>
                   <FaFilter />
-                </button>
+                </button> */}
               </div>
 
 
@@ -219,7 +201,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
                 {
                   playlist && playlist.length > 0 && playlist.map((playlist: any, index: number) => (
                     <div key={index} className='w-full ps-4 flex items-center justify-between'>
-                      <button
+                      {/* <button
                        className='bg-black hover:scale-105 shadow shadow-black text-white px-4 py-2 rounded-xl'
                         onClick={(event) => {
                           loadPlaylist(playlist.id)
@@ -227,7 +209,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
                           playlistButtons.forEach((button: any) => button.classList.remove('playlist-toggle'));
                           (event.target as HTMLElement).classList.toggle('playlist-toggle')
                         }}
-                      ><p>{playlist.listName} - <span className='font-light text-sm'>{playlist.items.length}</span></p></button>
+                      ><p>{playlist.listName} - <span className='font-light text-sm'>{playlist.items.length}</span></p></button> */}
                       <div className='flex gap-2 items-center'>
                         <button className='bg-black hover:bg-green-700 border border-green-700 text-white px-2 py-2 rounded-full'
                           onClick={() => deleteFromPlaylist(playlist.id)}>
@@ -248,17 +230,11 @@ export function MusicPlayerLayoutComponent({ music, list }) {
 
 
           </div>
-          <div id="content" className="w-full md:border-l px-4 flex-1 space-y-4 pt-4  overflow-y-auto overflow-x-clip">
-            {musicList && musicList.length > 0 && musicList.map((music: Music, index: number) => (
-              <div key={index} className='w-full  flex  items-center gap-4'>
-                <Input type="checkbox" value={music.id} onChange={() => handleSelection(music.id)} className='size-5 shrink-0 selection-box hidden' />
-                <MusicCard ref={(el) => { cardRefs.current[index] = el }} music={music} index={index} current={current} currentMusic={currentMusic} handleSearch={handleSearch} />
-              </div>
-            ))}
-          </div>
+<MusicList musicPromise={music} handleSearch={handleSearch} handleSelection={handleSelection}/>
+
         </div>
-        <div id="music-player" className=" border h-[10%]">
-          <MusicPlayer musicSource={musicList && musicList[currentMusic]?.fileUrlPublic || ""} next={next} prev={prev} metadata={musicList && musicList[currentMusic] || { title: "", artist: "", coverArt: "" }}/>
+        <div id="music-player" className="border h-[10%]">
+          <MusicPlayer/>
         </div>
         <div id="metadata-search" className='fixed bg-emerald-900 top-0 bottom-0 left-0 right-0 w-full md:w-[600px] mx-auto ' style={{ display: "none" }} ref={searchContainerRef}>
           <div className='absolute text-xl text-black hover:text-red-600 font-extrabold top-3 right-8 cursor-pointer' onClick={(e) => { if (searchContainerRef.current) searchContainerRef.current.style.display = "none" }}>
@@ -276,11 +252,11 @@ export function MusicPlayerLayoutComponent({ music, list }) {
                     <p className='text-lg'>{music.artistName}</p>
                     <p className='text-lg'>{music.releaseDate && music.releaseDate.split("T")[0]}</p>
                     <div className='flex gap-4'>
-                      <button className='w-max px-2 py-1 bg-green-600 hover:bg-green-700  rounded-3xl'
+                      {/* <button className='w-max px-2 py-1 bg-green-600 hover:bg-green-700  rounded-3xl'
                         onClick={() => {
                           updateMusic(music)
                         }}
-                      >Update Info</button>
+                      >Update Info</button> */}
                       <button
                         className='w-max bg-black hover:bg-green-600 p-2 rounded-full'
                         onClick={
@@ -314,7 +290,6 @@ export function MusicPlayerLayoutComponent({ music, list }) {
           </div>
         </div>
       </div>
-    </PlaylistContext.Provider>
   )
 }
 
