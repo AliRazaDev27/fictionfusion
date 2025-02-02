@@ -31,10 +31,8 @@ export async function createPlaylist(title: string) {
 }
 export async function getAllMusicPlaylists(){
     try{
-        const session:any = await auth()
-        const role = session?.user?.role || "VISITOR";
-        if(role === "VISITOR") throw new Error("Not Authorized")
-        const userLists = await db.select({musicLists:UserListTable.musicLists}).from(UserListTable).where(eq(UserListTable.email,session?.user?.email)).limit(1)
+        const email = "alirazadev27@gmail.com"
+        const userLists = await db.select({musicLists:UserListTable.musicLists}).from(UserListTable).where(eq(UserListTable.email,email)).limit(1)
         const values = userLists[0].musicLists
         if(!values || values.length === 0) throw new Error("No lists found/Empty List")
         const lists = await db.select().from(ListTable).where(inArray(ListTable.id,values))

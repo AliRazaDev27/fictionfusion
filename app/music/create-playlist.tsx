@@ -14,9 +14,9 @@ import { useState } from "react";
 import { createPlaylist, getAllMusicPlaylists } from "@/actions/playlistActions";
 import { useToast } from "@/components/ui/use-toast";
 import { useMusicStore } from "./music-context";
-export default function Create({addPlaylist}) {
+export default function Create() {
+    const addPlaylist = useMusicStore((state:any) => state.addPlaylist);
     const playlist = useMusicStore((state:any) => state.playlist);
-    console.log(`context playlist`, playlist);
     const [title, setTitle] = useState('');
     const { toast } = useToast();
     async function createMusicPlaylist() {
@@ -28,7 +28,6 @@ export default function Create({addPlaylist}) {
                 className:"bg-green-600 text-white",
             })
             addPlaylist([...playlist, result.list]);
-
         }
         else{
             toast({

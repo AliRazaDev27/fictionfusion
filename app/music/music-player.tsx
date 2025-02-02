@@ -10,23 +10,29 @@ import { IoSearch } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
 import { useMusicStore } from "./music-context";
 export function MusicPlayer() {
-  const music = useMusicStore((state:any)=>state.music)
-  const current = useMusicStore((state:any)=>state.current)
-  const musicSource = music && music[current]?.fileUrlPublic || undefined; 
-  const metadata:Metadata = music && music[current] || {title: "", artist: "", coverArt: null}  
+  const music = useMusicStore((state: any) => state.music)
+  const current = useMusicStore((state: any) => state.current)
+  const musicSource = music && music[current]?.fileUrlPublic || undefined;
+  const metadata: Metadata = music && music[current] || { title: "", artist: "", coverArt: null }
   console.log(`metadata:${metadata}`)
-  const setCurrent = useMusicStore((state:any)=>state.setCurrent)
-  const next = ()=>{
-if(!music) return
+  const setCurrent = useMusicStore((state: any) => state.setCurrent)
+  const next = () => {
+    if (!music) return
     const nextIndex = (current + 1) % music.length;
+    const nextCard = document.getElementById(`music-card-${nextIndex}`);
+    if (nextCard) {
+      nextCard.scrollIntoView({ behavior: "smooth" });
+    }
     setCurrent(nextIndex);
   }
-  const prev = ()=>{
-if(!music) return
-
+  const prev = () => {
+    if (!music) return
     const prevIndex = (current - 1 + music.length) % music.length
+    const prevCard = document.getElementById(`music-card-${prevIndex}`);
+    if (prevCard) {
+      prevCard.scrollIntoView({ behavior: "smooth" });
+    }
     setCurrent(prevIndex);
-
   }
 
 
@@ -40,7 +46,7 @@ if(!music) return
     if (progressRef.current && audioPlayer.current) {
       const { currentTime, duration } = audioPlayer.current;
       const progress = (currentTime / duration) * 100;
-      const updatedWitdh = 100-progress;
+      const updatedWitdh = 100 - progress;
       progressRef.current.style.width = `${updatedWitdh}%`;
     }
     animationFrame.current = requestAnimationFrame(updateProgress);
@@ -51,8 +57,8 @@ if(!music) return
       if (playRef.current) playRef.current.style.display = "none";
       if (pauseRef.current) pauseRef.current.style.display = "block";
       if (audioPlayer.current) {
-        if (audioPlayer.current.src !== musicSource){
-          if(musicSource) audioPlayer.current.src = musicSource;
+        if (audioPlayer.current.src !== musicSource) {
+          if (musicSource) audioPlayer.current.src = musicSource;
         }
         audioPlayer.current.play();
       }
@@ -76,8 +82,8 @@ if(!music) return
     prev()
   }
   useEffect(() => {
-    if(!music) return;
-    if('mediaSession' in navigator){
+    if (!music) return;
+    if ('mediaSession' in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: metadata.title,
         artist: metadata.artist,
@@ -103,7 +109,7 @@ if(!music) return
       if (audioPlayer.current) {
         audioPlayer.current.removeEventListener("ended", playNextSong)
       }
-      if('mediaSession' in navigator){
+      if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = null
         navigator.mediaSession.setActionHandler('play', null)
         navigator.mediaSession.setActionHandler('pause', null)
@@ -111,7 +117,7 @@ if(!music) return
         navigator.mediaSession.setActionHandler('nexttrack', null)
       }
     }
-  }, [musicSource, next, prev,music,current])
+  }, [musicSource, next, prev, music, current])
 
   useEffect(() => {
     return () => {
@@ -147,32 +153,32 @@ if(!music) return
       </div>
 
       <div className="md:hidden w-[50px] h-full bg-red-300">
-      <button 
-      className="border border-black w-full h-full flex items-center justify-center"
-      onClick={()=>{
-        const sidebar = document.getElementById("sidebar");
-        const openButton = document.getElementById("sidebar-open");
-        const closeButton = document.getElementById("sidebar-close");
+        <button
+          className="border border-black w-full h-full flex items-center justify-center"
+          onClick={() => {
+            const sidebar = document.getElementById("sidebar");
+            const openButton = document.getElementById("sidebar-open");
+            const closeButton = document.getElementById("sidebar-close");
 
-        if(sidebar && openButton && closeButton){
-        if (openButton.style.display === "block" || !openButton.style.display) {
-          sidebar.style.transform = "translateX(0%)";
-          openButton.style.display = "none";
-          closeButton.style.display = "block";
-        } else {
-          sidebar.style.transform = "translateX(-100%)";
-          openButton.style.display = "block";
-          closeButton.style.display = "none";
-        }
-      }
-      }}>
-        <span id="sidebar-open" className="text-2xl block">
-        <IoSearch/>
-        </span>
-<span id="sidebar-close" className="text-3xl hidden">
-        <IoIosCloseCircle/>
-</span>
-      </button>
+            if (sidebar && openButton && closeButton) {
+              if (openButton.style.display === "block" || !openButton.style.display) {
+                sidebar.style.transform = "translateX(0%)";
+                openButton.style.display = "none";
+                closeButton.style.display = "block";
+              } else {
+                sidebar.style.transform = "translateX(-100%)";
+                openButton.style.display = "block";
+                closeButton.style.display = "none";
+              }
+            }
+          }}>
+          <span id="sidebar-open" className="text-2xl block">
+            <IoSearch />
+          </span>
+          <span id="sidebar-close" className="text-3xl hidden">
+            <IoIosCloseCircle />
+          </span>
+        </button>
       </div>
     </div>
   )
@@ -181,5 +187,5 @@ if(!music) return
 type Metadata = {
   title: string;
   artist: string;
-  coverArt: string|null;
+  coverArt: string | null;
 }
