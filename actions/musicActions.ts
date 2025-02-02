@@ -12,6 +12,7 @@ export async function addMusic(music: NewMusic) {
         const session: any = await auth();
         if (session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
         await db.insert(MusicTable).values(music);
+        revalidatePath("/music")
         return { success: true }
     }
     catch (err:any) {
