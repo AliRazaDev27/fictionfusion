@@ -4,7 +4,7 @@ import { Suspense, use, useEffect, useRef, useState } from "react"
 import { Music } from "@/lib/database/musicSchema"
 import { useMusicStore } from "../music-context"
 
-export function MusicList({musicPromise,handleSelection,handleSearch}){
+export function MusicList({musicPromise}){
     const result = use<any>(musicPromise)
     const musicList = useMusicStore((state:any) => state.music)
     const setMusic = useMusicStore((state:any) => state.addMusic)
@@ -44,8 +44,7 @@ export function MusicList({musicPromise,handleSelection,handleSearch}){
           <div id="content" className="w-full md:border-l px-4 flex-1 space-y-4 pt-4  overflow-y-auto overflow-x-clip">
             {musicList && musicList?.length > 0 && musicList?.slice(0, visibleCount).map((music: Music, index: number) => (
               <div key={index} className='w-full  flex  items-center gap-4'>
-                <Input type="checkbox" value={music.id} onChange={() => handleSelection(music.id)} className='size-5 shrink-0 selection-box hidden' />
-                <MusicCard  music={music} index={index} handleSearch={handleSearch} />
+                <MusicCard  music={music} index={index}/>
               </div>
             ))}
             <div ref={observerRef} className="h-10" />
