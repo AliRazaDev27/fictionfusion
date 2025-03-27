@@ -1,16 +1,16 @@
 "use server"
 import jsdom from "jsdom"
 import { getIgnoreList } from "./ignorelistActions";
+import { ShowMyDramalist } from "@/types";
 export async function getWatchlist(url:string) {
     const [result,ignoreList] = await Promise.all([fetch(url),getIgnoreList()]);
     const response = await result.text()
     const dom = new jsdom.JSDOM(response)
     const document = dom.window.document
     const shows = Array.from(document.querySelectorAll("#content .app-body .box[id^='mdl-']"));
-    console.log(shows.length)
     if (shows.length === 0) return [];
     const showData = shows.map(show => {
-        const item: any = {};
+        const item: ShowMyDramalist = {};
         const titleElement = show.querySelector(".title a");
         const scoreElement = show.querySelector(".score");
         const rankingElement = show.querySelector(".ranking span");
@@ -25,8 +25,8 @@ export async function getWatchlist(url:string) {
         if (infoElement) item.info = infoElement.innerHTML;
         if (descriptionElement) item.description = descriptionElement.innerHTML;
         const imageElement = show.querySelector("[data-src]");
-        if (imageElement){
-           item.image = imageElement.getAttribute("data-src");
+        if (imageElement) {
+           item.image = imageElement.getAttribute("data-src") ?? undefined;
         }
     
         return item;

@@ -4,10 +4,25 @@ import { addItemToIgnoreList } from "@/actions/ignorelistActions";
 import { useToast } from "./ui/use-toast";
 import {  useRef } from "react";
 import { AddShowToDB } from "./add_show_to_db";
+import { Show, ShowMyDramalist } from "@/types";
 
-export default function MyDramaShowCard({item}:any) {
+export default function MyDramaShowCard({item}:{item:ShowMyDramalist}) {
     const cardRef = useRef<HTMLDivElement>(null);
     const { toast } = useToast()
+    const showObject:Show = {
+      id: (new Date()).getTime(),
+      name: item?.title || "",
+      summary: item?.description || "",
+      status: "completed",
+      type: "show",
+      language: "english",
+      genres: ["unknown"],
+      runtime: "unknown",
+      premiered: "unknown",
+      ended: "unknown",
+      rating: item?.rating || "unknown",
+      image: item?.image || "",
+    }
     const handleClick = async () => {
         if (cardRef.current){
           cardRef.current.style.opacity = "0.5";
@@ -18,7 +33,8 @@ export default function MyDramaShowCard({item}:any) {
             }
           }, 500);
         }
-        const result = await addItemToIgnoreList(item.title);
+        if(item?.title){
+        const result = await addItemToIgnoreList(item?.title);
         if (result.success) {
           toast({
             description: "Item added to ignore list",
@@ -37,12 +53,13 @@ export default function MyDramaShowCard({item}:any) {
             className: "bg-red-600 text-white"
           })
         }
+        }
     }
     return(
         <div ref={cardRef} className="bg-sky-950 relative flex flex-col gap-3 items-center justify-between rounded-lg  px-2 py-3 text-center overflow-hidden transition-all duration-500"
         style={{background: 'linear-gradient(220.55deg, #B9A14C 0%, #000000 100%)'}}>
       <div className="relative overflow-hidden w-[90%]  mx-auto aspect-[2/3]">
-        <Image src={item.image} alt="cover" fill quality={100} className="bg-cover" />
+        <Image src={item?.image || ""} alt="cover" fill quality={100} className="bg-cover" />
       </div>
       {
         item.ranking && <div className="absolute top-0 right-0 text-lg text-white bg-orange-500 px-4 py-2 rounded-bl-3xl">{item.ranking}</div>
@@ -67,7 +84,7 @@ export default function MyDramaShowCard({item}:any) {
       <button className="bg-black px-4 py-2 text-white rounded-xl hover:bg-orange-600" onClick={handleClick}>
         Ignore
       </button>
-<AddShowToDB show={item}/>
+<AddShowToDB show={showObject}/>
         </div>
     </div>
     )

@@ -2,10 +2,11 @@
 
 import { getWatchlist } from "@/actions/watchlistActions";
 import MyDramaShowCard from "@/components/mydramaShowCard";
+import { ShowMyDramalist } from "@/types";
 import { useEffect, useState, useRef } from "react";
 
 export default  function Page() {    
-    const [data,setData] = useState(Array<any>())
+    const [data,setData] = useState(Array<ShowMyDramalist>())
     const [page,setPage] = useState(1)
     const [isFetching, setIsFetching] = useState(false);
     const observerRef = useRef<IntersectionObserver | null>(null);
@@ -49,7 +50,7 @@ export default  function Page() {
         {data.length === 0 && <div className="w-full text-center  text-5xl text-white">Loading Please Wait...</div>}    
 
             <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
-        {data.map((item:any,index:number)=>(
+        {data.map((item)=>(
             <MyDramaShowCard key={item.title} item={item}/>
         ))}
         </div>

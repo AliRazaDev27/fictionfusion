@@ -10,25 +10,35 @@ export type { Movie }
 
 
 export type SortBook = {
-    year_newest:SQL<unknown>
-    year_oldest:SQL<unknown>
-    rating_max:SQL<unknown>
-    rating_min:SQL<unknown>
-    pages_max:SQL<unknown>
-    pages_min:SQL<unknown>
-    [key:string]:SQL<unknown>
+    year_newest: SQL<unknown>
+    year_oldest: SQL<unknown>
+    rating_max: SQL<unknown>
+    rating_min: SQL<unknown>
+    pages_max: SQL<unknown>
+    pages_min: SQL<unknown>
+    [key: string]: SQL<unknown>
 }
 export type SortShow = {
-    year_newest:SQL<unknown>
-    year_oldest:SQL<unknown>
-    rating_max:SQL<unknown>
-    rating_min:SQL<unknown>
-    [key:string]:SQL<unknown>
+    year_newest: SQL<unknown>
+    year_oldest: SQL<unknown>
+    rating_max: SQL<unknown>
+    rating_min: SQL<unknown>
+    [key: string]: SQL<unknown>
 }
 export type SortMovie = {
-    year_newest:SQL<unknown>
-    year_oldest:SQL<unknown>
-    rating_max:SQL<unknown>
-    rating_min:SQL<unknown>
-    [key:string]:SQL<unknown>
+    year_newest: SQL<unknown>
+    year_oldest: SQL<unknown>
+    rating_max: SQL<unknown>
+    rating_min: SQL<unknown>
+    [key: string]: SQL<unknown>
+}
+
+export type ShowMyDramalist = {
+    title?: string,
+    link?: string,
+    rating?: string,
+    ranking?: string,
+    info?: string,
+    description?: string,
+    image?: string
 }

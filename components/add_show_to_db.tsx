@@ -4,6 +4,7 @@ import { Show } from "@/types";
 import { useToast } from "./ui/use-toast"; 
 
 export function AddShowToDB({show}:{show:Show}) {
+    console.log(show)
     const { toast } = useToast()
     const handleAdd = async() => {
         const result = await addShow(show)

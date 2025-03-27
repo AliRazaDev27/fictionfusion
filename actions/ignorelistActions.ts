@@ -3,7 +3,6 @@ import { auth } from "@/auth"
 import { db } from "@/lib/database";
 import { IgnoneListTable } from "@/lib/database/ignorelistSchema";
 import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 const ignoreListCache = new Map<string, { data: any, expiry: number }>();
 
