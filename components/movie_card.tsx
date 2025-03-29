@@ -10,7 +10,7 @@ export function MovieCard({ movie,role,list}: { movie: Movie,role:string,list?:a
         key={movie.id}
         className="grid grid-cols-1 md:grid-cols-6  mx-2 gap-2    text-white"
       >
-        <div className="col-span-1 relative overflow-hidden aspect-[2/3] rounded-3xl">
+        <div className="col-span-1 relative overflow-hidden aspect-2/3 rounded-3xl">
           <Image
           src={getMoviePosterLink(movie.poster_path, "w342")}
           alt="poster"

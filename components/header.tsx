@@ -43,7 +43,7 @@ export default async function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[200px] bg-gradient-to-b from-gray-950 to-blue-950 ">
+          <SheetContent side="left" className="w-[200px] bg-linear-to-b from-gray-950 to-blue-950 ">
             <NavLinksMobile/>
           </SheetContent>
         </Sheet>
@@ -53,7 +53,7 @@ export default async function Header() {
         <Link href="/login" className="px-4 py-2   rounded-full bg-black/90 hover:bg-black text-white">Login</Link>:
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size={"icon"}  className="rounded-full  bg-emerald-700 outline-none ring-transparent text-white">
+              <Button size={"icon"}  className="rounded-full  bg-emerald-700 outline-hidden ring-transparent text-white">
                 <CircleUser className="size-7" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>

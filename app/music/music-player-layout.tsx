@@ -29,7 +29,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
       <div id="desktop-layout" className="relative border border-black w-full flex h-[90%]">
         <div id="sidebar" className="absolute md:static bg-[#082635]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0">
           <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
-            <input ref={filterRef} type="text" placeholder="Enter title" className="w-full text-black rounded-3xl px-4 py-2 outline-none" />
+            <input ref={filterRef} type="text" placeholder="Enter title" className="w-full text-black rounded-3xl px-4 py-2 outline-hidden" />
             <div className='flex w-full justify-center gap-4'>
               <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
                   <MdClear />

@@ -32,7 +32,7 @@ export function PlaylistView({ list}) {
                     playlist && playlist.length > 0 && playlist.map((playlist: any, index: number) => (
                         <div key={index} className='w-full ps-4 flex items-center justify-between'>
                             <button
-                                className='bg-black hover:scale-105 transition-transform duration-100 shadow-sm shadow-neutral-400 px-4 py-2 text-white rounded-xl'
+                                className='bg-black hover:scale-105 transition-transform duration-100 shadow-xs shadow-neutral-400 px-4 py-2 text-white rounded-xl'
                                 onClick={(event) => {
                                     loadPlaylist(playlist.id)
                                     const playlistButtons = document.querySelectorAll('.playlist-toggle')

@@ -26,7 +26,7 @@ export function ShowRatingUpdateCard({ item, id }: { item: any; id: any }) {
   };
   return (
     <div className="bg-sky-950 relative flex flex-col gap-2 items-center justify-between rounded-lg  p-4 text-center">
-      <div className="relative overflow-hidden w-[60%]  mx-auto aspect-[2/3]">
+      <div className="relative overflow-hidden w-[60%]  mx-auto aspect-2/3">
         <Image src={item.image} alt="cover" fill className="bg-cover" />
       </div>
       {

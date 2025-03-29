@@ -62,7 +62,7 @@ const sentenceRef:any = useRef(undefined)
   return (
     <div className="relative group/bookcard border">
       <div
-        className="aspect-[3/4] rounded-2xl overflow-hidden"
+        className="aspect-3/4 rounded-2xl overflow-hidden"
       >
         <Image
           src={getOpenLibraryCoverLink("olid", book.cover_edition_key, "M")}

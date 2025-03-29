@@ -68,7 +68,7 @@ Choose a date to add a task.
                             </div>
                             <div className="flex flex-col gap-2">
                                 <label htmlFor="taskTime" className="">Task Time</label>
-                                <input type="text" readOnly id="taskTime" name="taskTime" value={taskTime?.current?.toDateString()}  className="outline-none font-semibold hover:cursor-not-allowed rounded-md p-2 border border-white" />
+                                <input type="text" readOnly id="taskTime" name="taskTime" value={taskTime?.current?.toDateString()}  className="outline-hidden font-semibold hover:cursor-not-allowed rounded-md p-2 border border-white" />
                             </div>
                             <div className="flex justify-end items-center">
                                 <button className=" bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:bg-red-600 disabled:hover:cursor-not-allowed" disabled={pending}>Save</button>

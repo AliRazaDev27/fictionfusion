@@ -73,9 +73,9 @@ export function SearchBar() {
           <DropdownMenuContent side="bottom" sideOffset={8} align="start" alignOffset={8} className="w-full text-center border border-black/50" onInteractOutside={() => setOpen(false)}>
             <DropdownMenuLabel>Search in...</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="data-[highlighted]:bg-blue-400 justify-center text-md" onClick={() => setSearchType("books")} onKeyDown={(e) => {e.key === "Enter" && setSearchType("books") }}>Books</DropdownMenuItem>
-            <DropdownMenuItem className="data-[highlighted]:bg-blue-400 justify-center text-md" onClick={() => setSearchType("shows")}  onKeyDown={(e) => {e.key === "Enter" && setSearchType("shows") }}>Shows</DropdownMenuItem>
-            <DropdownMenuItem className="data-[highlighted]:bg-blue-400 justify-center text-md" onClick={() => setSearchType("movies")}  onKeyDown={(e) => {e.key === "Enter" && setSearchType("movies") }}>Movies</DropdownMenuItem>
+            <DropdownMenuItem className="data-highlighted:bg-blue-400 justify-center text-md" onClick={() => setSearchType("books")} onKeyDown={(e) => {e.key === "Enter" && setSearchType("books") }}>Books</DropdownMenuItem>
+            <DropdownMenuItem className="data-highlighted:bg-blue-400 justify-center text-md" onClick={() => setSearchType("shows")}  onKeyDown={(e) => {e.key === "Enter" && setSearchType("shows") }}>Shows</DropdownMenuItem>
+            <DropdownMenuItem className="data-highlighted:bg-blue-400 justify-center text-md" onClick={() => setSearchType("movies")}  onKeyDown={(e) => {e.key === "Enter" && setSearchType("movies") }}>Movies</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
     </form>

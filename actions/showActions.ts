@@ -1,6 +1,6 @@
 "use server"
 import { addShowTODatabase, deleteShow, getShows } from "@/lib/database/showSchema";
-import { Show, SortShow } from "@/types";
+import { NewShow,SortShow } from "@/types";
 import { revalidatePath } from "next/cache";
 import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
@@ -22,11 +22,10 @@ export async function searchShowByTitle(title: string) {
     const response = await result.json();
     return response;
 }
-export async function addShow(show: Show) {
-  console.log(show)
+export async function addShow(show: NewShow) {
   const session:any = await auth()
     if(session?.user?.role !== "ADMIN") return {success:false, message:"Not Authorized"}
-    const result = await addShowTODatabase(show);
+    const result = await addShowTODatabase(show)
     if(result.success){
         revalidatePath("/shows")
     }

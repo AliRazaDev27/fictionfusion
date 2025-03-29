@@ -6,7 +6,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen  text-white">
-      <main className="flex-grow flex flex-col items-center justify-center p-8 text-center mt-16">
+      <main className="grow flex flex-col items-center justify-center p-8 text-center mt-16">
         <h1 className="text-5xl font-bold mb-6 animate-fade-in-down">
           Discover <span className="text-[#f97316]">Organize</span> Track
         </h1>
