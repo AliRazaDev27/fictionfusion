@@ -3,10 +3,9 @@ import Image from "next/image";
 import { addItemToIgnoreList } from "@/actions/ignorelistActions";
 import { useToast } from "./ui/use-toast";
 import { useRef } from "react";
-import { AddShowToDB } from "./add_show_to_db";
-import { Show, ShowMyDramalist } from "@/types";
+import {  ShowMyDramalist } from "@/types";
 import { addMyDramalistShow } from "@/actions/watchlistActions";
-import { addShow } from "@/actions/showActions";
+
 
 export default function MyDramaShowCard({ item }: { item: ShowMyDramalist }) {
   const cardRef = useRef<HTMLDivElement>(null);

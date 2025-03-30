@@ -40,10 +40,11 @@ const t_genres = document.querySelectorAll('#show-detailsxx > div.show-detailsxs
 const genres: string[] | null = Array.from(t_genres)
     .map((genre) => genre.textContent?.trim())
     .filter((genre): genre is string => genre !== undefined);
-const showDates = document.querySelector('#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(4)')?.textContent?.trim();
-const [t_premiered,t_ended] = showDates?.split(":")[1]?.trim()?.split(" - ") || ["N/A", "N/A"];
-const premiered = t_premiered === "N/A" ? "N/A" : new Date(t_premiered).toISOString().split("T")[0];
-const ended = t_ended === "N/A" ? "N/A" : new Date(t_ended).toISOString().split("T")[0];
+const t_showDates = document.querySelector('#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(4)')?.textContent?.trim();
+const showDates = t_showDates?.split(":")[1]?.trim() || "Jan 1, 2000 - Jan 1, 2000";
+const [t_premiered,t_ended] = showDates?.includes(" - ") === true ? showDates?.split(" - ") : [showDates, showDates];
+const premiered =  new Date(t_premiered).toISOString().split("T")[0];
+const ended = new Date(t_ended).toISOString().split("T")[0];
 const rating = document.querySelector('#show-detailsxx div.box')?.textContent?.trim() || "0.0"
 const runtime = (parseInt(document.querySelector('#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(7)')?.textContent?.split(":")[1]?.trim() || "0")).toString();
 const id = parseInt(document.querySelector('head > meta[property="mdl:rid"]')?.getAttribute('content') || "0") || 0;
