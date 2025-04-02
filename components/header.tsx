@@ -15,7 +15,6 @@ import NavLinksMobile from "./nav_links_mobile"
 import { SearchBar } from "./search_bar"
 import { auth } from "@/auth"
 import Link from "next/link"
-export const dynamic = 'force-dynamic'
 export default async function Header() {
     const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
