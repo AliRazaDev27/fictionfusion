@@ -5,19 +5,14 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { getShowGallery } from "@/actions/showActions";
 import Image from "next/image";
-import { AddToList } from "./add_to_list";
-import Link from "next/link";
 import RatingStar from "./ratingStar";
-export async function ShowCard({ show, role, list }: { show: Show, role?: string, list?: any }) {
-  console.log("show", show);
+export async function ShowCard({ show}: { show: Show }) {
   let images = show?.type === "MDL" ? null : await getShowGallery(show.id);
   let image = show.image as any;
   let coverSrc = image?.medium ? image?.medium : image?.original;
@@ -116,10 +111,6 @@ export async function ShowCard({ show, role, list }: { show: Show, role?: string
         </div>
 
         <p className="text-lg md:line-clamp-3">{show?.summary}</p>
-        <div className="flex items-center gap-4">
-          {role !== "VISITOR" && <AddToList list={list} item={show.id} />}
-          {role === "ADMIN" && <Link href={`/track/${show.id}`} className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg">Track</Link>}
-        </div>
       </div>
     </div>
   );
