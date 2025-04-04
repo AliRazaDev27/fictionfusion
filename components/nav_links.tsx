@@ -25,9 +25,9 @@ export default function NavLinks() {
         Watchlist
       </Link>
 
-      <div className="relative group">
+      <div className="relative group cursor-pointer px-1 py-3">
         <p className="text-white/60 text-xl">Explore</p>
-        <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-linear-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 rounded-lg">
+        <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-linear-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 mt-2 rounded-lg">
           <div className="flex flex-col items-center gap-4">
             {links.map(({ href, label }) => (
               <Link
@@ -42,10 +42,10 @@ export default function NavLinks() {
           </div>
         </div>
       </div>
-      <div className="relative group">
+      <div className="relative group cursor-pointer px-1 py-3">
         <p className="text-white/60 text-xl">Tasks</p>
 
-        <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-linear-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 rounded-lg">
+        <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-linear-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 mt-2 rounded-lg">
           <div className="flex flex-col items-center gap-4">
             {/* ADD */}
             <AddTask />
