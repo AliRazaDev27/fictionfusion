@@ -2,8 +2,7 @@ import { Movie } from "@/types";
 import { getMoviePosterLink } from "@/lib";
 import { getGenre } from "@/lib/utils";
 import Image from "next/image";
-import { AddToList } from "./add_to_list";
-export function MovieCard({ movie,role,list}: { movie: Movie,role:string,list?:any }) {
+export function MovieCard({ movie}: { movie: Movie}) {
   
     return (
       <div
@@ -39,7 +38,6 @@ export function MovieCard({ movie,role,list}: { movie: Movie,role:string,list?:a
             <p>Popularity: <span>{movie.popularity}</span></p>
           </div>
           <p>{movie.overview}</p>
-          {role !== "VISITOR" && <AddToList list={list} item={movie.id} />}
         </div>
       </div>
     );
