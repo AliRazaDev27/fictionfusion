@@ -13,7 +13,7 @@ export default async function Page(props) {
         <div className="min-h-[90vh] w-full flex flex-col px-4 py-4:">
             {(type === "book") && result?.map((item:any,index:number)=>(
                 <div key={index}>
-                    <BookCard book={item} role="USER" />
+                    <BookCard book={item}/>
                 </div>
             ))}
              {(type === "movie") && result?.map((item:any,index:number)=>(
