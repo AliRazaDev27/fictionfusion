@@ -18,12 +18,12 @@ export default async function Page(props) {
             ))}
              {(type === "movie") && result?.map((item:any,index:number)=>(
                 <div key={index}>
-                    <MovieCard movie={item} role="USER" />
+                    <MovieCard movie={item}/>
                 </div>
             ))}
              {(type === "show") && result?.map((item:any,index:number)=>(
                 <div key={index}>
-                    <ShowCard show={item} role="USER" />
+                    <ShowCard show={item}/>
                 </div>
             ))}
         </div>
