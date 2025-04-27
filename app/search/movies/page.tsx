@@ -14,7 +14,7 @@ export default async function Page(props: { searchParams: Promise<any> }) {
     <div className="flex flex-col gap-4 py-4 px-4">
       {result.results.map((movie: any) => (
         <div className="relative" key={movie.id}>
-            <MovieCard  movie={movie} role={role}/>
+            <MovieCard  movie={movie}/>
             {role === "ADMIN" && <AddMovieToDB movie={movie} />}
         </div>
       ))}

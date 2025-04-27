@@ -23,7 +23,7 @@ export default async function Page(props:{searchParams: Promise<any>}) {
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 h-[calc(100vh-70px)] w-full overflow-y-auto">
         {books &&
         books.map((book, index) => (
-            <BookCard key={index} book={book} role={role} list={list}/>
+            <BookCard key={index} book={book}/>
         ))}
       </section>
       </div>

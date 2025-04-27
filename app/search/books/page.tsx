@@ -26,7 +26,7 @@ export default async function Page(props:{searchParams: Promise<any>}) {
         <div className="flex flex-col gap-4 px-4 py-6 ">     
             {books && books.map((book:Book,index:number)=> (
             <div key={index} className="relative">
-                <BookCard book={book}  role="VISITOR"/>
+                <BookCard book={book}/>
                 {role === "ADMIN" && <AddBookToDB book={book} />}
             </div>))}
         
