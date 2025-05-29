@@ -13,8 +13,14 @@ export default  function Page() {
     useEffect(
         () => {
             const fetcher = async () => {
+                const res = await fetch(`/api/getWatchlist`)
+                const text = await res.text();
+                console.log(text);
                 setIsFetching(true);
+                const start = performance.now();
                 const result = await getWatchlist(`https://mydramalist.com/shows/top?page=${page}`)
+                const end = performance.now();
+                console.log("fetch time", end - start);
                 if(result.length === 0) setPage((prev) => prev + 1);
                 setData([...data, ...result]);
                 setIsFetching(false);
