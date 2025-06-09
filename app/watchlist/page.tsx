@@ -59,6 +59,9 @@ export default function Page() {
                 setEmail(session.user.email);
                 console.log("witchhunter: ")
             }
+            else{
+                setEmail(null);
+            }
         }
         getEmail();
     }, [])
