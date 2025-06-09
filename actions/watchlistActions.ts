@@ -1,50 +1,59 @@
 "use server"
-import jsdom from "jsdom"
 import { getIgnoreList } from "./ignorelistActions";
 import { ShowMyDramalist } from "@/types";
 import { mydramalistScrapper } from "@/lib/mydramalistScrapper";
 import { auth } from "@/auth";
 import { addShow } from "./showActions";
-export async function getWatchlist(url: string) {
-  // const [result, ignoreList] = await Promise.all([fetch(url), getIgnoreList()]);
-  const result = await fetch(url);
-  const response = await result.text()
-  const dom = new jsdom.JSDOM(response)
-  const document = dom.window.document
-  const shows = Array.from(document.querySelectorAll("#content .app-body .box[id^='mdl-']"));
-  if (shows.length === 0) return [];
-  const showData = shows.map(show => {
+
+import * as cheerio from 'cheerio';
+
+
+export async function getWatchlist(url: string,email:string|null) {
+  console.log(email);
+  const a = performance.now();
+  const [result, ignoreList] = await Promise.all([fetch(url), getIgnoreList(email)]);
+  // const result = await fetch(url);
+  // const ignoreList = { success: false, items: Array() };
+  console.log("fetch+ignorelist: ",performance.now() - a);
+  const html = await result.text()
+  const start = performance.now();
+  const $ = cheerio.load(html);
+
+  const shows: ShowMyDramalist[] = [];
+
+  $("#content .app-body .box[id^='mdl-']").each((_, el) => {
+    const $el = $(el);
     const item: ShowMyDramalist = {};
-    const titleElement = show.querySelector(".title a");
-    const scoreElement = show.querySelector(".score");
-    const rankingElement = show.querySelector(".ranking span");
-    const infoElement = show.querySelector(".text-muted");
-    const descriptionElement = show.querySelector("p:last-of-type");
-    if (titleElement) {
-      item.title = titleElement.innerHTML;
-      item.link = (titleElement as HTMLAnchorElement)?.href;
-    }
-    if (scoreElement) item.rating = scoreElement.innerHTML;
-    if (rankingElement) item.ranking = rankingElement.innerHTML;
-    if (infoElement) item.info = infoElement.innerHTML;
-    if (descriptionElement) item.description = descriptionElement.innerHTML;
-    const imageElement = show.querySelector("[data-src]");
-    if (imageElement) {
-      item.image = imageElement.getAttribute("data-src") ?? undefined;
-    }
 
-    return item;
+    const titleElement = $el.find(".title a");
+    const scoreElement = $el.find(".score");
+    const rankingElement = $el.find(".ranking span");
+    const infoElement = $el.find(".text-muted");
+    const descriptionElement = $el.find("p").last();
+    const imageElement = $el.find("[data-src]");
+
+    if (titleElement.length) {
+      item.title = titleElement.html() ?? '';
+      item.link = titleElement.attr("href");
+    }
+    if (scoreElement.length) item.rating = scoreElement.html() ?? '';
+    if (rankingElement.length) item.ranking = rankingElement.html() ?? '';
+    if (infoElement.length) item.info = infoElement.html() ?? '';
+    if (descriptionElement.length) item.description = descriptionElement.html() ?? '';
+    if (imageElement.length) item.image = imageElement.attr("data-src");
+
+    shows.push(item);
   });
-  // if (ignoreList.success === true) {
-  //   const filterValues = showData.filter((item: any) => !ignoreList?.items?.includes(item.title))
-  //   return filterValues;
-  // }
-  // else {
-  //   return showData;
-  // }
+  console.log(`Time taken: ${performance.now() - start}ms`);
 
-  return showData
 
+  if (!!ignoreList) {
+    const filterValues = shows.filter((item: any) => !ignoreList?.includes(item.title))
+    return filterValues;
+  }
+  else {
+    return shows;
+  }
 }
 
 export async function addMyDramalistShow(url: string) {

@@ -4,7 +4,6 @@ import { db } from "@/lib/database";
 import { IgnoneListTable } from "@/lib/database/ignorelistSchema";
 import { eq } from "drizzle-orm";
 
-const ignoreListCache = new Map<string, { data: any, expiry: number }>();
 
 export async function addItemToIgnoreList(title:string){
     try{
@@ -24,23 +23,16 @@ export async function addItemToIgnoreList(title:string){
         return {success:false,message:err?.message}
     }
 }
-export async function getIgnoreList(){
+export async function getIgnoreList(email:string|null){
+    "use cache"
     try{
-        const session:any = await auth()
-        const role = session?.user?.role || "VISITOR";
-        if(role === "VISITOR") throw new Error("Not Authorized")
-        const email = session?.user?.email
-        const cacheEntry = ignoreListCache.get(session?.user?.email);
-        if (cacheEntry && cacheEntry.expiry > Date.now()) {
-            return {success:true,items:cacheEntry.data};
-        }
+        if(email === "" || email === null) return null;
         const exists = await db.select().from(IgnoneListTable).where(eq(IgnoneListTable.email,email)).limit(1)
-        if(exists.length === 0) throw new Error("No Ignore List Found For This User...")
-        ignoreListCache.set(session?.user?.email, { data: exists[0].items, expiry: Date.now() + 15 * 60 * 1000 });
-        return {success:true,items:exists[0].items}
+        if(exists.length === 0) return null;
+        return exists[0].items;
     }
     catch(err:any){
         console.log(err)
-        return {success:false,message:err?.message}
+        return null;
     }
 }

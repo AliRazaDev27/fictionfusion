@@ -1,3 +1,4 @@
+"use server";
 import { getUser } from "./actions/userActions"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
@@ -32,7 +33,7 @@ export const signIn = async (email, password) => {
   return;
 };
 
-export const verifyToken = (token) => {
+export const verifyToken = async(token) => {
   try {
     return jwt.verify(token, AUTH_SECRET);
   } catch {
@@ -65,5 +66,15 @@ export const auth = async() => {
 
   if (!token) return null;
 
-  return verifyToken(token);
+  const session = await verifyToken(token);
+  return session as {
+    user: {
+      id: number,
+      name: string,
+      email: string,
+      role: "ADMIN" | "USER",
+    },
+    iat: number,
+    exp: number,
+  };
 };
