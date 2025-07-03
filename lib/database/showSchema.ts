@@ -10,7 +10,6 @@ export const db = drizzle(sql);
 
 export type Show = InferSelectModel<typeof ShowTable>;
 export type NewShow = InferInsertModel<typeof ShowTable>;
-let a:NewShow;
 export const ShowTable = pgTable("shows", {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 64 }).notNull(),
