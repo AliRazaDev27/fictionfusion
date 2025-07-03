@@ -1,102 +1,45 @@
 "use server";
-import { franc } from "franc";
-import { addBook, BookTable, setCoverImage, updateBook } from "@/lib/database/bookSchema";
+import { Book, BookTable, NewBook } from "@/lib/database/bookSchema";
 import { db } from "@/lib/database";
-import { count, inArray } from "drizzle-orm";
-export async function getBookFromOpenLibrary(bookName:string){
-    try{
-    let safeTitle = bookName.trim()   
-    const titleUrl = encodeURIComponent(safeTitle);
-    const response = await fetch(
-      `https://openlibrary.org/search.json?q=${titleUrl}`
-    );
-    const result = await response.json();
-    const book = result.docs[0];
-      let {title, first_publish_year, number_of_pages_median, ratings_average} = book
-      let {author_key,cover_edition_key} = book
-      if(!author_key){
-        author_key = "Unknown"
-      }
-      if(Array.isArray(author_key)){
-        author_key = author_key[0]
-      }
-      console.log(cover_edition_key)
-      if(!first_publish_year){
-        first_publish_year = "null"
-      }
-      let altTitle = title
-      if(franc(title) !== "eng"){
-        altTitle = name
-      }
-      const author_name = book?.author_name ? book?.author_name[0] : "";
-      let first_sentence = ""
-      if(book?.first_sentence){
-        if(Array.isArray(book?.first_sentence)){
-          let sentence = book?.first_sentence.find((value:string)=> franc(value)==="eng")
-          if(sentence){
-            first_sentence = sentence
-          }
-          else{
-            first_sentence = book?.first_sentence[0]
-          }
-        }
-        else{
-          first_sentence = book?.first_sentence
-        }
-      }
-      const store = await addBook({
-        title:altTitle, author_name,author_id:author_key, cover_edition_key, first_publish_year, first_sentence, number_of_pages:number_of_pages_median, rating:ratings_average
-      })
 
-} catch (err) {
-  console.log(err);
-}
-}
-export async function setBookCoverImage(value:string,id:number){
-  const result = await setCoverImage(value,id)
-  return result
-}
-export async function updateBookInfo(id:number,title?:string,author?:string,year?:string,sentence?:string){
-  if(!!title || !!author || !!year || !!sentence){
-  const result = await updateBook(id,title,author,year,sentence)
-  return result
-}
-else{
-  return
-}
+export type bookSearchResult = {
+  author_key: string[];
+  author_name: string[];
+  cover_edition_key: string;
+  first_publish_year: number;
+  first_sentence?: string | string[];
+  key: string;
+  number_of_pages_median: number;
+  ratings_average: number;
+  title: string;
 }
 
-export async function searchBookByTitle(title:string){
-  const result = await fetch(`https://openlibrary.org/search.json?q=${title}&limit=5`)
+export async function searchBookByTitle(title: string) {
+  // const result = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(title)}&projection=full`);
+  const result = await fetch(`https://openlibrary.org/search.json?q=${title}&fields=*&limit=10`)
   const response = await result.json()
-  return response
+  // console.log(response)
+  return response.docs as bookSearchResult[];
 }
-export async function addBookToDB(book:any){
- try{
-  book.rating = book.ratings_average;
-  book.olid = book.edition_key;
-  if(!book.sentence) book.sentence = "";
-  if(!book.author_id) book.author_id = "";
-  const result = await addBook(book)
-  return {
-    success:true}
- }
- catch(err:any){
-  console.log(err)
-  return {
-    success:false,
-    message:err.message
+
+
+export interface Details {
+    covers: string[];
+    description: string | { value: string } | undefined;
+    subjects: string[];
+}
+export async function getBookWorkFromOL(key: string) {
+  const result = await fetch(`https://openlibrary.org/${key}.json`)
+  const response = await result.json()
+  return response as Details;
+}
+
+export async function addBookToDB(book: NewBook) {
+  try{
+    await db.insert(BookTable).values(book);
+    return {success:true, message: "Book added to DB successfully."};
+  }catch (error) {
+    console.error("Error adding book to DB:", error);
+    return {success:false, message: "Failed to add book to DB."};
   }
- }
-}
-export async function getTotalBooks(){
-  const result = await db.select({count:count()}).from(BookTable)
-  return result
-}
-export async function getBooksFromArrayList(list: number[]) {
-  const result = await db
-    .select()
-    .from(BookTable)
-    .where(inArray(BookTable.id, list));
-  return result
 }

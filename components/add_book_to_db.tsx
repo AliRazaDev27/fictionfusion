@@ -2,29 +2,13 @@
 import { useToast } from "./ui/use-toast";
 import { addBookToDB } from "@/actions/bookActions";
 import { Button } from "./ui/button";
+import { Book } from "@/lib/database/bookSchema";
 
 
-export function AddBookToDB({book}:{book:any}){
-    const { toast } = useToast()
+export function AddBookToDB({book}:{book:Book}){
     const handleAdd = async() => {
-        const result = await addBookToDB(book)
-        if(result.success){
-            toast({
-                title: "Added to DB",
-                className: "bg-green-600 text-white",
-                duration: 1000
-              })
-        }
-        else{
-            toast({
-                title: "Failed to Add",
-                description: result.message,
-                className: "bg-red-600 text-white",
-                duration: 2000
-              })
-        }
     }
     return(
-        <Button className="absolute bottom-10 right-5" onClick={handleAdd}>Add to DB</Button>
+        <Button className="w-min ms-auto bg-black/80 hover:bg-green-600  text-white" onClick={handleAdd}>Add to DB</Button>
     )
 }

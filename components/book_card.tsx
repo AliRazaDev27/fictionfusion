@@ -16,7 +16,7 @@ export default function BookCard({ book }: { book: Book }) {
   if (!rating) rating = (book as any)?.ratings_average;
   if (!rating) rating = "0"
   return (
-    <div className="relative group/bookcard rounded-2xl">
+    <div className="relative group/bookcard rounded-2xl border border-white/30 h-min">
       <div
         className="relative aspect-3/4 rounded-2xl overflow-hidden"
       >
@@ -33,7 +33,7 @@ export default function BookCard({ book }: { book: Book }) {
           }}
         />
       </div>
-      <div className="absolute overflow-hidden top-0 left-0 w-full h-full  scale-0 group-hover/bookcard:scale-100 transition-all duration-500 group-hover/bookcard:flex flex-col gap-5 shadow-md shadow-black px-4 py-4 bg-white/80 rounded-2xl">
+      <div className="absolute overflow-y-auto top-0 left-0 w-full h-full  scale-0 group-hover/bookcard:scale-100 transition-all duration-500 group-hover/bookcard:flex flex-col gap-4 shadow-md shadow-black px-4 py-4 bg-white/90 rounded-2xl">
         <div className="flex justify-between items-center">
           <h1 className="text-xl sm:text-2xl lg:text-xl  font-semibold italic">{book.title}</h1>
         </div>
@@ -63,10 +63,8 @@ export default function BookCard({ book }: { book: Book }) {
         <div>
           <p className="">{book.first_sentence}</p>
           {/*  add proper style for description. */}
-          <div className="border w-min border-black ">
-            <div id="description" className="absolute top-0 left-0 w-full h-full hidden scale-0  flex-col gap-5 shadow-md shadow-black px-4 py-4 bg-white/70 rounded-2xl">
+          <div className="w-full mt-4">
               <p className="">{book?.description}</p>
-            </div>
           </div>
         </div>
       </div>

@@ -20,6 +20,10 @@ const nextConfig = {
             {
                 protocol: "https",
                 hostname: "i.mydramalist.com"
+            },
+            {
+                protocol: "http",
+                hostname: "books.google.com"
             }
         ],
     }

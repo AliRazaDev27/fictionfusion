@@ -33,12 +33,13 @@ export function SearchControlls({type}:{type:string}) {
     router.push(`${path}`)
     router.refresh()
   }
+  const handleDelete = async () => {
+  }
 
   return (
     (<div
-      className="flex flex-col items-center gap-4 bg-background p-4 w-full mx-auto rounded-lg shadow-lg">
-      <div className="relative flex-1">
-        <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      className="flex flex-col border items-center py-3 gap-4 bg-background w-full mx-auto rounded-lg shadow-lg">
+      <div className="w-[90%] flex-1">
         <Input
           type="search"
           name="search"
@@ -51,7 +52,7 @@ export function SearchControlls({type}:{type:string}) {
             }
           }}
           placeholder="Search products..."
-          className="w-full pl-8 rounded-md bg-muted" />
+          className="w-full rounded-md bg-muted" />
       </div>
       <div className="flex items-center gap-4 justify-center">
         <Label>Sort By</Label>
@@ -72,8 +73,10 @@ export function SearchControlls({type}:{type:string}) {
         </DropdownMenu>
       </div>
       <div className="flex flex-wrap justify-center gap-4 items-center ">
-        <Button className="bg-red-600 text-white" onClick={() => handleReset()}>Reset</Button>
-        <Button className="bg-blue-600 text-white" onClick={() => handleFilter()}>Filter</Button>
+        <Button className="bg-red-500 text-white" onClick={() => handleReset()}>Reset</Button>
+        <Button className="bg-blue-500 text-white" onClick={() => handleFilter()}>Filter</Button>
+
+        <Button className="bg-red-500 text-white" onClick={() => handleDelete()}>Delete</Button>
       </div>
     </div>)
   );
