@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function stripHtml(html:string) {
     const data = cheerio.load(html);
-    const text = data.text();
+    const text = data.toString();
     return text;
   }
 

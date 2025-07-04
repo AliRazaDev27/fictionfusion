@@ -1,6 +1,7 @@
 "use server";
 import { Book, BookTable, NewBook } from "@/lib/database/bookSchema";
 import { db } from "@/lib/database";
+import { count } from "drizzle-orm";
 
 export type bookSearchResult = {
   author_key: string[];
@@ -42,4 +43,9 @@ export async function addBookToDB(book: NewBook) {
     console.error("Error adding book to DB:", error);
     return {success:false, message: "Failed to add book to DB."};
   }
+}
+
+export async function getTotalBooks(){
+  const result = await db.select({count:count()}).from(BookTable)
+  return result
 }

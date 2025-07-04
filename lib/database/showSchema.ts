@@ -5,6 +5,7 @@ import { drizzle } from "drizzle-orm/vercel-postgres";
 import { decimal, json, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
 import { stripHtml } from "../utils";
+// import { stripHtml } from "../utils";
 
 export const db = drizzle(sql);
 

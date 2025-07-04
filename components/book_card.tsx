@@ -42,12 +42,12 @@ export default function BookCard({ book }: { book: Book }) {
 
             <div>
               <Avatar className="size-14">
-                <AvatarImage src={getOpenLibraryAuthorLink("olid", book.author_id, "S")} className="object-cover object-center" />
+                <AvatarImage src={getOpenLibraryAuthorLink("olid", book?.author_key ? book?.author_key[0]: null, "S")} className="object-cover object-center" />
                 <AvatarFallback><IoPersonCircle className="size-14" /></AvatarFallback>
               </Avatar>
             </div>
             {/* TODO: some beautiful animation here */}
-            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="px-2 py-1  hover:bg-blue-600 hover:no-underline hover:rounded-2xl text-base underline underline-offset-4 transition-color duration-500">{book.author_name}</Link>
+            <Link href={`/author/${getAuthorId(book?.author_key![0])}`} prefetch={false} className="px-2 py-1  hover:bg-blue-600 hover:no-underline hover:rounded-2xl text-base underline underline-offset-4 transition-color duration-500">{book.author_name}</Link>
           </div>
         </div>
         <div className="flex justify-evenly items-center">
@@ -61,7 +61,6 @@ export default function BookCard({ book }: { book: Book }) {
           </div>
         </div>
         <div>
-          <p className="">{book.first_sentence}</p>
           {/*  add proper style for description. */}
           <div className="w-full mt-4">
               <p className="">{book?.description}</p>
