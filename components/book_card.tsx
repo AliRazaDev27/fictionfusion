@@ -21,16 +21,14 @@ export default function BookCard({ book }: { book: Book }) {
         className="relative aspect-3/4 rounded-2xl overflow-hidden"
       >
         <Image
-          src={getOpenLibraryCoverLink("olid", book.cover_edition_key, "M")}
+          src={getOpenLibraryCoverLink(book.cover_edition_key) || "/bookplaceholder.svg"}
           alt="cover"
-          fill
           quality={100}
-          placeholder="blur"
-          blurDataURL="/bookplaceholder.svg"
+          // placeholder="blur"
+          // blurDataURL="/bookplaceholder.svg"
           style={{ objectFit: "cover" }}
-          onError={(e) => {
-            e.currentTarget.src = placeholder.src;
-          }}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
       <div className="absolute overflow-y-auto top-0 left-0 w-full h-full  scale-0 group-hover/bookcard:scale-100 transition-all duration-500 group-hover/bookcard:flex flex-col gap-4 shadow-md shadow-black px-4 py-4 bg-white/90 rounded-2xl">

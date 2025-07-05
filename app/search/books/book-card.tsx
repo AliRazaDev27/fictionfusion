@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useState } from "react"
+import { Input } from "@/components/ui/input"
 import { IoMdRemoveCircle } from "react-icons/io";
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
@@ -14,46 +15,55 @@ export function BookCard({ book, details }: { book: bookSearchResult, details: D
     const [subjects, setSubjects] = useState(details.subjects || []);
     const [loading, setLoading] = useState(false);
     const { toast } = useToast()
-    const handleAdd = async () => {
+    const [editedBook, setEditedBook] = useState({
+        title: book.title,
+        author_name: book.author_name || [],
+        author_key: book.author_key || [],
+        cover_edition_key: book?.cover_edition_key || details.covers?.[0] || "",
+        openlibrary_work_key: book.key,
+        first_publish_year: book.first_publish_year || 0,
+        description: !!details.description ? (typeof details.description === 'string' ? details.description : details.description.value) : "No description available.",
+        number_of_pages: book.number_of_pages_median || 0,
+        rating: String(book.ratings_average || 0),
+        tags: subjects,
+        covers: details.covers || [],
+    });
 
-        console.log(book)
-        let description = "No description available.";
-        if (!!details.description) {
-            description = typeof details.description === 'string' ? details.description : details.description.value;
-        }
+    const handleSave = async () => {
         setLoading(true);
         const result = await addBookToDB({
-            title: book.title,
-            author_name: book.author_name || [],
-            author_key: book.author_key || [],
-            cover_edition_key: book?.cover_edition_key || details.covers?.[0] || "",
-            openlibrary_work_key: book.key,
-            first_publish_year: book.first_publish_year || 0,
-            description,
-            number_of_pages: book.number_of_pages_median || 0,
-            rating: String(book.ratings_average || 0),
-            tags: subjects,
-            covers: details.covers || [],
+            ...editedBook,
             isRead: false,
             isFav: false
-        })
+        });
         setLoading(false);
         if (result.success) {
             toast({
                 title: "Added to DB",
                 className: "bg-green-600 text-white",
                 duration: 1000
-            })
-        }
-        else {
+            });
+        } else {
             toast({
                 title: "Failed to Add",
                 description: result.message,
                 className: "bg-red-600 text-white",
                 duration: 2000
-            })
+            });
         }
-    }
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setEditedBook(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleRemoveCover = (index: number) => {
+        setEditedBook(prev => ({
+            ...prev,
+            covers: prev.covers.filter((_, i) => i !== index)
+        }));
+    };
     return (
         <Card className="w-full max-w-7xl mx-auto overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className="flex flex-wrap">
@@ -61,7 +71,7 @@ export function BookCard({ book, details }: { book: bookSearchResult, details: D
                 <div className="flex-shrink-0 w-1/4 min-w-[320px] mx-auto p-2">
                     <div className="relative aspect-[3/4] w-full border bg-gray-100">
                         <img
-                            src={getOpenLibraryCoverLink("olid", book.cover_edition_key, "L")}
+                            src={getOpenLibraryCoverLink(editedBook.cover_edition_key)}
                             alt={`Cover of ${book.title}`}
                             className="w-full h-full object-contain"
                         />
@@ -164,9 +174,64 @@ export function BookCard({ book, details }: { book: bookSearchResult, details: D
                     </CardContent>
 
                     <CardFooter className="pt-0">
-                        <Button className="w-min ms-auto bg-black/80 hover:bg-green-600  text-white" disabled={loading} onClick={handleAdd}>
-                            ADD
-                        </Button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button className="w-min ms-auto bg-black/80 hover:bg-green-600 text-white" disabled={loading}>
+                                    ADD
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Edit Book Details</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                    <div className="flex items-center justify-around gap-2">
+                                    <div>
+                                        <img src={getOpenLibraryCoverLink(editedBook.cover_edition_key)} alt="Cover" className="w-24 h-36 object-contain border" />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <Input name="cover_edition_key" value={editedBook.cover_edition_key} onChange={handleInputChange} placeholder="Cover Edition Key" />
+                                    <Input name="title" value={editedBook.title} onChange={handleInputChange} placeholder="Title" />
+                                    <Input name="author_name" value={editedBook.author_name.join(', ')} onChange={(e) => setEditedBook(prev => ({ ...prev, author_name: e.target.value.split(', ') }))} placeholder="Authors" />
+                                    </div>
+
+                                    <div className="flex flex-col items-center gap-2">
+                                    <Input name="first_publish_year" type="number" value={editedBook.first_publish_year} onChange={handleInputChange} placeholder="First Publish Year" />
+                                    <Input name="number_of_pages" type="number" value={editedBook.number_of_pages} onChange={handleInputChange} placeholder="Number of Pages" />
+                                    <Input name="rating" value={editedBook.rating} onChange={handleInputChange} placeholder="Rating" />
+                                    </div>
+                                    </div>
+                                    <textarea name="description" value={editedBook.description} onChange={handleInputChange} placeholder="Description" className="w-full p-2 border rounded" />
+                                    <div>
+                                        <h4 className="font-semibold mb-2">Covers: {editedBook.covers.length}</h4>
+                                        <div className="max-h-80 overflow-y-auto space-y-2  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+                                            {editedBook.covers.map((cover, index) => (
+                                                <div key={index} className="flex items-center gap-2 p-1 border rounded">
+                                                    <img src={getOpenLibraryCoverLink(cover, "M")} alt={`Cover ${index + 1}`} className="w-16 h-24 object-contain border" />
+                                                    <div className="flex-1">
+                                                        <Input
+                                                            value={cover}
+                                                            onChange={(e) => {
+                                                                const newCovers = [...editedBook.covers];
+                                                                newCovers[index] = e.target.value;
+                                                                setEditedBook(prev => ({ ...prev, covers: newCovers }));
+                                                            }}
+                                                            className="mb-2"
+                                                        />
+                                                        <Button variant="destructive" size="sm" onClick={() => handleRemoveCover(index)}>
+                                                            Remove
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <Button onClick={handleSave} disabled={loading}>
+                                    {loading ? 'Saving...' : 'Save'}
+                                </Button>
+                            </DialogContent>
+                        </Dialog>
                     </CardFooter>
                 </div>
             </div>

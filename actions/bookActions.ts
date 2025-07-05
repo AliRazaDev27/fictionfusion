@@ -49,3 +49,14 @@ export async function getTotalBooks(){
   const result = await db.select({count:count()}).from(BookTable)
   return result
 }
+
+export async function getBooks(){
+  try{
+    const result = await db.select().from(BookTable);
+    return result;
+  }
+  catch(error:any){
+    return null
+
+  }
+}

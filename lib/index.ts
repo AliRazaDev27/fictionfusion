@@ -1,9 +1,14 @@
-export type Key = "isbn" | "olid"
+export type Key = "isbn" | "olid" | "id"
 export type Size = "S" | "M" | "L"
-export const getOpenLibraryCoverLink =  (key:Key,value:string|null,size:Size) => {
+export  const getOpenLibraryCoverLink =  (value:string|null, size: Size = "L") => {
     if(!value) return "/bookplaceholder.svg"
-    value = value.trim()
-    return `https://covers.openlibrary.org/b/${key}/${value}-${size}.jpg?default=false`
+    const valueToString = value.toString().trim();
+    let key = "id"
+    console.log(typeof valueToString,valueToString)
+    if(valueToString.startsWith("OL")){
+        key="olid"
+    }
+    return `https://covers.openlibrary.org/b/${key}/${valueToString}-${size}.jpg?`
 }
 export const getOpenLibraryAuthorLink =  (key:Key,value:string|null,size:Size) => {
     if(!value) return "/bookplaceholder.svg"
