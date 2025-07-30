@@ -41,7 +41,7 @@ export function MusicList({musicPromise}){
 
     return(
         <Suspense fallback={<div>Loading...</div>}>
-          <div id="content" className="w-full md:border-l px-4 flex-1 space-y-4 pt-4  overflow-y-auto overflow-x-clip">
+          <div id="content" className="w-full md:border-l border-slate-500 px-4 flex-1 space-y-4 pt-4  overflow-y-auto overflow-x-clip">
             {musicList && musicList?.length > 0 && musicList?.slice(0, visibleCount).map((music: Music, index: number) => (
               <div key={index} className='w-full  flex  items-center gap-4'>
                 <MusicCard  music={music} index={index}/>

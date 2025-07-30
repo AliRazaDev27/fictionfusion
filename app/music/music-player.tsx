@@ -14,7 +14,6 @@ export function MusicPlayer() {
   const current = useMusicStore((state: any) => state.current)
   const musicSource = music && music[current]?.fileUrlPublic || undefined;
   const metadata: Metadata = music && music[current] || { title: "", artist: "", coverArt: null }
-  console.log(`metadata:${metadata}`)
   const setCurrent = useMusicStore((state: any) => state.setCurrent)
   const next = () => {
     if (!music) return
@@ -137,17 +136,17 @@ export function MusicPlayer() {
           className="progress-bar"
         ></div>
         <div className="flex w-full h-full">
-          <div className='flex  h-full w-[300px] text-3xl mx-auto items-center justify-between'>
-            <button onClick={() => prev()}><IoPlaySkipBackSharp /></button>
-            <button onClick={() => seek(-10)}><IoPlayBack /></button>
-            <button onClick={() => play()}>
+          <div className='flex h-full w-[300px] text-3xl mx-auto items-center justify-between'>
+            <button onClick={() => prev()} className="cursor-pointer hover:scale-125 transition-transform duration-150"><IoPlaySkipBackSharp /></button>
+            <button onClick={() => seek(-10)} className="cursor-pointer hover:scale-125 transition-transform duration-150"><IoPlayBack /></button>
+            <button onClick={() => play()} className="cursor-pointer hover:scale-125 transition-transform duration-150">
               <div>
                 <div ref={pauseRef} style={{ display: "none" }}><IoPause /></div>
                 <div ref={playRef} style={{ display: "block" }}><IoPlay /></div>
               </div>
             </button>
-            <button onClick={() => seek(10)}><IoPlayForward /></button>
-            <button onClick={() => next()}><IoPlaySkipForward /></button>
+            <button onClick={() => seek(10)} className="cursor-pointer hover:scale-125 transition-transform duration-150"><IoPlayForward /></button>
+            <button onClick={() => next()} className="cursor-pointer hover:scale-125 transition-transform duration-150"><IoPlaySkipForward /></button>
           </div>
         </div>
       </div>

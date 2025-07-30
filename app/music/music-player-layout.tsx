@@ -7,6 +7,7 @@ import { MdClear } from "react-icons/md";
 import { FaFilter } from "react-icons/fa";
 import { MusicList } from './components/music-list';
 import { PlaylistView } from './components/playlist';
+import { Input } from '@/components/ui/input';
 
 export function MusicPlayerLayoutComponent({ music, list }) {
   const filterMusicList = useMusicStore((state: any) => state.filterMusicList)
@@ -25,16 +26,16 @@ export function MusicPlayerLayoutComponent({ music, list }) {
   }
 
   return (
-    <div className="w-full " style={{ height: `calc(100svh - ${70}px)` }}>
-      <div id="desktop-layout" className="relative border border-black w-full flex h-[90%]">
-        <div id="sidebar" className="absolute md:static bg-[#082635]  top-0 bottom-0 transition-transform duration-300 w-full md:w-[300px] h-full -translate-x-full md:translate-x-0">
+    <div className="w-full" style={{ height: `calc(100svh - ${70}px)` }}>
+      <div id="desktop-layout" className="relative bg-slate-950 w-full flex h-[90%]">
+        <div id="sidebar" className="absolute md:static top-0 bottom-0 transition-transform duration-300 w-full md:w-[250px] h-full -translate-x-full md:translate-x-0">
           <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
-            <input ref={filterRef} type="text" placeholder="Enter title" className="w-full text-black rounded-3xl px-4 py-2 outline-hidden" />
+            <Input ref={filterRef} type="text" placeholder="Enter title" />
             <div className='flex w-full justify-center gap-4'>
-              <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
+              <button className='bg-slate-700 cursor-pointer hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
                   <MdClear />
                 </button>
-              <button className='bg-black hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={applyFilter}>
+              <button className='bg-slate-700 cursor-pointer hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={applyFilter}>
                   <FaFilter />
                 </button>
             </div>
@@ -43,7 +44,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
         </div>
         <MusicList musicPromise={music} />
       </div>
-      <div id="music-player" className="border h-[10%]">
+      <div id="music-player" className="h-[10%]">
         <MusicPlayer />
       </div>
     </div>
