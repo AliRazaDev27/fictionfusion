@@ -2,7 +2,7 @@
 import { db } from "@/lib/database";
 import { MusicTable } from "@/lib/database/musicSchema";
 import { NewMusic, Music } from "@/lib/database/musicSchema";
-import { asc, eq } from "drizzle-orm";
+import { asc, desc, eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import { deleteMusicFileOnCloudinary } from "@/lib/cloudinaryHelper";
 import { revalidatePath } from "next/cache";
@@ -25,7 +25,7 @@ export async function addMusic(music: NewMusic) {
 }
 export async function getMusic() {
     try {
-        const music = await db.select().from(MusicTable).orderBy(asc(MusicTable.id));
+        const music = await db.select().from(MusicTable).orderBy(desc(MusicTable.modifiedDate));
         return { success: true, music }
     }
     catch (err:any) {
