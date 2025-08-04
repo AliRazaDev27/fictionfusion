@@ -7,19 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { ImSpinner2 } from "react-icons/im";
 import { MdCheckCircle, MdDone, MdError } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
-import { getAllMusicPlaylists } from "@/actions/playlistActions";
-import { Label } from "@/components/ui/label";
 
 export default function Page() {
     const [stage, setStage] = useState(0);
     const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
     const [searchResults, setSearchResults] = useState<any>([]);
     const [uploadStatus, setUploadStatus] = useState<any>({});
-    const [playlist, setPlaylist] = useState<any>([]);
     const metadataSearchInputRef = useRef<HTMLInputElement>(null);
     const storeRef = useRef(new Map());
     const { toast } = useToast();
@@ -34,25 +31,19 @@ export default function Page() {
         const result = await fetch(`https://itunes.apple.com/search?term=${title}`)
         const response = await result.json()
         if (response.resultCount === 0) {
-            console.log("no results")
+            console.log("no results");
             return;
         }
-        console.log(response.results)
         setSearchResults(response.results)
     }
     function handleUpdate(music: any, fileName: string) {
         return () => {
-            console.log(fileName, music)
             storeRef.current.set(fileName, music);
             toast({
                 title: "Metadata updated",
                 description: `Metadata for ${fileName} has been updated.`,
             })
         }
-    }
-    async function handlePlaylist() {
-        const playlist = await getAllMusicPlaylists();
-        console.log(playlist)
     }
     async function handleUpload() {
         if (!selectedFiles) return;
@@ -62,7 +53,6 @@ export default function Page() {
         for (let file of selectedFiles) {
             setUploadStatus((prev: any) => ({ ...prev, [file.name]: "uploading" }));
             const metadata = storeRef.current.get(file.name);
-            console.log(metadata);
             if (!metadata) {
                 setUploadStatus((prev: any) => ({ ...prev, [file.name]: "error" }));
                 errorCount++;
@@ -104,14 +94,6 @@ export default function Page() {
             revalidateMusic();
         }
     }
-    useEffect(() => {
-        async function setupPlaylist() {
-            const result = await getAllMusicPlaylists();
-            console.log(playlist)
-            if (result.success) setPlaylist(result.lists);
-        }
-        setupPlaylist();
-    }, [])
     return (
         <div className="bg-slate-900 text-white w-full">
             {stage === 0 && (
@@ -121,9 +103,9 @@ export default function Page() {
             )}
             {stage === 1 && (
                 <div className='w-full min-h-[89svh] flex flex-col items-center gap-2 p-2'>
-                    <div className="flex items-center justify-between md:px-8 w-full">
-                        <Button className="cursor-pointer" onClick={() => setStage(0)}>Back</Button>
-                        <Button className="cursor-pointer" onClick={handleUpload}>Upload</Button>
+                    <div className="flex items-center justify-between md:px-8 md:py-2 w-full">
+                        <Button className="cursor-pointer bg-red-500" onClick={() => setStage(0)}>Back</Button>
+                        <Button className="cursor-pointer bg-green-600" onClick={handleUpload}>Upload</Button>
                     </div>
                     {
                         !selectedFiles && <p>No files selected</p>
@@ -132,7 +114,7 @@ export default function Page() {
                         {
                             !!selectedFiles &&
                             Array.from(selectedFiles).map((file) => (
-                                <div key={file.name} className="flex items-center w-full justify-between gap-1 bg-sky-950">
+                                <div key={file.name} className="flex items-center w-full justify-between gap-2 bg-sky-950">
                                     <div className="flex items-center gap-1">
                                         <div className="rounded-md overflow-clip">
                                             <img className="w-[100px] h-[100px]" src={storeRef.current.get(file.name)?.artworkUrl100 || "https://placehold.co/100"} alt={file.name} />
@@ -141,76 +123,51 @@ export default function Page() {
                                             <p className=""><span className="font-semibold text-green-500">Filename</span>: {file.name}</p>
                                             <p><span className="font-semibold text-green-500">Title</span>: {storeRef.current.get(file.name)?.trackName || "Unknown"}</p>
                                             <p><span className="font-semibold text-green-500">Artist</span>: {storeRef.current.get(file.name)?.artistName || "Unknown"}</p>
-                                            <p><span className="font-semibold text-green-500">Category</span>: {storeRef.current.get(file.name)?.primaryGenreName || "Unknown"}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex flex-col gap-2 items-center">
-                                            <div>
-                                                <Dialog>
-                                                    <DialogTrigger className="text-sm font-semibold cursor-pointer bg-slate-300 text-gray-800 w-fit p-2 rounded-lg"><span className="flex items-center">
-                                                        {storeRef.current.get(file.name) ? <MdDone className="mr-2 text-green-700 scale-150" /> : <RxCross2 className="mr-2 text-red-600 scale-150" />}
-                                                        <span>Metadata</span></span> </DialogTrigger>
-                                                    <DialogContent className="overflow-y-auto">
-                                                        <DialogHeader>
-                                                            <DialogTitle>Set Cover Metadata</DialogTitle>
-                                                            <DialogDescription className="sr-only">
-                                                                Search with Itunes Search API for cover metadata.
-                                                            </DialogDescription>
-                                                        </DialogHeader>
-                                                        <div>
-                                                            <Input type="text" defaultValue={file.name} ref={metadataSearchInputRef} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSearch(); } }} className="text-black outline" />
-                                                            <div className="flex flex-col p-2 gap-2 h-[70svh]">
-                                                                {
-                                                                    searchResults && searchResults.map((music: any, index: number) => (
-                                                                        <div className="flex flex-col border rounded-xl gap-2 p-2 bg-slate-400" key={music.trackId}>
-                                                                            <div className='flex items-center gap-2' key={index}>
-                                                                                <div className='min-w-[100px] aspect-square'>
-                                                                                    <img src={music.artworkUrl100} alt="artwork" style={{ objectFit: "cover" }} loading='lazy' width={100} height={100} />
-                                                                                </div>
-                                                                                <div className='flex flex-col gap-1'>
-                                                                                    <p className='text-xl'>{music.trackName}</p>
-                                                                                    <p className='text-lg'>{music.artistName}</p>
-                                                                                    <p className='text-lg'>{music.releaseDate && music.releaseDate.split("T")[0]}</p>
-                                                                                </div>
+                                    <div className="flex items-center">
+                                        <div>
+                                            <Dialog>
+                                                <DialogTrigger className="text-sm font-semibold cursor-pointer bg-slate-300 text-gray-800 w-fit p-2 rounded-lg"><span className="flex items-center">
+                                                    {storeRef.current.get(file.name) ? <MdDone className="mr-2 text-green-700 scale-150" /> : <RxCross2 className="mr-2 text-red-600 scale-150" />}
+                                                    <span>Metadata</span></span> </DialogTrigger>
+                                                <DialogContent className="overflow-y-auto">
+                                                    <DialogHeader>
+                                                        <DialogTitle>Set Cover Metadata</DialogTitle>
+                                                        <DialogDescription className="sr-only">
+                                                            Search with Itunes Search API for cover metadata.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div>
+                                                        <Input type="text" defaultValue={file.name.split(".")[0]} ref={metadataSearchInputRef} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleSearch(); } }} className="text-black outline" />
+                                                        <div className="flex flex-col p-2 gap-2 h-[70svh]">
+                                                            {
+                                                                searchResults && searchResults.map((music: any, index: number) => (
+                                                                    <div className="flex flex-col border rounded-xl gap-2 p-2 bg-slate-400" key={music.trackId}>
+                                                                        <div className='flex items-center gap-2' key={index}>
+                                                                            <div className='min-w-[100px] aspect-square'>
+                                                                                <img src={music.artworkUrl100} alt="artwork" style={{ objectFit: "cover" }} loading='lazy' width={100} height={100} />
                                                                             </div>
-
-                                                                            <div className="flex items-center justify-between gap-2">
-                                                                                <audio src={music.previewUrl || null} preload='none' controls controlsList="nodownload noplaybackrate noremote">Audio Player not supported</audio>
-                                                                                <Button className="cursor-pointer" onClick={handleUpdate(music, file.name)}>Update</Button>
+                                                                            <div className='flex flex-col gap-1'>
+                                                                                <p className='text-xl'>{music.trackName}</p>
+                                                                                <p className='text-lg'>{music.artistName}</p>
+                                                                                <p className='text-lg'>{music.releaseDate && music.releaseDate.split("T")[0]}</p>
                                                                             </div>
                                                                         </div>
-                                                                    ))
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </DialogContent>
-                                                </Dialog>
-                                            </div>
-                                            <div className="w-full">
-                                                <Dialog>
-                                                    <DialogTrigger className="w-full text-sm font-semibold cursor-pointer bg-slate-300 text-gray-800 p-2 rounded-lg">Playlist</DialogTrigger>
-                                                    <DialogContent>
-                                                        <DialogHeader>
-                                                            <DialogTitle>Add to playlist</DialogTitle>
-                                                            <DialogDescription className="sr-only">Choose a playlist to add this song to.</DialogDescription>
-                                                        </DialogHeader>
-                                                        <div>
-                                                            {playlist.map((item, index) => (
-                                                                <div className="flex border border-black justify-start items-center gap-4" key={index}>
-                                                                    <Input type="checkbox" id="name" className="size-5" checked={item?.items?.includes(index) ? true : false } />
-                                                                    <Label htmlFor="name" className="font-semibold text-lg">
-                                                                        {item.listName}
-                                                                    </Label>
-                                                                </div>
-                                                            ))}    
-                                                        </div>
-                                                    </DialogContent>
 
-                                                </Dialog>
-                                            </div>
+                                                                        <div className="flex items-center justify-between gap-2">
+                                                                            <audio src={music.previewUrl || null} preload='none' controls controlsList="nodownload noplaybackrate noremote">Audio Player not supported</audio>
+                                                                            <Button className="cursor-pointer" onClick={handleUpdate(music, file.name)}>Update</Button>
+                                                                        </div>
+                                                                    </div>
+                                                                ))
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </DialogContent>
+                                            </Dialog>
                                         </div>
-                                        <div>
+                                        <div className="p-3">
                                             {uploadStatus[file.name] === "uploading" && <ImSpinner2 className="animate-spin h-7 w-7" />}
                                             {uploadStatus[file.name] === "success" && <MdCheckCircle className="h-7 w-7 text-green-500" />}
                                             {uploadStatus[file.name] === "error" && <MdError className="h-7 w-7 text-red-500" />}
