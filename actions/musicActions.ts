@@ -7,17 +7,20 @@ import { auth } from "@/auth";
 import { deleteMusicFileOnCloudinary } from "@/lib/cloudinaryHelper";
 import { revalidatePath } from "next/cache";
 
+export async function revalidateMusic() {
+    revalidatePath("/music");
+}
 export async function addMusic(music: NewMusic) {
     try {
         const session: any = await auth();
         if (session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
         await db.insert(MusicTable).values(music);
-        revalidatePath("/music")
-        return { success: true }
+        // revalidatePath("/music")
+        return { success: true, message: "Music added successfully", music }
     }
     catch (err:any) {
         console.log(err)
-        return { success: false, message: err.message }
+        return { success: false, message: err.message, music: null }
     }
 }
 export async function getMusic() {

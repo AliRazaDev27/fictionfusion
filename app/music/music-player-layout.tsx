@@ -2,12 +2,12 @@
 import { useRef } from 'react'
 import { useMusicStore } from './music-context';
 import { MusicPlayer } from './music-player';
-
+import { PlaylistView } from './components/playlist';
+import { MusicList } from './components/music-list';
 import { MdClear } from "react-icons/md";
 import { FaFilter } from "react-icons/fa";
-import { MusicList } from './components/music-list';
-import { PlaylistView } from './components/playlist';
 import { Input } from '@/components/ui/input';
+import { AddMusicFile } from './add-music-file';
 
 export function MusicPlayerLayoutComponent({ music, list }) {
   const filterMusicList = useMusicStore((state: any) => state.filterMusicList)
@@ -32,6 +32,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
           <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
             <Input ref={filterRef} type="text" placeholder="Enter title" />
             <div className='flex w-full justify-center gap-4'>
+              <AddMusicFile />
               <button className='bg-slate-700 cursor-pointer hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
                   <MdClear />
                 </button>
