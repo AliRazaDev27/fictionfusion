@@ -17,11 +17,27 @@ export default function Page() {
     const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
     const [searchResults, setSearchResults] = useState<any>([]);
     const [uploadStatus, setUploadStatus] = useState<any>({});
+    const [metadataApplied, setMetadataApplied] = useState(false);
     const metadataSearchInputRef = useRef<HTMLInputElement>(null);
     const storeRef = useRef(new Map());
     const { toast } = useToast();
+    async function autoApplyMetadata(files: FileList) {
+        for (let file of files) {
+            const searchTerm = file.name.split(".")[0];
+            if (!searchTerm) continue;
+            const title = encodeURIComponent(searchTerm);
+            const result = await fetch(`https://itunes.apple.com/search?term=${title}`);
+            const response = await result.json();
+            if (response.resultCount > 0) {
+                storeRef.current.set(file.name, response.results[0]);
+            }
+        }
+        setMetadataApplied(true);
+    }
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+        if (!e.target.files) return;
         setSelectedFiles(e.target.files);
+        autoApplyMetadata(e.target.files);
         setStage(1);
     }
     async function handleSearch() {
@@ -127,7 +143,7 @@ export default function Page() {
                                     </div>
                                     <div className="flex items-center">
                                         <div>
-                                            <Dialog>
+                                            <Dialog onOpenChange={(isOpen) => { if (!isOpen) { setSearchResults([]) } }}>
                                                 <DialogTrigger className="text-sm font-semibold cursor-pointer bg-slate-300 text-gray-800 w-fit p-2 rounded-lg"><span className="flex items-center">
                                                     {storeRef.current.get(file.name) ? <MdDone className="mr-2 text-green-700 scale-150" /> : <RxCross2 className="mr-2 text-red-600 scale-150" />}
                                                     <span>Metadata</span></span> </DialogTrigger>

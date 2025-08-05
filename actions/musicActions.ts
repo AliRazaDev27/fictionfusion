@@ -1,8 +1,8 @@
 "use server"
 import { db } from "@/lib/database";
 import { MusicTable } from "@/lib/database/musicSchema";
-import { NewMusic, Music } from "@/lib/database/musicSchema";
-import { asc, desc, eq } from "drizzle-orm";
+import { NewMusic } from "@/lib/database/musicSchema";
+import {  desc, eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import { deleteMusicFileOnCloudinary } from "@/lib/cloudinaryHelper";
 import { revalidatePath } from "next/cache";
