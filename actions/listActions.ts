@@ -5,7 +5,7 @@ import { ListTable } from "@/lib/database/listSchema";
 import { UserListTable } from "@/lib/database/userListTable";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { getBooksFromArrayList } from "./bookActions";
+// import { getBooksFromArrayList } from "./bookActions";
 import { getShowsFromArrayList } from "./showActions";
 import { getMoviesFromArrayList } from "./movieActions";
 export async function CreateList(name:string|null,type:string|null){
@@ -131,10 +131,10 @@ export async function getListItems(listId:number) {
         const {items,type} = list[0] 
         if(!items || items.length === 0) throw new Error("List not Found / Empty List")
         // create a getItemsByArray function for each type
-        if(type==="book"){
-            const result = await getBooksFromArrayList(items)
-            return {result:result,type:type}
-        }
+        // if(type==="book"){
+        //     const result = await getBooksFromArrayList(items)
+        //     return {result:result,type:type}
+        // }
         if(type==="movie"){
             const result = await getMoviesFromArrayList(items)
             return {result:result,type:type}

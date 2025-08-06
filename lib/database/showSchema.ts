@@ -4,7 +4,6 @@ import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { decimal, json, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
-import { stripHtml } from "../utils";
 
 export const db = drizzle(sql);
 
@@ -35,7 +34,7 @@ export const addShowTODatabase = async (show: any) => {
     show.language = show?.language || "N/A";
     show.premiered = show?.premiered || "N/A";
     show.ended = show?.ended || "N/A";
-    show.summary = show?.summary ? stripHtml(show.summary) : "N/A";
+    show.summary = show?.summary ? show.summary : "N/A";
     show.image = show?.image || {};
     show.genres = show?.genres || [];
     show.status = show?.status || "N/A";

@@ -1,73 +1,86 @@
 "use client";
 import Image from "next/image";
 import placeholder from "@/public/bookplaceholder.svg";
-import { getAuthorId, getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
-import { FaBookOpen } from "react-icons/fa6";
+import { getOpenLibraryCoverLink } from "@/lib";
 import { Book } from "@/types";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { IoPersonCircle } from "react-icons/io5";
-
+import React from "react";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { FaStar, FaCalendarAlt, FaBookOpen } from "react-icons/fa";
 
 export default function BookCard({ book }: { book: Book }) {
+  const rating = book?.rating ?? (book as any)?.ratings_average ?? "0";
 
-  let rating = book?.rating;
-  if (!rating) rating = (book as any)?.ratings_average;
-  if (!rating) rating = "0"
   return (
-    <div className="relative group/bookcard rounded-2xl border border-white/30 h-min">
-      <div
-        className="relative aspect-3/4 rounded-2xl overflow-hidden"
-      >
-        <Image
-          src={getOpenLibraryCoverLink("olid", book.cover_edition_key, "M")}
-          alt="cover"
-          fill
-          quality={100}
-          placeholder="blur"
-          blurDataURL="/bookplaceholder.svg"
-          style={{ objectFit: "cover" }}
-          onError={(e) => {
-            e.currentTarget.src = placeholder.src;
-          }}
-        />
-      </div>
-      <div className="absolute overflow-y-auto top-0 left-0 w-full h-full  scale-0 group-hover/bookcard:scale-100 transition-all duration-500 group-hover/bookcard:flex flex-col gap-4 shadow-md shadow-black px-4 py-4 bg-white/90 rounded-2xl">
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl sm:text-2xl lg:text-xl  font-semibold italic">{book.title}</h1>
+    <Card className="flex flex-wrap w-full h-full overflow-hidden rounded-lg shadow-xl shadow-cyan-900 hover:shadow-lg transition-shadow duration-300 ease-in-out">
+      <CardHeader className="w-full sm:w-1/3">
+        <div className="relative aspect-[2/3]">
+          <Image
+            src={getOpenLibraryCoverLink(book.cover_edition_key)}
+            alt={book.title}
+            fill
+            quality={90}
+            className="object-cover"
+            placeholder="blur"
+            blurDataURL={placeholder.src}
+            onError={(e) => {
+              e.currentTarget.src = placeholder.src;
+            }}
+          />
         </div>
-        <div className="flex items-center gap-8">
-          <div className="flex gap-2 items-center">
-
-            <div>
-              <Avatar className="size-14">
-                <AvatarImage src={getOpenLibraryAuthorLink("olid", book.author_id, "S")} className="object-cover object-center" />
-                <AvatarFallback><IoPersonCircle className="size-14" /></AvatarFallback>
-              </Avatar>
-            </div>
-            {/* TODO: some beautiful animation here */}
-            <Link href={`/author/${getAuthorId(book.author_id)}`} prefetch={false} className="px-2 py-1  hover:bg-blue-600 hover:no-underline hover:rounded-2xl text-base underline underline-offset-4 transition-color duration-500">{book.author_name}</Link>
-          </div>
+      </CardHeader>
+      <CardContent className="w-full sm:w-2/3 p-4">
+        <CardTitle className="text-3xl font-semibold mb-2 leading-tight">
+          <Link prefetch={false} href={`/books/${book.id}`} className="hover:border-b-2 border-black transition-colors">
+            {book.title}
+          </Link>
+        </CardTitle>
+        <div className="text-lg text-gray-700 font-medium mb-3">
+          by{" "}
+          {book.author_name?.map((author, index) => (
+            <React.Fragment key={book.author_key?.[index] ?? index}>
+              <Link
+                href={`/author/${book.author_key?.[index]}`}
+                className="hover:text-primary transition-colors"
+              >
+                {author}
+              </Link>
+              {index < (book.author_name?.length ?? 0) - 1 && ", "}
+            </React.Fragment>
+          ))}
         </div>
-        <div className="flex justify-evenly items-center">
-          <p className="font-semibold">{book.first_publish_year}</p>
-          <div className="flex gap-2 items-center">
-            <Badge className="text-sm">{Number(rating).toFixed(2)}</Badge>
+        <div className="flex items-center gap-8 md:gap-16 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <FaStar className="text-yellow-500" />
+            <span>{Number(rating).toFixed(2)}</span>
           </div>
-          <div className="flex justify-center items-center gap-2">
-            <p className="text-md">{book.number_of_pages} </p>
+          <div className="flex items-center gap-1">
+            <FaCalendarAlt />
+            <span>{book.first_publish_year}</span>
+          </div>
+          <div className="flex items-center gap-1">
             <FaBookOpen />
+            <span>{book.number_of_pages}</span>
           </div>
         </div>
-        <div>
-          <p className="">{book.first_sentence}</p>
-          {/*  add proper style for description. */}
-          <div className="w-full mt-4">
-              <p className="">{book?.description}</p>
-          </div>
+        <div className="my-4">
+          {book.description}
         </div>
-      </div>
-    </div>
+        <div className="flex flex-wrap gap-2">
+          {book.tags?.slice(0, 3).map((tag) => (
+            <Badge key={tag} className="text-xs sm:text-sm" variant="default">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

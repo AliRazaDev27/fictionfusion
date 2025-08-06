@@ -61,7 +61,7 @@ export function BookCard({ book, details }: { book: bookSearchResult, details: D
                 <div className="flex-shrink-0 w-1/4 min-w-[320px] mx-auto p-2">
                     <div className="relative aspect-[3/4] w-full border bg-gray-100">
                         <img
-                            src={getOpenLibraryCoverLink("olid", book.cover_edition_key, "L")}
+                            src={getOpenLibraryCoverLink(book.cover_edition_key)}
                             alt={`Cover of ${book.title}`}
                             className="w-full h-full object-contain"
                         />

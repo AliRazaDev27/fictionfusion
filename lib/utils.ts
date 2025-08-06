@@ -6,12 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function stripHtml(html:string) {
-    const data = cheerio.load(html);
-    const text = data.text();
-    return text;
-  }
-
 export const bookSortOptions = [
     { value: "year_newest", label: "Year: Newest" },
     { value: "year_oldest", label: "Year: Oldest" },

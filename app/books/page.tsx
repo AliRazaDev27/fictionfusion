@@ -4,6 +4,7 @@ import { getBookList } from "@/actions/userListActions";
 import PaginationControll from "@/components/pagination"
 import SearchAndFilter from "@/components/seach_filter_sheet"
 import { Sidebar } from "./components/sidebar";
+import { getBooks } from "@/actions/bookActions";
 
 export default async function Page(props:{searchParams: Promise<any>}) {
   const searchParams = await props.searchParams;
@@ -11,13 +12,14 @@ export default async function Page(props:{searchParams: Promise<any>}) {
   const search = searchParams.search;
   const sort = searchParams.sort;
   const LIMIT = 10;
-  const books = []
+  const {books} = await getBooks();
+  console.log(books)
   return (
     <div className="relative min-h-[100svh - 70px]">
       {/* <SearchAndFilter type="books" /> */}
       <div className="flex items-center">
-      <Sidebar />
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4 h-[calc(100vh-70px)] w-full overflow-y-auto">
+      {/* <Sidebar /> */}
+      <section className="flex flex-col gap-8 p-4 w-full overflow-y-auto">
         {books &&
         books.map((book, index) => (
             <BookCard key={index} book={book}/>
