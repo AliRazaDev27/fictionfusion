@@ -65,7 +65,6 @@ export async function addMyDramalistShow(url: string) {
     const result = await fetch(url);
     const textContent = await result.text();
     const data = await mydramalistScrapper(textContent);
-    console.log(data)
     if (data.id === 0) throw new Error("Invalid ID");
     if (data.name === "unknown") throw new Error("Invalid Name");
     const response = await addShow(data)
