@@ -20,6 +20,7 @@ export default function NavLinks() {
 
       <Link
         href="/watchlist"
+        prefetch={false}
         className={cn(`transition-colors duration-100 hover:text-orange-500 text-xl`, pathname === "/watchlist" ? "text-white font-semibold" : "text-white/60 ")}
       >
         Watchlist
@@ -33,6 +34,7 @@ export default function NavLinks() {
               <Link
                 key={href}
                 href={href}
+                prefetch={false}
                 className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === href ? "text-white font-semibold" : "text-white/60")}
               >
                 {label}

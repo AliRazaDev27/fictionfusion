@@ -10,6 +10,7 @@ export default function NavLinksMobile() {
     <nav className="flex flex-col justify-center text-center gap-6 text-lg font-medium">
       <Link
         href="/"
+        prefetch={false}
         className="text-lg font-semibold text-white"
       >
         Fiction
@@ -17,30 +18,35 @@ export default function NavLinksMobile() {
       </Link>
       <Link
         href="/watchlist"
+        prefetch={false}
         className={cn(`transition-colors hover:text-foreground`, pathname === "/watchlist" ? "text-white" : "text-white/60")}
       >
         Watchlist
       </Link>
       <Link
         href="/books"
+        prefetch={false}
         className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white" : "text-white/60")}
       >
         Books
       </Link>
       <Link
         href="/movies"
+        prefetch={false}
         className={cn(`transition-colors hover:text-foreground`, pathname === "/movies" ? "text-white" : "text-white/60")}
       >
         Movies
       </Link>
       <Link
         href="/shows"
+        prefetch={false}
         className={cn(`transition-colors hover:text-foreground`, pathname === "/shows" ? "text-white" : "text-white/60")}
       >
         Shows
       </Link>
       <Link
         href="/music"
+        prefetch={false}
         className={cn(`transition-colors hover:text-foreground`, pathname === "/music" ? "text-white" : "text-white/60")}
       >
         Music
