@@ -22,16 +22,25 @@ export default function Page() {
     const storeRef = useRef(new Map());
     const { toast } = useToast();
     async function autoApplyMetadata(files: FileList) {
-        for (let file of files) {
+        const metadataPromises = Array.from(files).map(async (file) => {
             const searchTerm = file.name.split(".")[0];
-            if (!searchTerm) continue;
+            if (!searchTerm) return null;
             const title = encodeURIComponent(searchTerm);
             const result = await fetch(`https://itunes.apple.com/search?term=${title}`);
             const response = await result.json();
             if (response.resultCount > 0) {
-                storeRef.current.set(file.name, response.results[0]);
+                return { fileName: file.name, metadata: response.results[0] };
             }
-        }
+            return null;
+        });
+
+        const results = await Promise.all(metadataPromises);
+        results.forEach(result => {
+            if (result) {
+                storeRef.current.set(result.fileName, result.metadata);
+            }
+        });
+
         setMetadataApplied(true);
     }
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -63,23 +72,22 @@ export default function Page() {
     }
     async function handleUpload() {
         if (!selectedFiles) return;
-        let successCount = 0;
-        let errorCount = 0;
 
-        for (let file of selectedFiles) {
+        const uploadPromises = Array.from(selectedFiles).map(async (file) => {
             setUploadStatus((prev: any) => ({ ...prev, [file.name]: "uploading" }));
             const metadata = storeRef.current.get(file.name);
+
             if (!metadata) {
                 setUploadStatus((prev: any) => ({ ...prev, [file.name]: "error" }));
-                errorCount++;
-                continue;
+                return { success: false };
             }
+
             const response = await uploadToCloudinary(file);
             if (!response.secure_url) {
                 setUploadStatus((prev: any) => ({ ...prev, [file.name]: "error" }));
-                errorCount++;
-                continue;
+                return { success: false };
             }
+
             const { secure_url, public_id } = response;
             const music: NewMusic = {
                 title: metadata.trackName || "null",
@@ -91,21 +99,28 @@ export default function Page() {
                 fileUrlPublic: secure_url,
                 fileUrlPrivate: public_id,
                 uploadedBy: "ADMIN"
-            }
+            };
+
             const result = await addMusic(music);
             if (result.success) {
                 setUploadStatus((prev: any) => ({ ...prev, [file.name]: "success" }));
-                successCount++;
+                return { success: true };
             } else {
                 setUploadStatus((prev: any) => ({ ...prev, [file.name]: "error" }));
-                errorCount++;
                 await deleteMusicFileOnCloudinary(public_id);
+                return { success: false };
             }
-        }
+        });
+
+        const results = await Promise.all(uploadPromises);
+        const successCount = results.filter(r => r.success).length;
+        const errorCount = results.length - successCount;
+
         toast({
             title: "Upload Complete",
             description: `${successCount} files uploaded successfully, ${errorCount} files failed.`,
         });
+
         if (successCount > 0) {
             revalidateMusic();
         }
