@@ -151,20 +151,25 @@ export function MusicPlayer() {
         </div>
       </div>
 
-      <div className="md:hidden w-[50px] h-full bg-red-300">
+      <div className="absolute z-50 -top-[1.5%] -translate-y-full left-1/2 -translate-x-1/2 md:hidden bg-cyan-600 text-white rounded-full overflow-hidden">
         <button
-          className="border border-black w-full h-full flex items-center justify-center"
+          className="w-12 h-12 flex items-center justify-center cursor-pointer"
           onClick={() => {
+            console.log('click')
             const sidebar = document.getElementById("sidebar");
             const openButton = document.getElementById("sidebar-open");
             const closeButton = document.getElementById("sidebar-close");
+            console.log(sidebar, openButton, closeButton)
 
             if (sidebar && openButton && closeButton) {
               if (openButton.style.display === "block" || !openButton.style.display) {
-                sidebar.style.transform = "translateX(0%)";
+                console.log('what')
+                sidebar.style.transform = "translateX(100%)";
+                console.log(sidebar.style.transform)
                 openButton.style.display = "none";
                 closeButton.style.display = "block";
               } else {
+                console.log('what2')
                 sidebar.style.transform = "translateX(-100%)";
                 openButton.style.display = "block";
                 closeButton.style.display = "none";

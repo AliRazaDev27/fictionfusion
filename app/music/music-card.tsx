@@ -21,9 +21,9 @@ export const MusicCard = forwardRef<HTMLDivElement, MusicCardProps>(({ music, in
       <div className='shrink-0 w-[100px] h-[100px] rounded-3xl overflow-hidden'>
         <img src={music.coverArt || `/music-player.png`} loading="lazy" alt="cover-art" className='w-full h-full object-cover' width={100} height={100} />
       </div>
-      <div className='flex pt-2 ps-2 flex-col gap-3'>
-        <p className="text-xl">{music.title}</p>
-        <p className="text-lg">{music.artist || "Unknown"}</p>
+      <div className='flex pt-1 ps-1 flex-col gap-1'>
+        <p className="text-lg md:text-xl">{music.title}</p>
+        <p className="text-sm md:text-base text-gray-300">{music.artist || "Unknown"}</p>
       </div>
     </div>
   )
