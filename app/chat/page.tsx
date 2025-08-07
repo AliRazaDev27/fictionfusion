@@ -2,6 +2,7 @@
 import { sendMessage } from "@/actions/chatActions";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import options from "./options.json";
 export default function Page() {
     const [content,setContent] = useState<string>("");
     const handleSend = async (message:string) => {
