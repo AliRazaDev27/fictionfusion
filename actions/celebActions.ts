@@ -21,10 +21,19 @@ export async function getCelebs(){
   return await db.select().from(CelebListTable)
 }
 
-export async function extractRealTimeWorkInfo(id:number): Promise<Record<string, Film[]>>{
-  const [data] = await db.select({url: CelebListTable.url}).from(CelebListTable).where(eq(CelebListTable.id, id)).limit(1)
+export async function getCelebUrl(id: number) {
+  const celeb = await db.query.CelebListTable.findFirst({
+    columns: {
+      url: true,
+    },
+    where: eq(CelebListTable.id, id),
+  });
+  return celeb?.url;
+}
+
+export async function extractRealTimeWorkInfo(url:string): Promise<Record<string, Film[]>>{
   const store: Record<string, Film[]> = {}
-  const result = await fetch(data.url)
+  const result = await fetch(url)
   const response = await result.text()
   const content = cheerio.load(response)
   // const name = content("#content > div > div.container-fluid > div > div.col-lg-4.col-md-4 > div > div:nth-child(1) > div.box-header.p-b-0.text-center > h1").text()
