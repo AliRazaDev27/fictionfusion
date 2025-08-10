@@ -68,3 +68,16 @@ export async function uploadToCloudinary(file) {
 
   return response.json();
 }
+
+export interface Film {
+  year: string;
+  title: string;
+  link: string | undefined;
+  episodes: string;
+  role: string;
+  rating: string;
+}
+
+export interface FilmData {
+  [category: string]: Film[];
+}
