@@ -19,8 +19,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+// 082635
     <html lang="en">
-      <body className={`${inter.className} bg-linear-to-tl from-[#121a26] to-[#082635]`}>
+      <body className={`${inter.className} bg-stone-900`}>
         <Header />
         <main>{children}</main>
         <Toaster />

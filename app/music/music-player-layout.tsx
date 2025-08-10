@@ -27,8 +27,8 @@ export function MusicPlayerLayoutComponent({ music, list }) {
 
   return (
     <div className="w-full relative" style={{ height: `calc(100svh - ${70}px)` }}>
-      <div id="desktop-layout" className="relative bg-slate-950 w-full flex h-[90%]">
-        <div id="sidebar" className="absolute md:static top-0 bottom-0 transition-transform duration-300 w-full md:w-[250px] h-full bg-slate-950 -translate-x-full md:translate-x-0">
+      <div id="desktop-layout" className="relative  w-full flex h-[90%]">
+        <div id="sidebar" className="absolute md:static top-0 bottom-0 transition-transform duration-300 w-full md:w-[250px] h-full  -translate-x-full md:translate-x-0">
           <div className='flex flex-col gap-4 w-full px-1 sm:px-2 py-4'>
             <Input ref={filterRef} type="text" placeholder="Enter title" />
             <div className='flex w-full justify-center gap-4'>
