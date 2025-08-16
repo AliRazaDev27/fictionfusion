@@ -410,7 +410,7 @@ export default function HomePage() {
               </div>
               <div className="p-6">
                 <h3 className="text-lg font-semibold mb-2 text-white">Nirvana in Fire</h3>
-                <p className="text-stone-300 text-sm">Thrilling revenge thriller following a family's secrets</p>
+                <p className="text-stone-300 text-sm">Thrilling revenge thriller following a family&aposs secrets</p>
               </div>
             </Card>
 
@@ -473,7 +473,7 @@ export default function HomePage() {
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-2 text-white">100 Years of Solitude</h3>
                 <p className="text-stone-300 text-sm">
-                  A family's magical journey through the Spanish Civil War
+                  A family&aposs magical journey through the Spanish Civil War
                 </p>
               </div>
             </Card>
@@ -504,7 +504,7 @@ export default function HomePage() {
               </div>
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-2 text-white">Wuthering Heights</h3>
-                <p className="text-stone-300 text-sm">A classic novel about a family's struggle for survival</p>
+                <p className="text-stone-300 text-sm">A classic novel about a family&aposs struggle for survival</p>
               </div>
             </Card>
           </div>

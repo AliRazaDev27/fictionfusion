@@ -51,7 +51,7 @@ export default async function Header() {
           <SearchBar/>
           {role === "VISITOR" ? 
         <Link href="/login"
-         className="px-4 py-2 rounded-full bg-black/90 hover:bg-black text-white"
+         className="px-4 py-2 rounded-full bg-slate-700 hover:bg-slate-800 text-white"
          prefetch={false}
          >Login</Link>:
         <DropdownMenu>
