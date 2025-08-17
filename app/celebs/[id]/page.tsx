@@ -12,16 +12,25 @@ export default async function Page({ params }) {
       </div>
     );
   }
-  const response: FilmData = await extractRealTimeWorkInfo(info?.url);
-  // console.log(response);
+  const response: {data:FilmData, info:{nationality:string, gender:string, age:string}} = await extractRealTimeWorkInfo(info?.url);
+  console.log(response);
 
   return (
     <div className="container mx-auto p-4 text-white">
-      <div className="flex items-center gap-4">
-        <img src={info.avatar || ""} alt={info.title} className="w-32 h-32 rounded-full mb-4" />
-        <h1 className="text-3xl font-bold">{info.title}</h1>
-      </div>
-      <WorkList id={id} workInfo={response} ignoredTitles={info.ignoredTitles!} />
+      <WorkList
+       id={id} 
+       workInfo={response.data} 
+       ignoredTitles={info.ignoredTitles!}
+       favouritedTitles={info.favouritedTitles!} 
+       extraInfo={
+        {
+          title: info.title, 
+          avatar: info.avatar!, 
+          nationality: response.info.nationality, 
+          gender: response.info.gender, 
+          age: response.info.age
+        }
+      }/>
     </div>
   );
 }

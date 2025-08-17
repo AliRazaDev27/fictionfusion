@@ -6,6 +6,7 @@ export const CelebListTable = pgTable("celeblists", {
   avatar: varchar("avatar", { length: 255 }),
   url: text("url").notNull().unique(),
   ignoredTitles: text("ignored_titles").array().default([]),
+  favouritedTitles: text("favourited_titles").array().default([]),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdateFn(() => new Date()),
 });

@@ -1,16 +1,28 @@
 "use client"
-import { addWorkInIgnoredList } from "@/actions/celebActions";
+import { addWorkInFavouritedList, addWorkInIgnoredList } from "@/actions/celebActions";
 import { Button } from "@/components/ui/button";
 import { FilmData } from "@/lib";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 // const sample = ["Nirvana in Fire","The Disguiser","Sound of the Desert","You Are the Best","Refresh 3+7"]
-export function WorkList({id,workInfo,ignoredTitles}:{id:number,workInfo:FilmData,ignoredTitles:string[]}){
+export function WorkList({ id, workInfo, ignoredTitles,favouritedTitles,extraInfo }:
+  { id: number,
+    workInfo: FilmData, 
+    ignoredTitles: string[],
+    favouritedTitles: string[],
+    extraInfo:{
+      title:string,
+      avatar:string,
+      nationality:string,
+      gender:string,
+      age:string
+    }
+   }) {
   const [list, setList] = useState(workInfo);
-  
-  const markDone = async(category,title) => {
-    const result = await addWorkInIgnoredList(id,title);
-    if(!result) return
+
+  const handleIgnore = async (category, title) => {
+    const result = await addWorkInIgnoredList(id, title);
+    if (!result) return
     setList((prevList) => {
       const updatedList = { ...prevList };
       if (updatedList[category]) {
@@ -19,14 +31,47 @@ export function WorkList({id,workInfo,ignoredTitles}:{id:number,workInfo:FilmDat
       return updatedList;
     });
   }
-  useEffect(() => {
-    const updatedList = { ...list };
+
+  const handleFavourite = async (category, title) => {
+    const result = await addWorkInFavouritedList(id, title);
+    if (!result) return
+    // maybe add a heart?
+  }
+  const filterAll = ()=>{
+      setList(workInfo);
+    }
+    const filterWatchlist = ()=>{
+      console.log(list)
+    const updatedList = { ...workInfo };
     for (const category in updatedList) {
       updatedList[category] = updatedList[category].filter((film) => !ignoredTitles.includes(film.title));
     }
     setList(updatedList);
-  },[])
-  return(
+    }
+    const filterFavourites = ()=>{
+      const updatedList = { ...workInfo };
+      for (const category in updatedList) {
+        updatedList[category] = updatedList[category].filter((film) => favouritedTitles.includes(film.title));
+      }
+      setList(updatedList);
+    }
+  useEffect(() => {
+    filterWatchlist();
+  }, [])
+  return (
+    <div className="space-y-4">
+      <div className="flex items-start gap-4 sm:gap-8">
+        <img src={extraInfo.avatar || ""} alt={extraInfo.title} className="w-32 h-32 rounded-xl mb-4" />
+        <div>
+          <h1 className="text-3xl font-bold">{extraInfo.title}</h1>
+          <p>{extraInfo.nationality}</p><p>{extraInfo.gender}</p><p>{extraInfo.age}</p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <button className="p-2 bg-teal-600 rounded-lg" onClick={filterWatchlist}>Watchlist</button>
+          <button className="p-2 bg-teal-600 rounded-lg" onClick={filterFavourites}>Favourites</button>
+          <button className="p-2 bg-teal-600 rounded-lg" onClick={filterAll}>All</button>
+        </div>
+      </div>
       <div className="space-y-8">
         {Object.keys(list).map((category) => (
           <div key={category}>
@@ -46,9 +91,14 @@ export function WorkList({id,workInfo,ignoredTitles}:{id:number,workInfo:FilmDat
                         <span className="ms-2 inline-block font-semibold bg-yellow-500 text-black rounded-full px-3 py-3">{film.rating}</span>
                       }
                     </p>
+                    <div className="flex items-center gap-2">
                     <Button
-                    className="cursor-pointer hover:bg-green-600"
-                    onClick={() => markDone(category,film.title)}>MARK</Button>
+                      className="cursor-pointer hover:bg-green-600"
+                      onClick={() => handleFavourite(category, film.title)}>Favourite</Button>
+                    <Button
+                      className="cursor-pointer hover:bg-green-600"
+                      onClick={() => handleIgnore(category, film.title)}>Ignore</Button>
+                    </div>
                   </div>
 
                 </div>
@@ -57,5 +107,6 @@ export function WorkList({id,workInfo,ignoredTitles}:{id:number,workInfo:FilmDat
           </div>
         ))}
       </div>
+    </div>
   )
 }
