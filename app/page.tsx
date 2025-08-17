@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -30,6 +30,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
+// export const dynamic = "force-static"
+
 const data = [
   {
     title: "The Godfather",
@@ -37,15 +39,13 @@ const data = [
     url: "/movies",
     genre: "Movie",
     year: "1972",
-    rating: "9.2",
   },
   {
     title: "Ezel",
     image: "https://static.tvmaze.com/uploads/images/medium_portrait/30/75370.jpg",
     url: "/shows",
-    genre: "TV Show",
+    genre: "Show",
     year: "2009",
-    rating: "8.8",
   },
   {
     title: "The Trial",
@@ -53,7 +53,6 @@ const data = [
     url: "/books",
     genre: "Book",
     year: "1913",
-    rating: "9.2",
   },
 ]
 
@@ -61,8 +60,8 @@ export default function HomePage() {
   return (
     <div className="min-h-screen w-full overflow-hidden" style={{ backgroundColor: "#1c1917" }}>
       {/* Hero Section */}
-      <section className="container mx-auto px-4 md:px-8 py-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="container mx-auto px-4 lg:px-8 py-8 sm:py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-4">
           {/* Left Content */}
           <div className="space-y-4">
             <div className="space-y-4">
@@ -112,7 +111,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="w-fit mt-2">
+            <div className="w-fit max-md:mx-auto mt-8 md:mt-4">
               <Link
                 href="/login"
                 prefetch={false}
@@ -124,22 +123,23 @@ export default function HomePage() {
             </div>
 
           </div>
-          <div className="flex flex-col items-center justify-evenly">
+          <div className="flex flex-col items-center justify-center gap-8">
             <div className="space-y-2">
               <p className="text-4xl font-bold text-center bg-gradient-to-r from-green-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">The Best Stories Ever Told</p>
               <p className="text-xl font-semibold text-white text-center">From timeless classics to trending hits</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-2 lg:gap-4">
               {
                 data.map((item, index) => (
                   <div key={index} className="flex flex-col items-center justify-between rounded-2xl overflow-hidden bg-gray-800">
-                    <div className="w-full bg-gray-800 relative  h-full">
-                      <img src={item.image} alt={item.title} className="w-full h-full" />
+                    <div className="w-full aspect-[0.66] bg-gray-800 relative overflow-hidden">
+                      {/* <img src={item.image} alt={item.title} className="w-full h-full" /> */}
+                      <Image src={item.image} alt={item.title} fill={true} sizes="100%" className="w-full h-full object-cover" />
                     </div>
                     <div className="w-full bg-stone-700 hover:bg-emerald-600 transition-colors duration-200">
                       <Link href={item.url} prefetch={false} className="inline-block  w-full py-2  text-center">
-                        <p className="text-white font-medium text-xl">{item.title}</p>
-                        <p className="text-neutral-300">{item.genre} - {item.year} - {item.rating}</p>
+                        <p className="text-white font-medium text-base text-nowrap">{item.title}</p>
+                        <p className="text-neutral-300 text-sm text-nowrap">{item.genre} - {item.year}</p>
                       </Link>
                     </div>
                   </div>
@@ -151,8 +151,8 @@ export default function HomePage() {
       </section>
 
       {/* Advanced Features Grid */}
-      <section className="container mx-auto px-4 md:px-8 py-20">
-        <div className="text-center mb-16">
+      <section className="container mx-auto px-4 sm:px-8 py-4 sm:py-8 mt-6 sm:mt-2">
+        <div className="text-center py-4">
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
             Powerful Features for <span className="text-emerald-400">Every Media Enthusiast</span>
           </h2>
@@ -322,22 +322,27 @@ export default function HomePage() {
       </section>
 
       {/* Movies Feature Section */}
-      <section className="container mx-auto px-4 md:px-8 py-20">
-        <div className="mb-16">
+      <section className="container mx-auto px-4 sm:px-8 py-4 sm:py-8">
+        <div className="p-4 border border-stone-700 rounded-2xl">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+            <div className="hidden w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl sm:flex items-center justify-center">
               <Film className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-4xl font-bold text-white">Movie Tracking</h2>
-              <p className="text-xl text-stone-300">Comprehensive movie management with advanced categorization</p>
+              <h2 className="text-2xl md:text-4xl font-bold text-white">Movies</h2>
+              <p className="text-lg md:text-xl text-stone-300">Comprehensive movie management with advanced categorization</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 bg-stone-800 border border-stone-700 bg-top">
               <div className="relative">
-                <img src="https://image.tmdb.org/t/p/w342/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg" alt="The Shawshank Redemption movie poster" className="w-full h-72 object-cover object-[0_20%]" />
+                <img
+                  src="https://image.tmdb.org/t/p/w342/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg"
+                  alt="The Shawshank Redemption movie poster"
+                  className="w-full h-72 object-cover object-[0_20%]"
+                  loading="lazy"
+                />
                 <Badge className="absolute top-4 left-4 bg-blue-600 text-white">Drama</Badge>
               </div>
               <div className="p-6">
@@ -354,6 +359,7 @@ export default function HomePage() {
                   src="https://image.tmdb.org/t/p/w342/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg"
                   alt="The Lord of the Rings movie poster"
                   className="w-full h-72 object-cover object-[0_37%]"
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-red-600 text-white">Fantasy</Badge>
               </div>
@@ -371,6 +377,7 @@ export default function HomePage() {
                   src="https://image.tmdb.org/t/p/w342/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"
                   alt="Intersteller movie poster"
                   className="w-full h-72 object-cover object-[0_27%]"
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-purple-600 text-white">Sci-fi</Badge>
               </div>
@@ -386,15 +393,15 @@ export default function HomePage() {
       </section>
 
       {/* TV Shows Feature Section */}
-      <section className="container mx-auto px-4 md:px-8 py-20 ">
-        <div className="mb-16">
+      <section className="container mx-auto px-4 sm:px-8 py-4 sm:py-8 ">
+        <div className="p-4 border border-stone-700 rounded-2xl">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
+            <div className="hidden sm:flex w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl  items-center justify-center">
               <Tv className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-4xl font-bold text-white">TV Show Management</h2>
-              <p className="text-xl text-stone-300">Track episodes, seasons, and binge-watching progress</p>
+              <h2 className="text-2xl md:text-4xl font-bold text-white">TV Show</h2>
+              <p className="text-lg md:text-xl text-stone-300">Track episodes, seasons, and binge-watching progress</p>
             </div>
           </div>
 
@@ -405,6 +412,7 @@ export default function HomePage() {
                   src="https://static.tvmaze.com/uploads/images/medium_portrait/69/174608.jpg"
                   alt="Nirvana in Fire"
                   className="w-full h-72 object-cover object-[0_60%]"
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-orange-600 text-white">Revenge</Badge>
               </div>
@@ -420,6 +428,7 @@ export default function HomePage() {
                   src="https://static.tvmaze.com/uploads/images/medium_portrait/61/152818.jpg"
                   alt="The Sopranos"
                   className="w-full h-72 object-cover object-[0_40%]"
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-green-600 text-white">Mafia</Badge>
               </div>
@@ -435,6 +444,7 @@ export default function HomePage() {
                   src="https://static.tvmaze.com/uploads/images/medium_portrait/83/207960.jpg"
                   alt="Seinfeld"
                   className="w-full h-72 object-cover object-[0_50%]"
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-pink-600 text-white">Comedy</Badge>
               </div>
@@ -448,15 +458,15 @@ export default function HomePage() {
       </section>
 
       {/* Books Feature Section */}
-      <section className="container mx-auto px-4 md:px-8 py-20 ">
-        <div className="mb-16">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center">
-              <BookOpen className="w-8 h-8 text-white" />
+      <section className="container mx-auto px-4 sm:px-8 py-4 sm:py-8">
+        <div className="p-4 border rounded-2xl border-stone-700">
+          <div className="flex items-center gap-4 mb-8 ">
+            <div className="hidden sm:flex w-8 h-8 md:w-16 md:h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl  items-center justify-center">
+              <BookOpen className="w-4 h-4 md:w-8 md:h-8 text-white" />
             </div>
             <div>
-              <h2 className="text-4xl font-bold text-white">Book Library</h2>
-              <p className="text-xl text-stone-300">Advanced reading tracking with progress analytics</p>
+              <h2 className="text-2xl md:text-4xl font-bold text-white">Book Library</h2>
+              <p className="text-lg md:text-xl text-stone-300">Advanced reading tracking with progress analytics</p>
             </div>
           </div>
 
@@ -467,6 +477,7 @@ export default function HomePage() {
                   src="https://m.media-amazon.com/images/I/91GoCrV6emL._UF1000,1000_QL80_.jpg"
                   alt="100 Years of Solitude cover"
                   className="w-full h-96 object-contain"
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-blue-600 text-white">Saga</Badge>
               </div>
@@ -484,6 +495,7 @@ export default function HomePage() {
                   src="https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1327144697i/3744438.jpg"
                   alt="Nineteen Eighty-Four cover"
                   className="w-full h-96 object-contain "
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-rose-600 text-white">Dystopia</Badge>
               </div>
@@ -499,6 +511,7 @@ export default function HomePage() {
                   src="https://images.thegreatestbooks.org/0peqiiwiftf1vax30skf1xq165x0"
                   alt="Wuthering Heights cover"
                   className="w-full h-96 object-contain"
+                  loading="lazy"
                 />
                 <Badge className="absolute top-4 left-4 bg-yellow-600 text-white">Tragedy</Badge>
               </div>
@@ -511,10 +524,10 @@ export default function HomePage() {
         </div>
       </section>
       {/* Enhanced CTA Section */}
-      <section className="container mx-auto px-4 md:px-8 py-20">
-        <Card className="p-16 text-center bg-stone-900/50 border border-stone-700 shadow-2xl">
+      <section className="container  mx-auto px-4 sm:px-8 py-4 sm:py-8">
+        <Card className="px-6 py-6 text-center bg-stone-900/50 border border-stone-700 shadow-2xl">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl lg:text-6xl font-bold text-white mb-6">
+            <h2 className="text-2xl sm:text-4xl lg:text-6xl font-bold text-white mb-6">
               A Personal Entertainment Hub
               <span className="block text-emerald-400">Built for Media Enthusiasts</span>
             </h2>
@@ -523,13 +536,13 @@ export default function HomePage() {
               recommendations, and sophisticated data management for books, movies, TV shows, and music.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
+            <div className="mb-12 flex items-center justify-center">
               <Link
                 href="https://github.com/AliRazaDev27/fictionfusion"
                 prefetch={false}
-                className="flex items-center bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white px-8 py-4 text-lg font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105"
+                className="flex justify-center text-nowrap w-fit items-center bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-500 hover:to-blue-500 text-white px-3 py-3 text-base md:text-lg font-semibold transition-all duration-300 hover:shadow-2xl hover:scale-105"
               >
-                <BookOpen className="w-6 h-6 mr-3" />
+                <BookOpen className="w-6 h-6 mr-3 hidden sm:block" />
                 View on Github
               </Link>
             </div>
@@ -551,6 +564,11 @@ export default function HomePage() {
           </div>
         </Card>
       </section>
+      <footer className="p-4 text-center text-sm text-white">
+        <div className="container mx-auto">
+          <p>© 2023 <span className="font-semibold text-[#f97316]">FictionFusion</span>. All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   )
 }

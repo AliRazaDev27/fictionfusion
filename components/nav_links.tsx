@@ -16,9 +16,7 @@ export default function NavLinks() {
   const pathname = usePathname()
 
   return (
-    <nav className="hidden text-lg font-medium md:flex md:flex-row md:items-center md:gap-4  lg:gap-4">
-
-
+    <nav className="hidden text-lg font-medium md:flex md:flex-row md:items-center md:gap-4">
       <div className="relative group cursor-pointer px-1 py-3">
         <p className="text-white/60 text-xl">Track</p>
         <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-linear-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 mt-2 rounded-lg">
