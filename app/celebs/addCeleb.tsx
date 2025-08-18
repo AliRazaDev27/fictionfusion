@@ -4,14 +4,31 @@ import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, Dialog
 import { Input } from "@/components/ui/input"
 import { MdAdd } from "react-icons/md"
 import { Button } from "@/components/ui/button"
-import { setupCelebInfo } from "@/actions/celebActions"
+import { createCeleb, setupCelebInfo } from "@/actions/celebActions"
 import { useState } from "react"
+import { getPersonIdFromTMDBByTitle } from "@/actions/movieActions"
 
 export function AddCeleb() {
   const [url, setUrl] = useState("")
   const handleSave = async () => {
     if (!url) return
+    if(url.startsWith('https://mydramalist.com/people/')){
     await setupCelebInfo(url)
+    }
+    else{
+      const result = await getPersonIdFromTMDBByTitle(url);
+      if(result.results.length > 0){
+        const data = result.results.find(item => item.name === url);
+        console.log(data);
+        if(!data) return
+        await createCeleb({ 
+          title: url, 
+          avatar: `https://image.tmdb.org/t/p/w500${data.profile_path}`, 
+          url: `${data.id}`,
+          source: "TMDB"
+         })
+      }
+    }
   }
   const handleOpen = async () => {
     const text = await navigator.clipboard.readText()

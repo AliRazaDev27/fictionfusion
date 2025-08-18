@@ -1,11 +1,22 @@
 "use server"
 import { db } from "@/lib/database";
-import { CelebListTable } from "@/lib/database/celebSchema";
+import { CelebListTable, NewCelebList } from "@/lib/database/celebSchema";
 import { eq } from "drizzle-orm";
 import * as cheerio from "cheerio"
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 
+export async function createCeleb(values: NewCelebList) {
+  try{
+  const session = await auth();
+  if(session?.user?.role !== "ADMIN") return
+  await db.insert(CelebListTable).values(values);
+  revalidatePath("/people")
+  }
+  catch(e){
+    console.log(e)
+  }
+}
 
 export async function setupCelebInfo(url: string) {
   try {
