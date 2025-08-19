@@ -8,8 +8,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Suspense } from "react";
 import LoaderHeader from "./loaderHeader";
 
-
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const experimental_ppr = true;
@@ -27,6 +25,10 @@ export default function RootLayout({
   return (
     // 082635
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#082635" />
+      </head>
       <body className={`${inter.className} bg-stone-900`}>
         <Suspense fallback={<LoaderHeader/>}>
         <Header />
