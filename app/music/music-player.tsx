@@ -130,7 +130,7 @@ export function MusicPlayer() {
   return (
     <div className="flex w-full h-full">
       <div className="player">
-        <audio src={musicSource || undefined} preload="auto" autoPlay={isPlaying.current} ref={audioPlayer}>Audio playback not supported</audio>
+        <audio src={musicSource || undefined} preload="none" autoPlay={isPlaying.current} ref={audioPlayer}>Audio playback not supported</audio>
         <div
           ref={progressRef}
           className="progress-bar"

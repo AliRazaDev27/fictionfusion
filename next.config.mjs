@@ -46,6 +46,7 @@ const nextConfig = {
 
 const withPWA = withPWAInit({
     dest: "public",
+    disable: process.env.NODE_ENV === 'development', // 👈 disables in dev
     cacheOnFrontEndNav: true,
     extendDefaultRuntimeCaching: true,
     workboxOptions: {
@@ -70,9 +71,8 @@ const withPWA = withPWAInit({
                 handler: "CacheFirst",
                 options: {
                     cacheName: "cloudinary-media",
-                    expiration: {
-                        maxEntries: 50,                // keep up to 50 files
-                        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                    cacheableResponse: {
+                        statuses: [0, 200],
                     },
                 },
             },
