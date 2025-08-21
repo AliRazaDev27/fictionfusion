@@ -32,21 +32,29 @@ export function MusicPlayerLayoutComponent({ music, list }) {
     playlistButtons.forEach((button: any) => button.classList.remove('playlist-toggle'))
   }
   const filterDownloaded = async () => {
-    const cache = await window.caches.open("cloudinary-media");
+    const cacheButton = document.getElementById('filterCacheButton') as HTMLButtonElement
+    if (!cacheButton) return
+    cacheButton.disabled = true;
+    try {
+      const cache = await window.caches.open("cloudinary-media");
       const checks = await Promise.all(
-    fullMusicList.map(async (music) => {
-      const response = await cache.match(music.fileUrlPublic!);
-      return { music, exists: !!response };
-    })
-  );
-
-  // filter based on resolved results
-  const filtered = checks
-    .filter((item) => item.exists)
-    .map((item) => item.music);
-
-  console.log(filtered);
-    addMusic(filtered)
+        fullMusicList.map(async (music) => {
+          const response = await cache.match(music.fileUrlPublic!);
+          return { music, exists: !!response };
+        })
+      );
+      // filter based on resolved results
+      const filtered = checks
+        .filter((item) => item.exists)
+        .map((item) => item.music);
+      addMusic(filtered)
+    }
+    catch (e) {
+      console.log(e)
+    }
+    finally {
+      cacheButton.disabled = false;
+    }
   }
   return (
     <div className="w-full relative" style={{ height: `calc(100svh - ${70}px)` }}>
@@ -58,8 +66,11 @@ export function MusicPlayerLayoutComponent({ music, list }) {
               <Link href="/music/add" prefetch={false} className='bg-slate-700 cursor-pointer hover:bg-green-700 text-white px-3 py-2 rounded-lg'>
                 <MdAdd />
               </Link>
-              <button className='bg-slate-700 cursor-pointer hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
-                <FaArrowAltCircleDown onClick={filterDownloaded} />
+              <button
+                id={`filterCacheButton`}
+                onClick={filterDownloaded}
+                className='bg-slate-700 cursor-pointer hover:bg-green-700 text-white px-3 py-2 rounded-lg'>
+                <FaArrowAltCircleDown />
               </button>
               <button className='bg-slate-700 cursor-pointer hover:bg-green-700 text-white px-3 py-2 rounded-lg' onClick={clearFilter}>
                 <MdClear />

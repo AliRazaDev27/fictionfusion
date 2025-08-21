@@ -33,7 +33,7 @@ export const MusicCard = forwardRef<HTMLDivElement, MusicCardProps>(({ music, in
       }
     }
     checkCache();
-  }, [])
+  }, [music]);
 
   return (
     <div ref={ref} id={`music-card-${index}`} className='w-full flex  gap-2 overflow-hidden text-white font-semibold text-xl px-2 py-2  hover:bg-teal-700  bg-slate-800 cursor-pointer rounded-xl' style={{ backgroundColor: index === currentMusic ? "rgba(0, 122, 255, 1)" : "" }} key={music.id} onClick={selectMusic}>
