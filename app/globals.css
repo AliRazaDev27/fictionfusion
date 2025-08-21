@@ -174,3 +174,12 @@
     @apply bg-background text-foreground;
   }
 }
+@media (max-width: 768px) {
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+}
