@@ -37,7 +37,7 @@ export const MusicCard = forwardRef<HTMLDivElement, MusicCardProps>(({ music, in
 
   return (
     <div ref={ref} id={`music-card-${index}`} className='w-full flex  gap-2 overflow-hidden text-white font-semibold text-xl px-2 py-2  hover:bg-teal-700  bg-slate-800 cursor-pointer rounded-xl' style={{ backgroundColor: index === currentMusic ? "rgba(0, 122, 255, 1)" : "" }} key={music.id} onClick={selectMusic}>
-      <div className='relative shrink-0 w-[100px] h-[100px] rounded-lg overflow-hidden'>
+      <div className='relative z-0 shrink-0 w-[100px] h-[100px] rounded-lg overflow-hidden'>
         <img src={music.coverArt || `/music-player.png`} loading="lazy" alt="cover-art" className='w-full h-full object-cover' width={100} height={100} />
         {cached && <span className="absolute bottom-1 right-1 rounded-full w-3 h-3 border bg-lime-400"/>}
       </div>
