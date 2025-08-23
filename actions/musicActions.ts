@@ -23,14 +23,18 @@ export async function addMusic(music: NewMusic) {
         return { success: false, message: err.message, music: null }
     }
 }
-export async function getMusic() {
+export async function getMusic(offset: number = 0, limit: number = 16) {
     try {
-        const music = await db.select().from(MusicTable).orderBy(desc(MusicTable.modifiedDate));
-        return { success: true, music }
+        const music = await db.select().from(MusicTable)
+            .orderBy(desc(MusicTable.modifiedDate))
+            .offset(offset)
+            .limit(limit);
+        const totalMusicCount = await db.select({ count: MusicTable.id }).from(MusicTable);
+        return { success: true, music, totalCount: totalMusicCount.length }
     }
     catch (err:any) {
         console.log(err.message)
-        return { success: false }
+        return { success: false, music: [], totalCount: 0 }
     }
 }
 export async function updateMusicCoverArt(id: number, coverArt: string) {

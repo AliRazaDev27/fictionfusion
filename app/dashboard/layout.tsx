@@ -2,7 +2,7 @@ import Link from "next/link"
 import {
   Home,
 } from "lucide-react"
-import { FaBookOpen } from "react-icons/fa";
+import { FaBookOpen, FaMusic } from "react-icons/fa";
 import { BiSolidMoviePlay } from "react-icons/bi";
 import { ImTv } from "react-icons/im";
 
@@ -14,9 +14,9 @@ import {
 } from "@/components/ui/tooltip"
 export default function Layout({ children }: { children: React.ReactNode }) {
     return(
-        <div className="min-h-screen w-full border border-blue-500">
+        <div className="min-h-screen w-full">
         <TooltipProvider>
-        <aside className="md:fixed  h-max w-max mx-auto mt-2  md:left-2 md:top-1/2 md:-translate-y-1/2 z-10  border border-red-500 bg-sky-950 rounded-2xl">
+        <aside className="md:fixed  h-max w-max mx-auto mt-2  md:left-2 md:top-1/2 md:-translate-y-1/2 z-10  border border-teal-800 bg-sky-950 rounded-2xl">
         <nav className="flex flex-row md:flex-col items-center gap-4 px-2 py-2">
           
           <Tooltip>
@@ -68,6 +68,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <TooltipContent side="right">Shows</TooltipContent>
           </Tooltip>
           
+
+              <Link
+                href="/dashboard/music"
+                prefetch={false}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-foreground md:h-8 md:w-8"
+              >
+                <FaMusic className="h-5 w-5" />
+                <span className="sr-only">Music</span>
+              </Link>
         </nav>
         
       </aside>
