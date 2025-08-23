@@ -33,13 +33,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Music } from "@/lib/database/musicSchema";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { Pencil, Trash2, Image } from "lucide-react";
+import { Pencil, Trash2, Image, ListFilter, RefreshCw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { getAllMusicPlaylists, addToPlaylist, removeFromPlaylist } from "@/actions/playlistActions";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox";
+import { revalidateMusic } from "@/actions/musicActions";
 
 const ITEMS_PER_PAGE = 16;
 
 export default function Page() {
   const [musicData, setMusicData] = useState<Music[]>([]);
+  const [allPlaylists, setAllPlaylists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [offset, setOffset] = useState(0);
@@ -54,6 +66,23 @@ export default function Page() {
   });
   const { toast } = useToast();
   const observer = useRef<IntersectionObserver>(null);
+
+  const fetchPlaylists = useCallback(async () => {
+    const result = await getAllMusicPlaylists();
+    if (result.success && result.lists) {
+      setAllPlaylists(result.lists);
+    } else {
+      toast({
+        title: "Error",
+        description: result.message || "Failed to fetch playlists.",
+        variant: "destructive",
+      });
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchPlaylists();
+  }, [fetchPlaylists]);
 
   const fetchMusic = useCallback(async (currentOffset: number, isInitialLoad: boolean = false) => {
     if (isInitialLoad) {
@@ -144,6 +173,36 @@ export default function Page() {
     }
   };
 
+  const handleAssignPlaylist = async (musicId: number, playlistId: number, isChecked: boolean) => {
+    let result;
+    if (isChecked) {
+      result = await addToPlaylist(playlistId, [musicId]);
+    } else {
+      result = await removeFromPlaylist(playlistId, [musicId]);
+    }
+
+    if (result?.success) {
+      toast({
+        title: "Success",
+        description: `Music ${isChecked ? "added to" : "removed from"} playlist.`,
+      });
+      // Update the local allPlaylists state to reflect the change
+      setAllPlaylists((prevPlaylists) =>
+        prevPlaylists.map((playlist) =>
+          playlist.id === playlistId
+            ? { ...playlist, items: result.items }
+            : playlist
+        )
+      );
+    } else {
+      toast({
+        title: "Error",
+        description: result?.message || `Failed to ${isChecked ? "add to" : "remove from"} playlist.`,
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleEditClick = (music: Music) => {
     setSelectedMusic(music);
     setEditForm({
@@ -195,9 +254,31 @@ export default function Page() {
     }
   };
 
+  const handleRevalidateMusic = async () => {
+    toast({
+      title: "Revalidating...",
+      description: "Refreshing music data.",
+    });
+    await revalidateMusic();
+    fetchMusic(0, true); // Re-fetch initial data after revalidation
+    setOffset(0); // Reset offset
+    setMusicData([]); // Clear existing data to force a fresh load
+    setHasMore(true); // Reset hasMore
+    toast({
+      title: "Success",
+      description: "Music data revalidated.",
+    });
+  };
+
   return (
     <div className="text-white md:w-[95%] ms-auto py-8 px-4">
-      <h1 className="text-3xl font-bold mb-6">Manage Music</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Manage Music</h1>
+        <Button onClick={handleRevalidateMusic} variant="outline" className="flex text-black cursor-pointer items-center gap-2">
+          <RefreshCw className="h-4 w-4" />
+          Revalidate
+        </Button>
+      </div>
 
       {loading ? (
         <p>Loading music...</p>
@@ -212,6 +293,7 @@ export default function Page() {
                 <TableHead>Album</TableHead>
                 <TableHead>Release Date</TableHead>
                 <TableHead>Duration</TableHead>
+                <TableHead>Playlists</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -232,6 +314,32 @@ export default function Page() {
                   <TableCell>{music.album || "N/A"}</TableCell>
                   <TableCell>{music.releaseDate || "N/A"}</TableCell>
                   <TableCell>{music.duration || "N/A"}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <ListFilter className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-56 bg-slate-800 text-white">
+                        <DropdownMenuLabel>Assign to Playlist</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {allPlaylists.length > 0 ? (
+                          allPlaylists.map((playlist) => (
+                            <DropdownMenuCheckboxItem
+                              key={playlist.id}
+                              checked={playlist.items?.includes(music.id)}
+                              onCheckedChange={(isChecked) => handleAssignPlaylist(music.id, playlist.id, isChecked)}
+                            >
+                              {playlist.listName}
+                            </DropdownMenuCheckboxItem>
+                          ))
+                        ) : (
+                          <DropdownMenuLabel>No playlists found.</DropdownMenuLabel>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Dialog open={selectedMusic?.id === music.id} onOpenChange={(open) => !open && setSelectedMusic(null)}>
@@ -315,14 +423,14 @@ export default function Page() {
               ))}
               {loadingMore && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center">
+                  <TableCell colSpan={8} className="text-center">
                     Loading more music...
                   </TableCell>
                 </TableRow>
               )}
               {!hasMore && musicData.length > 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-gray-500">
+                  <TableCell colSpan={8} className="text-center text-gray-500">
                     No more music to load.
                   </TableCell>
                 </TableRow>
