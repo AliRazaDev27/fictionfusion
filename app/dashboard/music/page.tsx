@@ -145,7 +145,7 @@ export default function Page() {
         observer.current.disconnect();
       }
     };
-  }, [loading, loadingMore, hasMore]); // Removed offset from dependencies as it's handled by setOffset callback
+  }, [loading, loadingMore, hasMore]); // Removed offset from dependencies as it is handled by setOffset callback
 
   useEffect(() => {
     // This useEffect triggers fetchMusic when offset changes (for infinite scroll)
@@ -353,7 +353,7 @@ export default function Page() {
                             <DialogHeader>
                               <DialogTitle>Edit Music</DialogTitle>
                               <DialogDescription>
-                                Make changes to the music metadata here. Click save when you're done.
+                                Make changes to the music metadata here. Click save when you are done.
                               </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">

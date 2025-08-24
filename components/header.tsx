@@ -44,7 +44,7 @@ export default async function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[200px] bg-linear-to-b from-gray-950 to-blue-950 ">
+          <SheetContent side="left" className="w-[200px] bg-linear-to-b from-indigo-950 to-blue-950 ">
             <NavLinksMobile/>
           </SheetContent>
         </Sheet>

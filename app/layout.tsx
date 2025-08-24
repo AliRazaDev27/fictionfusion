@@ -30,9 +30,9 @@ export default function RootLayout({
         <meta name="theme-color" content="#082635" />
       </head>
       <body className={`${inter.className} bg-stone-900`}>
-        <Suspense fallback={<LoaderHeader/>}>
-        <Header />
-          </Suspense>
+        <Suspense fallback={<LoaderHeader />}>
+          <Header />
+        </Suspense>
         <main>{children}</main>
         <Toaster />
         <Analytics />

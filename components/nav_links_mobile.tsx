@@ -24,6 +24,13 @@ export default function NavLinksMobile() {
         Watchlist
       </Link>
       <Link
+        href="/celebs"
+        prefetch={false}
+        className={cn(`transition-colors hover:text-foreground`, pathname === "/celebs" ? "text-white" : "text-white/60")}
+      >
+        Celebs
+      </Link>
+      <Link
         href="/books"
         prefetch={false}
         className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white" : "text-white/60")}
@@ -51,12 +58,14 @@ export default function NavLinksMobile() {
       >
         Music
       </Link>
-      <div className="flex flex-col  gap-2 py-2 border rounded-2xl">
-        <p className="text-xl font-semibold text-white/80">Tasks</p>
-        <div className="flex flex-col gap-2">
-          <AddTask />
-          <ViewTasks />
-        </div>
+
+      <div>
+        <Link
+          href='/recgen'
+          prefetch={false}
+          className={cn(`text-lg transition-colors duration-100 hover:text-orange-500`, pathname === '/recgen' ? "text-white font-semibold" : "text-white/60")}>
+          RecGen
+        </Link>
       </div>
     </nav>
   );
