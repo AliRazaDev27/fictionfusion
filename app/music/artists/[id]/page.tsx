@@ -26,7 +26,6 @@ export default async function Page({ params }) {
   const map = new Map();
   const response = await fetch(url)
   const data = await response.json()
-  console.log(data)
   for (let i = 0; i < data.results.length; i++) {
     const item: Music  = data.results[i]
     if (item.artistName !== decodeURIComponent(artistName)) continue
@@ -47,7 +46,7 @@ export default async function Page({ params }) {
         store.map((music: Music, index: number) => (
           <div key={index} className="w-full flex items-center gap-2 overflow-hidden text-white font-semibold text-xl px-2 py-2 bg-slate-800 rounded-xl">
             <div className="relative z-0 shrink-0 w-[100px] h-[100px] rounded-lg overflow-hidden">
-              <img src={music.artworkUrl100} alt="cover-art" loading="lazy" className="w-full h-full object-cover" width={100} height={100} />
+              <img src={music.artworkUrl100} alt={`Cover for ${music.trackName}`} loading="lazy" className="w-full h-full object-cover" width={100} height={100} />
             </div>
             <div className="flex flex-col">
               <p className="text-lg md:text-xl">{music.trackName}</p>

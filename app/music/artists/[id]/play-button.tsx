@@ -20,7 +20,7 @@ export function PlayButton({ src }: { src: string }) {
       <button className="text-2xl cursor-pointer" onClick={togglePlay}>
         {playing ? "⏸️" : "▶️"}
       </button>
-      <audio ref={audioRef} src={src} />
+      <audio ref={audioRef} src={src} preload="none"/>
     </div>
   );
 }
