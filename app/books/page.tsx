@@ -6,6 +6,10 @@ import SearchAndFilter from "@/components/seach_filter_sheet"
 import { Sidebar } from "./components/sidebar";
 import { getBooks } from "@/actions/bookActions";
 
+export const metadata = {
+  title: "Books",
+}
+
 export default async function Page(props:{searchParams: Promise<any>}) {
   const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1;
@@ -19,7 +23,7 @@ export default async function Page(props:{searchParams: Promise<any>}) {
       {/* <SearchAndFilter type="books" /> */}
       <div className="flex items-center">
       {/* <Sidebar /> */}
-      <section className="flex flex-col gap-8 p-4 w-full overflow-y-auto">
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-8 w-full overflow-y-auto">
         {books &&
         books.map((book, index) => (
             <BookCard key={index} book={book}/>
