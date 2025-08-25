@@ -1,5 +1,7 @@
 import { MdPlayCircle } from "react-icons/md";
 import { PlayButton } from "./play-button";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 
 type Music = {
   artistName: string,
@@ -49,7 +51,12 @@ export default async function Page({ params }) {
               <img src={music.artworkUrl100} alt={`Cover for ${music.trackName}`} loading="lazy" className="w-full h-full object-cover" width={100} height={100} />
             </div>
             <div className="flex flex-col">
-              <p className="text-lg md:text-xl">{music.trackName}</p>
+              <Link href={`https://www.youtube.com/results?search_query=${encodeURIComponent(music.trackName)}`} className="hover:underline" prefetch={false} target="_blank">
+              <p className="flex items-center gap-1 text-lg md:text-xl">
+                {music.trackName}
+          <ExternalLink size={14} />
+              </p>
+              </Link>
               <p className="text-sm md:text-base text-gray-300">{music.artistName}</p>
               {music.collectionName && <p className="text-xs md:text-sm text-gray-400">Album: {music.collectionName}</p>}
               <div className="flex gap-4 text-xs md:text-sm text-gray-400">

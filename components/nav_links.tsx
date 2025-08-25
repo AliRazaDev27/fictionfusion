@@ -2,14 +2,12 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { AddTask } from "./add-task"
-import { ViewTasks } from "./view-tasks"
 
 const links = [
+  { href: "/music", label: "Music" },
   { href: "/books", label: "Books" },
   { href: "/movies", label: "Movies" },
   { href: "/shows", label: "Shows" },
-  { href: "/music", label: "Music" },
 ]
 
 export default function NavLinks() {

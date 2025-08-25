@@ -49,7 +49,7 @@ export const MusicCard = forwardRef<HTMLDivElement, MusicCardProps>(({ music, in
         href={`/music/artists/${encodeURIComponent(music.artist)}`} 
         prefetch={false} 
         target="_blank" 
-        className="flex items-center gap-1 text-sm md:text-base text-gray-300 hover:text-white transition">
+        className="flex items-center gap-1 text-sm md:text-base text-neutral-400 hover:text-white transition">
           {music.artist || "Unknown"}
           <ExternalLink size={14} />
           </Link>
