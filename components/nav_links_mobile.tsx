@@ -2,8 +2,38 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { AddTask } from "./add-task"
-import { ViewTasks } from "./view-tasks"
+
+const links = [
+  {
+    href: "/music",
+    label: "Music",
+  },
+  {
+    href: "/watchlist",
+    label: "Watchlist",
+  },
+  {
+    href: "/celebs",
+    label: "Celebs",
+  },
+  {
+    href: "/books",
+    label: "Books",
+  },
+  {
+    href: "/movies",
+    label: "Movies",
+  },
+  {
+    href: "/shows",
+    label: "Shows",
+  },
+  {
+    href: "/recgen",
+    label: "RecGen",
+  },
+]
+
 export default function NavLinksMobile() {
   const pathname = usePathname()
   return (
@@ -16,57 +46,19 @@ export default function NavLinksMobile() {
         Fiction
         <span className="text-orange-500 text-xl">Fusion</span>
       </Link>
-      <Link
-        href="/watchlist"
-        prefetch={false}
-        className={cn(`transition-colors hover:text-foreground`, pathname === "/watchlist" ? "text-white" : "text-white/60")}
-      >
-        Watchlist
-      </Link>
-      <Link
-        href="/celebs"
-        prefetch={false}
-        className={cn(`transition-colors hover:text-foreground`, pathname === "/celebs" ? "text-white" : "text-white/60")}
-      >
-        Celebs
-      </Link>
-      <Link
-        href="/books"
-        prefetch={false}
-        className={cn(`transition-colors hover:text-foreground`, pathname === "/books" ? "text-white" : "text-white/60")}
-      >
-        Books
-      </Link>
-      <Link
-        href="/movies"
-        prefetch={false}
-        className={cn(`transition-colors hover:text-foreground`, pathname === "/movies" ? "text-white" : "text-white/60")}
-      >
-        Movies
-      </Link>
-      <Link
-        href="/shows"
-        prefetch={false}
-        className={cn(`transition-colors hover:text-foreground`, pathname === "/shows" ? "text-white" : "text-white/60")}
-      >
-        Shows
-      </Link>
-      <Link
-        href="/music"
-        prefetch={false}
-        className={cn(`transition-colors hover:text-foreground`, pathname === "/music" ? "text-white" : "text-white/60")}
-      >
-        Music
-      </Link>
-
-      <div>
-        <Link
-          href='/recgen'
-          prefetch={false}
-          className={cn(`text-lg transition-colors duration-100 hover:text-orange-500`, pathname === '/recgen' ? "text-white font-semibold" : "text-white/60")}>
-          RecGen
-        </Link>
-      </div>
+      {
+        links.map((link,index) => {
+          return (
+            <Link
+            key={index}
+              href={link.href}
+              prefetch={false}
+              className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === '/recgen' ? "text-white font-semibold" : "text-white/60")}>
+              {link.label}
+            </Link>
+          )
+        })
+      }
     </nav>
   );
 }
