@@ -56,7 +56,7 @@ export async function mydramalistScrapper(fetchText: string) {
         .get()
         .filter((genre): genre is string => genre !== undefined);
     const t_showDates = $(
-        "#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(4)",
+        "#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(6)",
     )
         .text()
         ?.trim();
@@ -71,7 +71,7 @@ export async function mydramalistScrapper(fetchText: string) {
     const runtime = (
         parseInt(
             $(
-                "#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(7)",
+                "#content > div > div.container-fluid.title-container > div > div.col-lg-4.col-md-4 > div > div:nth-child(2) > div.box-body.light-b > ul > li:nth-child(9)",
             )
                 .text()
                 ?.split(":")[1]
