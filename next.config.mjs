@@ -57,8 +57,7 @@ const withPWA = withPWAInit({
                 options: {
                     cacheName: 'music-cache',
                     expiration: {
-                        maxEntries: 10,
-                        maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
                     },
                     cacheableResponse: {
                         statuses: [0, 200],

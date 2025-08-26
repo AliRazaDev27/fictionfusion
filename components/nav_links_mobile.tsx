@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { SheetClose } from "./ui/sheet"
 
 const links = [
   {
@@ -38,6 +39,7 @@ export default function NavLinksMobile() {
   const pathname = usePathname()
   return (
     <nav className="flex flex-col justify-center text-center gap-6 text-lg font-medium">
+      <SheetClose asChild>
       <Link
         href="/"
         prefetch={false}
@@ -46,16 +48,18 @@ export default function NavLinksMobile() {
         Fiction
         <span className="text-orange-500 text-xl">Fusion</span>
       </Link>
+      </SheetClose>
       {
         links.map((link,index) => {
           return (
+            <SheetClose asChild key={index}>
             <Link
-            key={index}
               href={link.href}
               prefetch={false}
               className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === '/recgen' ? "text-white font-semibold" : "text-white/60")}>
               {link.label}
             </Link>
+            </SheetClose>
           )
         })
       }
