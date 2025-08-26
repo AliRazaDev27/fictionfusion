@@ -23,7 +23,7 @@ export async function addMusic(music: NewMusic) {
         return { success: false, message: err.message, music: null }
     }
 }
-export async function getMusic(offset: number = 0, limit: number = 16) {
+export async function getMusic(offset: number = 0, limit: number = -1) {
     try {
         const music = await db.select().from(MusicTable)
             .orderBy(desc(MusicTable.modifiedDate))

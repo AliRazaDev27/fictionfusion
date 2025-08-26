@@ -8,12 +8,13 @@ export function MusicList({musicPromise}){
     const musicList = useMusicStore((state:any) => state.music)
     const setMusic = useMusicStore((state:any) => state.addMusic)
     const setFullMusicList = useMusicStore((state:any) => state.setFullMusicList)
-    const [visibleCount, setVisibleCount] = useState(5) // Start with 5 items
+    const [visibleCount, setVisibleCount] = useState(8) // Start with 5 items
     const observerRef = useRef(null)
 
     useEffect(() => {
       setMusic(result.music)
       setFullMusicList(result.music)
+      console.log(result)
     }, [result.music])
 
     useEffect(() => {
