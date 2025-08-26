@@ -29,7 +29,7 @@ import {
   Monitor,
 } from "lucide-react"
 import Link from "next/link"
-
+import ScrollToTop from "@/components/scroll_to_top"
 // export const dynamic = "force-static"
 
 const data = [
@@ -59,6 +59,7 @@ const data = [
 export default function HomePage() {
   return (
     <div className="min-h-screen w-full overflow-hidden" style={{ backgroundColor: "#1c1917" }}>
+    <ScrollToTop />
       {/* Hero Section */}
       <section className="container mx-auto px-4 lg:px-8 py-8 sm:py-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-4">
