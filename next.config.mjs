@@ -75,6 +75,17 @@ const withPWA = withPWAInit({
                     },
                 },
             },
+            {
+                // Cache static assets like JS, CSS
+                urlPattern: /\.(?:png|jpg|jpeg|gif|webp)$/,
+                handler: 'CacheFirst',
+                options: {
+                    cacheName: 'image-assets',
+                    expiration: {
+                        maxAgeSeconds: 30 * 24 * 60 * 60, // Cache for 30 days
+                    },
+                },
+            },
         ]
     }
 });
