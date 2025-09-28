@@ -12,7 +12,7 @@
   width: 100%;
   z-index: -9;
   background: linear-gradient(to right, #3793FF 0%, #1c7cbd 100%);
-  transition: width 0.1s linear;
+  transition: width 1s linear;
 }
 .player::before{
   content: "";

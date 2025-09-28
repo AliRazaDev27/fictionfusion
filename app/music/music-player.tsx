@@ -39,17 +39,7 @@ export function MusicPlayer() {
   const playRef = useRef<HTMLDivElement>(null);
   const pauseRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
-  const animationFrame = useRef<number | null>(null);
   const audioPlayer = useRef<HTMLAudioElement>(null);
-  const updateProgress = () => {
-    if (progressRef.current && audioPlayer.current) {
-      const { currentTime, duration } = audioPlayer.current;
-      const progress = (currentTime / duration) * 100;
-      const updatedWitdh = 100 - progress;
-      progressRef.current.style.width = `${updatedWitdh}%`;
-    }
-    animationFrame.current = requestAnimationFrame(updateProgress);
-  };
   const play = () => {
     if (!isPlaying.current) {
       isPlaying.current = true;
@@ -61,14 +51,12 @@ export function MusicPlayer() {
         }
         audioPlayer.current.play();
       }
-      animationFrame.current = requestAnimationFrame(updateProgress);
     }
     else {
       isPlaying.current = false;
       if (playRef.current) playRef.current.style.display = "block";
       if (pauseRef.current) pauseRef.current.style.display = "none";
       if (audioPlayer.current) audioPlayer.current.pause();
-      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
     }
   }
   const seek = (value: number) => {
@@ -120,17 +108,29 @@ export function MusicPlayer() {
 
   useEffect(() => {
     return () => {
-      if (animationFrame.current) cancelAnimationFrame(animationFrame.current);
       if (audioPlayer.current) {
         audioPlayer.current.pause();
         audioPlayer.current.src = "";
       }
     };
   }, []);
+
+  const handleTimeUpdate = () => {
+    if (progressRef.current && audioPlayer.current) {
+      const { currentTime, duration } = audioPlayer.current;
+      console.log(currentTime, duration)
+      if (duration) {
+        const progress = (currentTime / duration) * 100;
+        const updatedWidth = 100 - progress;
+        progressRef.current.style.width = `${updatedWidth}%`;
+      }
+    }
+  };
+
   return (
     <div className="flex w-full h-full">
       <div className="player">
-        <audio src={musicSource || undefined} preload="none" autoPlay={isPlaying.current} ref={audioPlayer}>Audio playback not supported</audio>
+        <audio src={musicSource || undefined} preload="none" autoPlay={isPlaying.current} ref={audioPlayer} onTimeUpdate={handleTimeUpdate}>Audio playback not supported</audio>
         <div
           ref={progressRef}
           className="progress-bar"
