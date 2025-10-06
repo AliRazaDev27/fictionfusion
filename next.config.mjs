@@ -77,12 +77,15 @@ const withPWA = withPWAInit({
             },
             {
                 // Cache static assets like JS, CSS
-                urlPattern: /\.(?:png|jpg|jpeg|gif|webp)$/,
+                urlPattern: /\.(?:png|jpg|jpeg|gif|webp|svg|ico)$/i,
                 handler: 'CacheFirst',
                 options: {
                     cacheName: 'image-assets',
                     expiration: {
                         maxAgeSeconds: 30 * 24 * 60 * 60, // Cache for 30 days
+                    },
+                    cacheableResponse: {
+                        statuses: [0, 200], // ensure opaque responses (like cross-origin images) are cached
                     },
                 },
             },

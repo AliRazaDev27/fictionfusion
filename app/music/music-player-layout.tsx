@@ -16,6 +16,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
   const filterMusicList = useMusicStore((state: any) => state.filterMusicList)
   const _clearFilter = useMusicStore((state: any) => state.clearFilter)
   const filterRef = useRef<HTMLInputElement>(null)
+    const playlist = useMusicStore((state: any) => state.playlist)
 
   const addMusic = useMusicStore((state: any) => state.addMusic);
   const fullMusicList = useMusicStore((state: any) => state.fullMusicList)
@@ -35,6 +36,12 @@ export function MusicPlayerLayoutComponent({ music, list }) {
     const cacheButton = document.getElementById('filterCacheButton') as HTMLButtonElement
     if (!cacheButton) return
     cacheButton.disabled = true;
+    const selected = document.getElementsByClassName('playlist-toggle').item(0) as HTMLButtonElement;
+    let selectedPlaylist: any = null
+    if(!!selected){
+    selectedPlaylist = playlist.find((list) => list.listName === selected!.innerText.split(" ")[0]);
+    }
+    console.log(selectedPlaylist)
     try {
       const cache = await window.caches.open("cloudinary-media");
       const checks = await Promise.all(
@@ -44,10 +51,22 @@ export function MusicPlayerLayoutComponent({ music, list }) {
         })
       );
       // filter based on resolved results
+      if(!!selectedPlaylist){
+        console.log('yes')
+        const filtered = checks
+        .filter((item) => item.exists)
+        .filter((item) => selectedPlaylist?.items?.includes(item.music.id))
+        .map((item) => item.music);
+        console.log(filtered);
+        addMusic(filtered)
+      }
+      else{
+        console.log('no')
       const filtered = checks
         .filter((item) => item.exists)
         .map((item) => item.music);
       addMusic(filtered)
+      }
     }
     catch (e) {
       console.log(e)
