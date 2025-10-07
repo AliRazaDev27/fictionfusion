@@ -6,12 +6,15 @@ import options from "./options.json";
 export default function Page() {
     const [content,setContent] = useState<string>("");
     const handleSend = async (message:string) => {
+        const start = performance.now();
         const response = await sendMessage(message);
+        console.log("response time", (performance.now() - start) / 1000);
         setContent(response);
+
     }
     return (
         <div className="flex flex-col w-full h-[89svh] bg-gray-800 text-white/90">
-            <div className="flex-1 overflow-y-auto overflow-hidden w-full p-4">
+            <div className="flex-1 overflow-y-auto overflow-hidden w-full p-8">
                 <pre className="w-full text-lg  text-wrap">{content}</pre>
             </div>
             <div className="mt-auto">
