@@ -4,13 +4,14 @@ import { generateText } from 'ai';
 
 
 export async function sendMessage(message:string) {
-    const model = google('gemini-2.5-flash');
-    const { text } = await generateText({
+    const model = google('gemini-2.0-flash');
+    const start = performance.now();
+    const { text,usage,totalUsage } = await generateText({
       model:model,
       prompt: message,
       tools: {
-        google_search: google.tools.googleSearch({}),
-        url_context: google.tools.urlContext({}),
+        // google_search: google.tools.googleSearch({}),
+        // url_context: google.tools.urlContext({}),
       },
       providerOptions: {
         google:{
@@ -35,5 +36,7 @@ export async function sendMessage(message:string) {
         },
       }
     }); 
+    console.log("response time in server action", (performance.now() - start) / 1000);
+    console.log(usage,totalUsage)
     return text
 }

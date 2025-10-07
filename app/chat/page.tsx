@@ -2,11 +2,13 @@
 import { sendMessage } from "@/actions/chatActions";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import options from "./options.json";
+import { readStreamableValue } from '@ai-sdk/rsc';
+
 export default function Page() {
     const [content,setContent] = useState<string>("");
     const handleSend = async (message:string) => {
         const start = performance.now();
+        console.log(message)
         const response = await sendMessage(message);
         console.log("response time", (performance.now() - start) / 1000);
         setContent(response);
