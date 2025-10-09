@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^2.0.17",
+    "@ai-sdk/rsc": "^1.0.60",
     "@ducanh2912/next-pwa": "^10.2.9",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.4",
@@ -28,6 +30,7 @@
     "@vercel/analytics": "^1.4.1",
     "@vercel/postgres": "^0.10.0",
     "@vercel/speed-insights": "^1.2.0",
+    "ai": "^5.0.60",
     "bcrypt": "^5.1.1",
     "cheerio": "^1.1.2",
     "class-variance-authority": "^0.7.1",
@@ -43,7 +46,7 @@
     "next": "15.4.2-canary.52",
     "react": "^19.0.0",
     "react-day-picker": "^9.4.4",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.1.0",
     "react-icons": "^5.4.0",
     "recharts": "^2.15.0",
     "resend": "^4.0.1",
@@ -56,6 +59,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.17",
     "@types/cheerio": "^0.22.35",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22",
     "@types/react": "^19.0.2",
