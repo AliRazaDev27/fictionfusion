@@ -77,7 +77,7 @@ const withPWA = withPWAInit({
             },
             {
                 // Cache static assets like JS, CSS
-                urlPattern: /\.(?:png|jpg|jpeg|gif|webp|svg|ico)$/i,
+                urlPattern: ({request})=> request.destination === 'image',
                 handler: 'CacheFirst',
                 options: {
                     cacheName: 'image-assets',

@@ -11,6 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Page() {
     const modelRef = useRef<string>('gemini-2.5-flash');
@@ -67,46 +68,57 @@ export default function Page() {
             mx-auto p-4 leading-relaxed text-[20px] text-neutral-300 font-serif">
             </textarea>
             <div className="mt-auto max-w-3xl mx-auto w-full">
-                <div className="flex items-center justify-between pb-2">
-                    {/* MODEL SELECTION */}
-                    <Select onValueChange={(e) => { modelRef.current = e }}>
-                        <SelectTrigger className="w-fit bg-gray-700">
-                            <SelectValue placeholder="Models" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-slate-800 text-slate-400">
-                            {
-                                models.map((model) => (
-                                    <SelectItem key={model.model} value={model.model}>{model.name}</SelectItem>
-                                ))
-                            }
-                        </SelectContent>
-                    </Select>
-                    {/* SYSTEM SELECTION */}
-                    <Select onValueChange={(e) => { systemRef.current = e }}>
-                        <SelectTrigger className="w-fit bg-gray-700">
-                            <SelectValue placeholder="Systems" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-slate-800 text-slate-400">
-                            {
-                                Object.entries(systems).map(([key, value]) => (
-                                    <SelectItem key={key} value={key}>{key.toUpperCase()}</SelectItem>
-                                ))
-                            }
-                        </SelectContent>
-                    </Select>
+                <div className="w-full overflow-hidden flex items-center justify-evenly pb-2">
+                    <Dialog>
+                        <DialogTrigger className="bg-gray-700 p-2 rounded-md cursor-pointer">Settings</DialogTrigger>
+                        <DialogContent className="bg-gray-950 text-gray-300">
+                            <DialogHeader>
+                                <DialogTitle>Settings</DialogTitle>
+                                <DialogDescription className="sr-only">Choose a model, system, and temperature </DialogDescription>
+                            </DialogHeader>
+                            <div className="flex items-center justify-between w-full">
+                                {/* MODEL SELECTION */}
+                                <Select onValueChange={(e) => { modelRef.current = e }}>
+                                    <SelectTrigger className="w-fit bg-gray-700">
+                                        <SelectValue placeholder="Models" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-slate-800 text-slate-400">
+                                        {
+                                            models.map((model) => (
+                                                <SelectItem key={model.model} value={model.model}>{model.name}</SelectItem>
+                                            ))
+                                        }
+                                    </SelectContent>
+                                </Select>
+                                {/* SYSTEM SELECTION */}
+                                <Select onValueChange={(e) => { systemRef.current = e }}>
+                                    <SelectTrigger className="w-fit bg-gray-700">
+                                        <SelectValue placeholder="Systems" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-slate-800 text-slate-400">
+                                        {
+                                            Object.entries(systems).map(([key, value]) => (
+                                                <SelectItem key={key} value={key}>{key.toUpperCase()}</SelectItem>
+                                            ))
+                                        }
+                                    </SelectContent>
+                                </Select>
 
-                    <Select onValueChange={(e) => { tempRef.current = Number(e) }}>
-                        <SelectTrigger className="w-fit bg-gray-700">
-                            <SelectValue placeholder="Temp" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-slate-800 text-slate-400">
-                            <SelectItem value="0.3">🧊 Low (Consistent & Focused)</SelectItem>
-                            <SelectItem value="0.7">🌤️ Medium (Balanced & Creative)</SelectItem>
-                            <SelectItem value="1.0">🔥 High (Imaginative & Expressive)</SelectItem>
-                            <SelectItem value="1.5">⚡ Wild (Unpredictable & Experimental)</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    {/* TEMP SELECTION */}
+                                <Select onValueChange={(e) => { tempRef.current = Number(e) }}>
+                                    <SelectTrigger className="w-fit bg-gray-700">
+                                        <SelectValue placeholder="Temp" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-slate-800 text-slate-400">
+                                        <SelectItem value="0.3">🧊 Low (Consistent & Focused)</SelectItem>
+                                        <SelectItem value="0.7">🌤️ Medium (Balanced & Creative)</SelectItem>
+                                        <SelectItem value="1.0">🔥 High (Imaginative & Expressive)</SelectItem>
+                                        <SelectItem value="1.5">⚡ Wild (Unpredictable & Experimental)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                {/* TEMP SELECTION */}
+                            </div>
+                        </DialogContent>
+                    </Dialog>
                     <button className="bg-gray-700 p-2 rounded-md cursor-pointer" onClick={handleReGen}>ReGen</button>
                     <button className="bg-gray-700 p-2 rounded-md cursor-pointer" onClick={handleNext}>Next</button>
                 </div>
