@@ -30,8 +30,8 @@ const links = [
     label: "Shows",
   },
   {
-    href: "/recgen",
-    label: "RecGen",
+    href: "/chat",
+    label: "Chat",
   },
 ]
 
@@ -56,7 +56,7 @@ export default function NavLinksMobile() {
             <Link
               href={link.href}
               prefetch={false}
-              className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === '/recgen' ? "text-white font-semibold" : "text-white/60")}>
+              className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === '/chat' ? "text-white font-semibold" : "text-white/60")}>
               {link.label}
             </Link>
             </SheetClose>

@@ -30,7 +30,6 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import ScrollToTop from "@/components/scroll_to_top"
-// export const dynamic = "force-static"
 
 const data = [
   {

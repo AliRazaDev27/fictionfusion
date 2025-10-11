@@ -56,10 +56,10 @@ export default function NavLinks() {
       </div>
       <div>
         <Link
-          href='/recgen'
+          href='/chat'
           prefetch={false}
-          className={cn(`text-xl transition-colors duration-100 hover:text-orange-500`, pathname === '/recgen' ? "text-white font-semibold" : "text-white/60")}>
-          RecGen
+          className={cn(`text-xl transition-colors duration-100 hover:text-orange-500`, pathname === '/chat' ? "text-white font-semibold" : "text-white/60")}>
+          Chat
         </Link>
       </div>
 
