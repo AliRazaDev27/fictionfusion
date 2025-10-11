@@ -58,7 +58,6 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@tailwindcss/oxide-linux-x64-gnu": "^4.1.14",
     "@tailwindcss/postcss": "^4.0.17",
     "@tailwindcss/typography": "^0.5.19",
     "@types/cheerio": "^0.22.35",

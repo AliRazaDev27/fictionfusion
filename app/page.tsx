@@ -113,7 +113,7 @@ export default function HomePage() {
 
             <div className="w-fit max-md:mx-auto mt-8 md:mt-4">
               <Link
-                href="/login"
+                href="/music"
                 prefetch={false}
                 className="flex items-center justify-center gap-2 rounded-4xl bg-gradient-to-r from-emerald-700 to-teal-600 hover:from-emerald-600 hover:to-teal-500 hover:text-neutral-300 text-white px-10 py-4 text-lg font-semibold transition-all duration-300 hover:shadow-xl hover:scale-105"
               >
