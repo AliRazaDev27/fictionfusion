@@ -9,11 +9,11 @@ import { safetySettings, systems, tools } from '@/lib/ai';
 
 
 export async function generateMessage(message: string, model: string, system: string, temp: number = 0.5) {
-  console.log(`model: ${model}`)
+  try{
   const session = await auth()
-  if (session?.user.role !== 'ADMIN') return { success: false, output: null }
+  if (session?.user.role !== 'ADMIN') throw new Error("Not Authorized")
 
-  const { text } = await generateText({
+  const { text,finishReason,usage,warnings } = await generateText({
     model: google(model || 'gemini-2.0-flash'),
     system: systems[system || 'storygen'],
     prompt: message,
@@ -25,7 +25,12 @@ export async function generateMessage(message: string, model: string, system: st
       },
     }
   });
-  return { output: text, success: true };
+  console.log(finishReason,usage,warnings)
+  return { output: text, success: true, message: "Success" };
+  }
+  catch(error:any){
+    return { output: null, success: false, message: error.message };
+  }
 }
 
 export async function streamMessage(message: string, model: string) {

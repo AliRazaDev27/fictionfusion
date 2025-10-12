@@ -1,9 +1,9 @@
 "use client";
 import "./styles.css";
 import { models, systems } from "@/lib/ai";
-import { generateMessage, streamMessage } from "@/actions/chatActions";
+import { generateMessage  } from "@/actions/chatActions";
 import { Textarea } from "@/components/ui/textarea";
-import { useRef } from "react";
+import { useEffect,useRef, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -12,22 +12,43 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Page() {
     const modelRef = useRef<string>('gemini-2.5-flash');
     const systemRef = useRef<string>('storygen');
     const tempRef = useRef<number>(0.5);
     const textcontent = useRef<HTMLTextAreaElement>(null);
+    const [disabled, setDisabled] = useState(false);
+    const { toast } = useToast();
     const handleSend = async (message: string) => {
         if (!message) return
         const start = performance.now();
         console.log(message)
-        const { output, success } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current);
-        if (!success || !output) return;
-        console.log("response time", (performance.now() - start) / 1000);
-
+        setDisabled(true);
+        const { output, success, message: msg } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current);
+        setDisabled(false);
+        const end = ((performance.now() - start) / 1000);
+        if (!success || !output){
+            toast({
+                title: "Error",
+                description: msg,
+                variant: "destructive",
+                duration: 2000,
+            })
+            return;
+        }
+        else{
+            toast({
+                title: "Success",
+                description: `Took ${Math.round(end)} seconds`,
+                duration: 1500,
+            })
+        } 
         if (textcontent.current) {
             textcontent.current.value = `${textcontent.current.value}${output.trim()}`
+            window.localStorage.setItem("chat", textcontent.current.value);
         }
     }
     const handleNext = async () => {
@@ -41,11 +62,30 @@ export default function Page() {
         `;
         const start = performance.now();
 
-        const { output, success } = await generateMessage(message, modelRef.current, systemRef.current, tempRef.current);
-        if (!success || !output) return;
-        console.log("response time", (performance.now() - start) / 1000);
+        setDisabled(true);
+        const { output, success, message: msg } = await generateMessage(message, modelRef.current, systemRef.current, tempRef.current);
+        const end = ((performance.now() - start) / 1000);
+        setDisabled(false);
+        if (!success || !output){
+            toast({
+                title: "Error",
+                description: msg,
+                variant: "destructive",
+                duration: 2000,
+            })
+            return;
+        }
+        else{
+            toast({
+                title: "Success",
+                description: `Took ${Math.round(end)} seconds`,
+                duration: 1500,
+            })
+        }
+
         if (textcontent.current) {
             textcontent.current.value = `${textcontent.current.value}\n\n${output.trim()}`;
+            window.localStorage.setItem("chat", textcontent.current.value);
         }
     }
     const handleReGen = async () => {
@@ -60,6 +100,18 @@ export default function Page() {
             handleNext();
         }
     }
+    useEffect(() => {
+        console.log('starting');
+        if(window.localStorage){
+            console.log('localstorage')
+            if(textcontent.current){
+                console.log('textcontent')
+                const content = window.localStorage.getItem("chat") || "";
+                console.log(`content: ${content}`)
+                textcontent.current.defaultValue = content;
+            }
+        }
+    }, [])
     return (
         <div className="flex flex-col gap-2 w-full p-2 min-h-[calc(100vh-70px)] bg-gray-900 text-white/90">
             <textarea id='chat' ref={textcontent}
@@ -119,13 +171,41 @@ export default function Page() {
                             </div>
                         </DialogContent>
                     </Dialog>
-                    <button className="bg-gray-700 p-2 rounded-md cursor-pointer" onClick={handleReGen}>ReGen</button>
-                    <button className="bg-gray-700 p-2 rounded-md cursor-pointer" onClick={handleNext}>Next</button>
+
+                    <Dialog>
+                        <DialogTrigger className="bg-gray-700 p-2 rounded-md cursor-pointer">Manage</DialogTrigger>
+                        <DialogContent className="bg-gray-950 text-gray-300">
+                            <DialogHeader>
+                                <DialogTitle>Manage</DialogTitle>
+                            </DialogHeader>
+                            <div className="flex flex-col items-center gap-2">
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <button className="bg-gray-700 p-2 rounded-md cursor-pointer">Clear</button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>Clear Chat</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                Are you sure you want to clear the chat?
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction onClick={() => { textcontent.current!.value = ""; window.localStorage.removeItem("chat") }}>Clear</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            </div>
+                            </DialogContent>
+                    </Dialog>
+                    <button className="bg-gray-700 p-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleReGen}>ReGen</button>
+                    <button className="bg-gray-700 p-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleNext}>Next</button>
                 </div>
                 <Textarea
-                    className="p-2 md:p-4 md:text-lg outline-0 bg-gray-800  text-gray-300"
+                    id="query"
+                    className="p-2 md:p-4 md:text-lg outline-0 bg-slate-950  text-gray-300"
                     placeholder="Describe your story..."
-                    // on enter send
                     onKeyDown={(e) => {
                         if (e.key === "Enter" && e.shiftKey === false) {
                             e.preventDefault();
