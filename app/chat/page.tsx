@@ -1,9 +1,10 @@
 "use client";
 import "./styles.css";
 import { models, systems } from "@/lib/ai";
-import { generateMessage  } from "@/actions/chatActions";
+import { generateMessage } from "@/actions/chatActions";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect,useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { readStreamableValue } from "@ai-sdk/rsc";
 import {
     Select,
     SelectContent,
@@ -19,6 +20,7 @@ export default function Page() {
     const modelRef = useRef<string>('gemini-2.5-flash');
     const systemRef = useRef<string>('storygen');
     const tempRef = useRef<number>(0.5);
+    const responseTypeRef = useRef<string>('text');
     const textcontent = useRef<HTMLTextAreaElement>(null);
     const [disabled, setDisabled] = useState(false);
     const { toast } = useToast();
@@ -27,7 +29,20 @@ export default function Page() {
         const start = performance.now();
         console.log(message)
         setDisabled(true);
-        const { output, success, message: msg } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current);
+        const { output, success, message: msg } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current, responseTypeRef.current);
+        if (responseTypeRef.current === 'stream' && output && typeof output === 'object') {
+            let finalOutput = '';
+            for await (const delta of readStreamableValue(output!)) {
+                finalOutput = delta as string;
+                console.log(`${performance.now() - start} ${finalOutput}`)
+                if (textcontent.current) {
+                    textcontent.current.value = `${textcontent.current.value}${finalOutput}`;
+                }
+            }
+            if (textcontent.current) {
+                textcontent.current.value = `${textcontent.current.value}\n\n`;
+            }
+        }
         setDisabled(false);
         const end = ((performance.now() - start) / 1000);
         if (!success || !output){
@@ -46,8 +61,8 @@ export default function Page() {
                 duration: 1500,
             })
         } 
-        if (textcontent.current) {
-            textcontent.current.value = `${textcontent.current.value}${output.trim()}`
+        if (textcontent.current && typeof output === 'string') {
+            textcontent.current.value = `${textcontent.current.value}${output.trim()}\n\n`
             window.localStorage.setItem("chat", textcontent.current.value);
         }
     }
@@ -63,7 +78,19 @@ export default function Page() {
         const start = performance.now();
 
         setDisabled(true);
-        const { output, success, message: msg } = await generateMessage(message, modelRef.current, systemRef.current, tempRef.current);
+        const { output, success, message: msg } = await generateMessage(message, modelRef.current, systemRef.current, tempRef.current, responseTypeRef.current);
+        if (responseTypeRef.current === 'stream' && output && typeof output === 'object') {
+            let finalOutput = '';
+            for await (const delta of readStreamableValue(output)) {
+                finalOutput = delta as string;
+                if (textcontent.current) {
+                    textcontent.current.value = `${textcontent.current.value}${finalOutput}`;
+                }
+            }
+            if (textcontent.current) {
+                textcontent.current.value = `${textcontent.current.value}\n\n`;
+            }
+        }
         const end = ((performance.now() - start) / 1000);
         setDisabled(false);
         if (!success || !output){
@@ -83,8 +110,8 @@ export default function Page() {
             })
         }
 
-        if (textcontent.current) {
-            textcontent.current.value = `${textcontent.current.value}\n\n${output.trim()}`;
+        if (textcontent.current && typeof output === 'string') {
+            textcontent.current.value = `${textcontent.current.value}${output.trim()}\n\n`;
             window.localStorage.setItem("chat", textcontent.current.value);
         }
     }
@@ -92,6 +119,7 @@ export default function Page() {
         if (textcontent.current && textcontent.current.value) {
             const contentArray = textcontent.current.value.split("\n\n");
             console.log(contentArray)
+            if(contentArray.at(-1) === '') contentArray.pop();
             const contentSlice = contentArray.slice(0, -1);
             console.log(contentSlice)
             const contentJoin = contentSlice.join("\n\n");
@@ -156,6 +184,7 @@ export default function Page() {
                                     </SelectContent>
                                 </Select>
 
+                                {/* TEMP SELECTION */}
                                 <Select onValueChange={(e) => { tempRef.current = Number(e) }}>
                                     <SelectTrigger className="w-fit bg-gray-700">
                                         <SelectValue placeholder="Temp" />
@@ -167,7 +196,17 @@ export default function Page() {
                                         <SelectItem value="1.5">⚡ Wild (Unpredictable & Experimental)</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                {/* TEMP SELECTION */}
+
+                                {/* RESPONSE TYPE SELECTION */}
+                                <Select onValueChange={(e) => { responseTypeRef.current = e }}>
+                                    <SelectTrigger className="w-fit bg-gray-700">
+                                        <SelectValue placeholder="Response Type" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-slate-800 text-slate-400">
+                                        <SelectItem value="text">Text</SelectItem>
+                                        <SelectItem value="stream">Stream</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
                         </DialogContent>
                     </Dialog>
