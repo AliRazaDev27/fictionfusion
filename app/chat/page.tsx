@@ -15,13 +15,21 @@ import {
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { FaPlay } from "react-icons/fa";
+import { IoReloadSharp } from "react-icons/io5";
+import { IoSettings } from "react-icons/io5";
+import { FaClipboard } from "react-icons/fa6";
+
+
 
 export default function Page() {
     const modelRef = useRef<string>('gemini-2.5-flash');
     const systemRef = useRef<string>('storygen');
     const tempRef = useRef<number>(0.5);
-    const responseTypeRef = useRef<string>('text');
+    const responseTypeRef = useRef<string>('stream');
     const textcontent = useRef<HTMLTextAreaElement>(null);
+    const queryRef = useRef<HTMLTextAreaElement>(null);
     const [disabled, setDisabled] = useState(false);
     const { toast } = useToast();
     const handleSend = async (message: string) => {
@@ -115,6 +123,19 @@ export default function Page() {
             window.localStorage.setItem("chat", textcontent.current.value);
         }
     }
+
+    const handleGen = async () => {
+        if(textcontent.current){
+            if(textcontent.current.value){
+                console.log('next')
+                handleNext();
+            }
+            else{
+                console.log('send')
+                handleSend(queryRef.current?.value.trim() || "");
+            }
+        }   
+    }
     const handleReGen = async () => {
         if (textcontent.current && textcontent.current.value) {
             const contentArray = textcontent.current.value.split("\n\n");
@@ -128,6 +149,7 @@ export default function Page() {
             handleNext();
         }
     }
+
     useEffect(() => {
         console.log('starting');
         if(window.localStorage){
@@ -150,7 +172,9 @@ export default function Page() {
             <div className="mt-auto max-w-3xl mx-auto w-full">
                 <div className="w-full overflow-hidden flex items-center justify-evenly pb-2">
                     <Dialog>
-                        <DialogTrigger className="bg-gray-700 p-2 rounded-md cursor-pointer">Settings</DialogTrigger>
+                        <DialogTrigger className="bg-gray-700 px-4 py-2.5 rounded-md cursor-pointer">
+                            <IoSettings/>
+                        </DialogTrigger>
                         <DialogContent className="bg-gray-950 text-gray-300">
                             <DialogHeader>
                                 <DialogTitle>Settings</DialogTitle>
@@ -212,7 +236,7 @@ export default function Page() {
                     </Dialog>
 
                     <Dialog>
-                        <DialogTrigger className="bg-gray-700 p-2 rounded-md cursor-pointer">Manage</DialogTrigger>
+                        <DialogTrigger className="bg-gray-700 px-4 py-2.5 rounded-md cursor-pointer"><FaClipboard/></DialogTrigger>
                         <DialogContent className="bg-gray-950 text-gray-300">
                             <DialogHeader>
                                 <DialogTitle>Manage</DialogTitle>
@@ -238,19 +262,18 @@ export default function Page() {
                             </div>
                             </DialogContent>
                     </Dialog>
-                    <button className="bg-gray-700 p-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleReGen}>ReGen</button>
-                    <button className="bg-gray-700 p-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleNext}>Next</button>
+                    <Button className="bg-gray-700 px-4 py-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleReGen}>
+                    <IoReloadSharp/>
+                    </Button>
+                    <Button className="bg-gray-700 px-4 py-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleGen}>
+                    <FaPlay/>
+                    </Button>
                 </div>
                 <Textarea
                     id="query"
+                    ref={queryRef}
                     className="p-2 md:p-4 md:text-lg outline-0 bg-slate-950  text-gray-300"
                     placeholder="Describe your story..."
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && e.shiftKey === false) {
-                            e.preventDefault();
-                            handleSend(e.currentTarget.value);
-                        }
-                    }}
                 />
             </div>
         </div>
