@@ -4,7 +4,18 @@ import { generateObject } from "ai"
 import { z } from "zod/v4"
 import { db } from "@/lib/database"
 import { quizzes } from "@/lib/database/quizSchema"
+import { eq } from "drizzle-orm"
 import {SYSTEM} from "./util"
+
+export const getQuizById = async (id: number) => {
+  try {
+    const quiz = await db.select().from(quizzes).where(eq(quizzes.id, id))
+    return quiz[0]
+  } catch (error) {
+    console.error("Error fetching quiz by id:", error)
+    return null
+  }
+}
 
 export const saveQuiz = async (quizData: {
   title: string

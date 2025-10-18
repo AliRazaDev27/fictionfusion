@@ -25,6 +25,7 @@ export default function Home() {
   const [topic, setTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false)
   const [isLoadingCollections, setIsLoadingCollections] = useState(false)
+  const [loadedQuizData, setLoadedQuizData] = useState<any>(null) // New state for loaded quiz
 
   const handleQuizComplete = (score: number, total: number) => {
     setResults({ score, total })
@@ -33,6 +34,7 @@ export default function Home() {
   const handleRestart = () => {
     setResults(null)
     setQuizStarted(false)
+    setLoadedQuizData(null) // Reset loaded quiz data on restart
     // setQUIZ_QUESTIONS(shuffleArray(_QUIZ_QUESTIONS))
   }
 
@@ -60,7 +62,15 @@ export default function Home() {
 
   }
 
-  if(isLoadingCollections) return <Collections/>
+  const handleLoadQuiz = (quiz: any) => {
+    setLoadedQuizData(quiz.data) // Assuming quiz.data contains the questions
+    setQUIZ_QUESTIONS(quiz.data.questions)
+    setTopic(quiz.topic)
+    setQuizStarted(true)
+    setIsLoadingCollections(false) // Hide collections after loading quiz
+  }
+
+  if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} />
 
   if (results) {
     return <QuizResults score={results.score} total={results.total} onRestart={handleRestart} />

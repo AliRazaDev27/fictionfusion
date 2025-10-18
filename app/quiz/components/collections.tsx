@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Search, Plus, Filter } from "lucide-react"
+import { getQuizById } from "../actions"
 
 interface Quiz {
   id: number
@@ -19,6 +20,7 @@ interface Quiz {
   description: string | null
   questionCount: number
   createdAt: Date
+  data: any
 }
 
 // This will be the type for the component state, which matches what child components expect
@@ -31,8 +33,11 @@ interface DisplayQuiz {
   createdDate: string
 }
 
+interface CollectionsProps {
+  onLoadQuiz: (quiz: Quiz) => void
+}
 
-export function Collections() {
+export function Collections({ onLoadQuiz }: CollectionsProps) {
   const [quizzes, setQuizzes] = useState<DisplayQuiz[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
@@ -47,9 +52,11 @@ export function Collections() {
       const dbQuizzes: Quiz[] = await getQuizzes()
       // Map the data to match the display component's expected props
       const displayQuizzes: DisplayQuiz[] = dbQuizzes.map(q => ({
-        ...q,
         id: q.id.toString(),
+        title: q.title,
+        topic: q.topic,
         description: q.description ?? "",
+        questionCount: q.questionCount,
         createdDate: new Date(q.createdAt).toLocaleDateString(),
       }))
       setQuizzes(displayQuizzes)
@@ -91,7 +98,14 @@ export function Collections() {
     }
   }
 
-  const handleLoad = () => {
+  const handleLoad = async () => {
+    if (selectedQuiz) {
+      const quizId = Number.parseInt(selectedQuiz.id)
+      const quizData = await getQuizById(quizId)
+      if (quizData) {
+        onLoadQuiz(quizData)
+      }
+    }
     setIsLoadOpen(false)
     setSelectedQuiz(null)
   }
