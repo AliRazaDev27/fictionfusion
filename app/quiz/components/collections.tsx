@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { generateQuiz } from "../actions"
 import { QuizGrid } from "@/components/quiz-grid"
 import { CreateQuizModal } from "@/components/create-quiz-modal"
 import { EditQuizModal } from "@/components/edit-quiz-modal"
@@ -75,14 +76,13 @@ export  function Collections() {
     return matchesSearch && matchesTopic
   })
 
-  const handleCreate = (newQuiz: Omit<Quiz, "id" | "createdDate">) => {
-    const quiz: Quiz = {
-      ...newQuiz,
-      id: Date.now().toString(),
-      createdDate: new Date().toISOString().split("T")[0],
-    }
-    setQuizzes([quiz, ...quizzes])
+  const handleCreate = async (newQuiz: Omit<Quiz, "id" | "createdDate">) => {
+    const generatedData = await generateQuiz(`$Generate exactly ${newQuiz.questionCount}
+       questions about this topic: ${newQuiz.topic} given this title '${newQuiz.title}' and description '${newQuiz.description}'`)
+    // The logic to add to the quiz list will be handled after the user saves the generated quiz.
+    // For now, we just return the generated data to the modal.
     setIsCreateOpen(false)
+    return generatedData
   }
 
   const handleEdit = (updatedQuiz: Quiz) => {

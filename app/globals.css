@@ -3,6 +3,34 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Global dark scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1e1e; /* dark background */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #444, #222);
+  border-radius: 10px;
+  border: 2px solid #1e1e1e; /* subtle padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #666, #333);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #444 #1e1e1e;
+}
+
+
 @theme {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
