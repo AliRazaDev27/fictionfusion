@@ -11,6 +11,7 @@ import { Sparkles, BookOpen, Zap, Library } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { set } from "zod/v4"
+import { Collections } from "./components/collections"
 
 
 type QuizMode = "learn" | "test"
@@ -23,6 +24,7 @@ export default function Home() {
   const [quizTopic, setQuizTopic] = useState("")
   const [topic, setTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false)
+  const [isLoadingCollections, setIsLoadingCollections] = useState(false)
 
   const handleQuizComplete = (score: number, total: number) => {
     setResults({ score, total })
@@ -32,11 +34,6 @@ export default function Home() {
     setResults(null)
     setQuizStarted(false)
     // setQUIZ_QUESTIONS(shuffleArray(_QUIZ_QUESTIONS))
-  }
-  const handleStart = () => {
-    if(!!QUIZ_QUESTIONS) {
-    setQuizStarted(true)
-    }
   }
 
   const handleGenerateQuiz = ()=>{
@@ -58,8 +55,12 @@ export default function Home() {
   }
 
   const handleLoadCollections = () => {
+    console.log("loading collections")
+    setIsLoadingCollections(true);
 
   }
+
+  if(isLoadingCollections) return <Collections/>
 
   if (results) {
     return <QuizResults score={results.score} total={results.total} onRestart={handleRestart} />
