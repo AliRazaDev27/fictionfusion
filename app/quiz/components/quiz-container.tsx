@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import QuestionCard from "./question-card"
 import ProgressBar from "./progress-bar"
 
@@ -234,32 +234,44 @@ const QUIZ_QUESTIONS : Question[] = [
 
 interface QuizContainerProps {
   onComplete: (score: number, total: number) => void
+  mode: "learn" | "test"
 }
 
-export default function QuizContainer({ onComplete }: QuizContainerProps) {
+export default function QuizContainer({ onComplete, mode }: QuizContainerProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answered, setAnswered] = useState(false)
+  const isLastAnswerCorrect = useRef(false);
   console.log(score);
 
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex]
   const isLastQuestion = currentQuestionIndex === QUIZ_QUESTIONS.length - 1
 
   const handleSelectAnswer = (optionIndex: number) => {
-    if (!answered) {
-      setSelectedAnswer(optionIndex)
-      setAnswered(true)
+    if (answered) return
 
-      if (currentQuestion.options[optionIndex] === currentQuestion.answer) {
-        setScore(score + 1)
-      }
+    setSelectedAnswer(optionIndex)
+    setAnswered(true)
+
+    const isCorrect = currentQuestion.options[optionIndex] === currentQuestion.answer
+    if (!isLastQuestion && isCorrect) {
+      setScore(score + 1)
+    }
+    if(isLastQuestion && isCorrect) {
+      isLastAnswerCorrect.current = true;
+    }
+
+    if (mode === "test") {
+      setTimeout(() => {
+        handleNext();
+      }, 500)
     }
   }
 
   const handleNext = () => {
     if (isLastQuestion) {
-      onComplete(score, QUIZ_QUESTIONS.length)
+      onComplete(isLastAnswerCorrect.current ? score+1:score, QUIZ_QUESTIONS.length)
     } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
       setSelectedAnswer(null)
@@ -289,18 +301,21 @@ export default function QuizContainer({ onComplete }: QuizContainerProps) {
             correctAnswer={currentQuestion.answer}
             answered={answered}
             onSelectAnswer={handleSelectAnswer}
+            mode={mode}
           />
         </div>
 
-        <div className="flex justify-end">
-          <button
-            onClick={handleNext}
-            disabled={!answered}
-            className="bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-primary/20"
-          >
-            {isLastQuestion ? "Finish" : "Next"}
-          </button>
-        </div>
+        {mode === "learn" && (
+          <div className="flex justify-end">
+            <button
+              onClick={handleNext}
+              disabled={!answered}
+              className="bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-primary/20"
+            >
+              {isLastQuestion ? "Finish" : "Next"}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )

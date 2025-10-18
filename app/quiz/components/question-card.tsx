@@ -7,6 +7,7 @@ interface QuestionCardProps {
   correctAnswer: string
   answered: boolean
   onSelectAnswer: (index: number) => void
+  mode: "learn" | "test"
 }
 
 export default function QuestionCard({
@@ -16,6 +17,7 @@ export default function QuestionCard({
   correctAnswer,
   answered,
   onSelectAnswer,
+  mode,
 }: QuestionCardProps) {
   return (
     <div className="w-full max-w-xl">
@@ -28,8 +30,8 @@ export default function QuestionCard({
         {options.map((option, index) => {
           const isSelected = selectedAnswer === index
           const isCorrect = options[index] === correctAnswer
-          const showCorrect = answered && isCorrect
-          const showIncorrect = answered && isSelected && !isCorrect
+          const showCorrect = mode === "learn" && answered && isCorrect
+          const showIncorrect = mode === "learn" && answered && isSelected && !isCorrect
 
           return (
             <button
