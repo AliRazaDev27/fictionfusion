@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { generateQuiz } from "../actions"
+import { useState, useEffect } from "react"
+import { getQuizzes, generateQuiz } from "../actions"
 import { QuizGrid } from "@/components/quiz-grid"
 import { CreateQuizModal } from "@/components/create-quiz-modal"
 import { EditQuizModal } from "@/components/edit-quiz-modal"
@@ -13,6 +13,16 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Search, Plus, Filter } from "lucide-react"
 
 interface Quiz {
+  id: number
+  title: string
+  topic: string
+  description: string | null
+  questionCount: number
+  createdAt: Date
+}
+
+// This will be the type for the component state, which matches what child components expect
+interface DisplayQuiz {
   id: string
   title: string
   topic: string
@@ -21,50 +31,31 @@ interface Quiz {
   createdDate: string
 }
 
-const MOCK_QUIZZES: Quiz[] = [
-  {
-    id: "1",
-    title: "React Fundamentals",
-    topic: "React Basics",
-    description: "Learn the core concepts of React",
-    questionCount: 15,
-    createdDate: "2024-10-15",
-  },
-  {
-    id: "2",
-    title: "Advanced HTML",
-    topic: "HTML Advanced",
-    description: "Master advanced HTML techniques",
-    questionCount: 12,
-    createdDate: "2024-10-10",
-  },
-  {
-    id: "3",
-    title: "CSS Grid Mastery",
-    topic: "CSS Advanced",
-    description: "Deep dive into CSS Grid layouts",
-    questionCount: 18,
-    createdDate: "2024-10-08",
-  },
-  {
-    id: "4",
-    title: "JavaScript ES6+",
-    topic: "JavaScript Advanced",
-    description: "Modern JavaScript features and patterns",
-    questionCount: 20,
-    createdDate: "2024-10-05",
-  },
-]
 
-export  function Collections() {
-  const [quizzes, setQuizzes] = useState<Quiz[]>(MOCK_QUIZZES)
+export function Collections() {
+  const [quizzes, setQuizzes] = useState<DisplayQuiz[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isLoadOpen, setIsLoadOpen] = useState(false)
-  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null)
+  const [selectedQuiz, setSelectedQuiz] = useState<DisplayQuiz | null>(null)
+
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      const dbQuizzes: Quiz[] = await getQuizzes()
+      // Map the data to match the display component's expected props
+      const displayQuizzes: DisplayQuiz[] = dbQuizzes.map(q => ({
+        ...q,
+        id: q.id.toString(),
+        description: q.description ?? "",
+        createdDate: new Date(q.createdAt).toLocaleDateString(),
+      }))
+      setQuizzes(displayQuizzes)
+    }
+    fetchQuizzes()
+  }, [])
 
   const topics = Array.from(new Set(quizzes.map((q) => q.topic)))
 
@@ -76,16 +67,17 @@ export  function Collections() {
     return matchesSearch && matchesTopic
   })
 
-  const handleCreate = async (newQuiz: Omit<Quiz, "id" | "createdDate">) => {
-    const generatedData = await generateQuiz(`$Generate exactly ${newQuiz.questionCount}
-       questions about this topic: ${newQuiz.topic} given this title '${newQuiz.title}' and description '${newQuiz.description}'`)
+  const handleCreate = async (newQuiz: { title: string; topic: string; description: string; questionCount: number }) => {
+    const generatedData = await generateQuiz(
+      `Generate exactly ${newQuiz.questionCount} questions about this topic: ${newQuiz.topic} given this title '${newQuiz.title}' and description '${newQuiz.description}'`
+    )
     // The logic to add to the quiz list will be handled after the user saves the generated quiz.
     // For now, we just return the generated data to the modal.
     setIsCreateOpen(false)
     return generatedData
   }
 
-  const handleEdit = (updatedQuiz: Quiz) => {
+  const handleEdit = (updatedQuiz: DisplayQuiz) => {
     setQuizzes(quizzes.map((q) => (q.id === updatedQuiz.id ? updatedQuiz : q)))
     setIsEditOpen(false)
     setSelectedQuiz(null)
@@ -104,17 +96,17 @@ export  function Collections() {
     setSelectedQuiz(null)
   }
 
-  const openEdit = (quiz: Quiz) => {
+  const openEdit = (quiz: DisplayQuiz) => {
     setSelectedQuiz(quiz)
     setIsEditOpen(true)
   }
 
-  const openDelete = (quiz: Quiz) => {
+  const openDelete = (quiz: DisplayQuiz) => {
     setSelectedQuiz(quiz)
     setIsDeleteOpen(true)
   }
 
-  const openLoad = (quiz: Quiz) => {
+  const openLoad = (quiz: DisplayQuiz) => {
     setSelectedQuiz(quiz)
     setIsLoadOpen(true)
   }

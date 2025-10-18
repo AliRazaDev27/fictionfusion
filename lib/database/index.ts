@@ -11,7 +11,8 @@ import * as showSchema from './showSchema';
 import * as taskSchema from './taskSchema';
 import * as userListTable from './userListTable';
 import * as userSchema from './userSchema';
+import * as quizSchema from './quizSchema';
 
 config({ path: '.env.local' }); // or .env
 
-export const db = drizzle(sql, { schema: { ...bookSchema, ...celebSchema, ...ignorelistSchema, ...listSchema, ...movieSchema, ...musicSchema, ...showSchema, ...taskSchema, ...userListTable, ...userSchema } });
+export const db = drizzle(sql, { schema: { ...bookSchema, ...celebSchema, ...ignorelistSchema, ...listSchema, ...movieSchema, ...musicSchema, ...showSchema, ...taskSchema, ...userListTable, ...userSchema, ...quizSchema } });

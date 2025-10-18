@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
+import { saveQuiz } from "@/app/quiz/actions"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -38,22 +39,30 @@ export function CreateQuizModal({ open, onOpenChange, onCreate }: CreateQuizModa
       setGeneratedQuiz(quizData)
       setEditorValue(JSON.stringify(quizData, null, 2))
       setIsQuizGenerated(true)
+    }
+  }
+
+  const handleSaveGeneratedQuiz = async () => {
+    try {
+      if (generatedQuiz) {
+        const quizToSave = {
+          title,
+          topic: generatedQuiz.topic,
+          description,
+          questionCount: generatedQuiz.questions.length,
+          data: generatedQuiz,
+        }
+        await saveQuiz(quizToSave)
+        setFinalQuizData(generatedQuiz)
+        setIsQuizGenerated(false)
+        onOpenChange(false)
       setTitle("")
       setTopic("")
       setDescription("")
       setQuestionCount("10")
-    }
-  }
-
-  const handleSaveGeneratedQuiz = () => {
-    try {
-      const parsed = JSON.parse(editorValue);
-      setFinalQuizData(parsed)
-      setIsQuizGenerated(false)
-      onOpenChange(false)
-    }
-    catch (error: any) {
-      console.log(error);
+      }
+    } catch (error: any) {
+      console.log(error)
     }
   }
 
