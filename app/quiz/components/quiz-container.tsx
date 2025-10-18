@@ -3,14 +3,9 @@
 import { useRef, useState } from "react"
 import QuestionCard from "./question-card"
 import ProgressBar from "./progress-bar"
+import { Question } from "../util"
 
-interface Question {
-  question: string
-  options: string[]
-  answer: string
-}
-
-const QUIZ_QUESTIONS : Question[] = [
+const __QUIZ_QUESTIONS : Question[] = [
   // Easy
   {
     question: "What does HTML stand for?",
@@ -204,46 +199,20 @@ const QUIZ_QUESTIONS : Question[] = [
 ];
 
 
-// const _QUIZ_QUESTIONS: Question[] = [
-//   {
-//     question: "What is the capital of France?",
-//     options: ["London", "Berlin", "Paris", "Madrid"],
-//     answer: "Paris",
-//   },
-//   {
-//     question: "Which planet is known as the Red Planet?",
-//     options: ["Venus", "Mars", "Jupiter", "Saturn"],
-//     answer: "Mars",
-//   },
-//   {
-//     question: "What is the largest ocean on Earth?",
-//     options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
-//     answer: "Pacific Ocean",
-//   },
-//   {
-//     question: 'Who wrote "Romeo and Juliet"?',
-//     options: ["Jane Austen", "William Shakespeare", "Charles Dickens", "Mark Twain"],
-//     answer: "William Shakespeare",
-//   },
-//   {
-//     question: "What is the chemical symbol for Gold?",
-//     options: ["Go", "Gd", "Au", "Ag"],
-//     answer: "Au",
-//   },
-// ]
 
 interface QuizContainerProps {
+  topic:string
   onComplete: (score: number, total: number) => void
+  QUIZ_QUESTIONS: Question[]
   mode: "learn" | "test"
 }
 
-export default function QuizContainer({ onComplete, mode }: QuizContainerProps) {
+export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }: QuizContainerProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answered, setAnswered] = useState(false)
   const isLastAnswerCorrect = useRef(false);
-  console.log(score);
 
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex]
   const isLastQuestion = currentQuestionIndex === QUIZ_QUESTIONS.length - 1
@@ -283,7 +252,7 @@ export default function QuizContainer({ onComplete, mode }: QuizContainerProps) 
     <div className="min-h-[calc(100vh-70px)] bg-background flex flex-col p-3 md:p-6">
       <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
         <div className="mb-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Quiz Master</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{topic}</h1>
           <p className="text-muted-foreground">
             Question {currentQuestionIndex + 1} of {QUIZ_QUESTIONS.length}
           </p>

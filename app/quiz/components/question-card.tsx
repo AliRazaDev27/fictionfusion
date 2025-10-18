@@ -23,7 +23,7 @@ export default function QuestionCard({
     <div className="w-full max-w-xl">
       {/* Question */}
       <div className="mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground text-balance leading-relaxed">{question}</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-foreground text-balance leading-relaxed">{question}</h2>
       </div>
 
       <div className="space-y-2">
