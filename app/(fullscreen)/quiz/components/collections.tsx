@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Search, Plus, Filter } from "lucide-react"
-import { getQuizById } from "../actions"
 import { useToast } from "@/components/ui/use-toast"
 
 interface Quiz {
@@ -40,6 +39,7 @@ interface CollectionsProps {
 
 export function Collections({ onLoadQuiz }: CollectionsProps) {
   const [quizzes, setQuizzes] = useState<DisplayQuiz[]>([])
+  const [c_quiz_data, set_c_quiz_data] = useState<Quiz[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -52,6 +52,8 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
   useEffect(() => {
     const fetchQuizzes = async () => {
       const dbQuizzes: Quiz[] = await getQuizzes()
+      set_c_quiz_data(dbQuizzes)
+      console.log(dbQuizzes)
       // Map the data to match the display component's expected props
       const displayQuizzes: DisplayQuiz[] = dbQuizzes.map(q => ({
         id: q.id.toString(),
@@ -133,7 +135,7 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
   const handleLoad = async () => {
     if (selectedQuiz) {
       const quizId = Number.parseInt(selectedQuiz.id)
-      const quizData = await getQuizById(quizId)
+      const quizData = c_quiz_data.find(q => q.id === quizId)
       if (quizData) {
         onLoadQuiz(quizData)
       }
