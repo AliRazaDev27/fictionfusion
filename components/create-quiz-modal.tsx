@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { saveQuiz } from "@/app/quiz/actions"
+import { saveQuiz } from "@/app/(fullscreen)/quiz/actions"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
