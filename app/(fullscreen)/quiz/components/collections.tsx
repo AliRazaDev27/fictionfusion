@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getQuizzes, generateQuiz } from "../actions"
+import { getQuizzes, generateQuiz, updateQuiz } from "../actions"
 import { QuizGrid } from "@/components/quiz-grid"
 import { CreateQuizModal } from "@/components/create-quiz-modal"
 import { EditQuizModal } from "@/components/edit-quiz-modal"
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Search, Plus, Filter } from "lucide-react"
 import { getQuizById } from "../actions"
+import { useToast } from "@/components/ui/use-toast"
 
 interface Quiz {
   id: number
@@ -46,6 +47,7 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isLoadOpen, setIsLoadOpen] = useState(false)
   const [selectedQuiz, setSelectedQuiz] = useState<DisplayQuiz | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     const fetchQuizzes = async () => {
@@ -84,10 +86,40 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
     return generatedData
   }
 
-  const handleEdit = (updatedQuiz: DisplayQuiz) => {
-    setQuizzes(quizzes.map((q) => (q.id === updatedQuiz.id ? updatedQuiz : q)))
-    setIsEditOpen(false)
-    setSelectedQuiz(null)
+  const handleEdit = async (updatedQuiz: DisplayQuiz) => {
+    try {
+      const quizId = Number.parseInt(updatedQuiz.id)
+      const result = await updateQuiz(quizId, {
+        title: updatedQuiz.title,
+        topic: updatedQuiz.topic,
+        description: updatedQuiz.description,
+        questionCount: updatedQuiz.questionCount,
+      })
+
+      if (result.success) {
+        setQuizzes(quizzes.map((q) => (q.id === updatedQuiz.id ? updatedQuiz : q)))
+        toast({
+          title: "Success",
+          description: "Quiz updated successfully!",
+        })
+      } else {
+        toast({
+          title: "Error",
+          description: `Failed to update quiz: ${result.error}`,
+          variant: "destructive",
+        })
+      }
+    } catch (error: any) {
+      console.error("Error updating quiz:", error)
+      toast({
+        title: "Error",
+        description: `Failed to update quiz: ${error.message || "Unknown error"}`,
+        variant: "destructive",
+      })
+    } finally {
+      setIsEditOpen(false)
+      setSelectedQuiz(null)
+    }
   }
 
   const handleDelete = () => {

@@ -4,7 +4,7 @@ import { generateObject } from "ai"
 import { z } from "zod/v4"
 import { db } from "@/lib/database"
 import { quizzes } from "@/lib/database/quizSchema"
-import { eq } from "drizzle-orm"
+import { eq, sql } from "drizzle-orm"
 import {SYSTEM} from "./util"
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { revalidateTag } from 'next/cache'
@@ -44,6 +44,24 @@ export const getQuizzes = async () => {
   } catch (error) {
     console.error("Error fetching quizzes:", error)
     return []
+  }
+}
+
+export const updateQuiz = async (
+  id: number,
+  updatedFields: {
+    title?: string
+    topic?: string
+    description?: string | null
+    questionCount?: number
+  }
+) => {
+  try {
+    await db.update(quizzes).set(updatedFields).where(eq(quizzes.id, id))
+    return { success: true }
+  } catch (error) {
+    console.error("Error updating quiz:", error)
+    return { success: false, error: "Failed to update quiz" }
   }
 }
 
