@@ -69,7 +69,7 @@ export function QuizGrid({ quizzes, onEdit, onDelete, onLoad }: QuizGridProps) {
               <span className="text-xs text-muted-foreground">{new Date(quiz.createdDate).toLocaleDateString()}</span>
             </div>
             <div className="flex gap-2 pt-2">
-              <Button onClick={() => onEdit(quiz)} variant="outline" size="sm" className="flex-1 gap-2">
+              <Button onClick={() => onEdit(quiz)} variant="outline" size="sm" className="flex-1 gap-2 bg-slate-900">
                 <Edit2 className="h-4 w-4" />
                 Edit
               </Button>

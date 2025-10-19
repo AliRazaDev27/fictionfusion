@@ -6,7 +6,8 @@ import { db } from "@/lib/database"
 import { quizzes } from "@/lib/database/quizSchema"
 import { eq } from "drizzle-orm"
 import {SYSTEM} from "./util"
-
+import { unstable_cacheTag as cacheTag } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 export const getQuizById = async (id: number) => {
   try {
     const quiz = await db.select().from(quizzes).where(eq(quizzes.id, id))
@@ -26,6 +27,7 @@ export const saveQuiz = async (quizData: {
 }) => {
   try {
     await db.insert(quizzes).values(quizData)
+    revalidateTag('quiz-public')
     return { success: true }
   } catch (error) {
     console.error("Error saving quiz:", error)
@@ -34,6 +36,8 @@ export const saveQuiz = async (quizData: {
 }
 
 export const getQuizzes = async () => {
+  "use cache";
+  cacheTag('quiz-public');
   try {
     const allQuizzes = await db.select().from(quizzes)
     return allQuizzes

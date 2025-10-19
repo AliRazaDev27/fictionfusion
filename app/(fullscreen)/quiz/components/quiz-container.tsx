@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import QuestionCard from "./question-card"
 import ProgressBar from "./progress-bar"
 import { Question } from "../util"
@@ -21,6 +21,7 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answered, setAnswered] = useState(false)
   const [isSaveQuizDialogOpen, setIsSaveQuizDialogOpen] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(30) // 30 seconds timer
   const isLastAnswerCorrect = useRef(false);
 
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex]
@@ -41,11 +42,43 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
     }
 
     if (mode === "test") {
+      // Clear timer immediately when an answer is selected
+      // The handleNext will be called after a short delay
       setTimeout(() => {
         handleNext();
       }, 500)
     }
   }
+
+  const handleTimerEnd = () => {
+    if (!answered) { // Only proceed if not already answered
+      setAnswered(true) // Mark as answered to prevent further input
+      handleNext() // Move to the next question without score increment
+    }
+  }
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null;
+    if (mode === "test" && !answered) {
+      setTimeLeft(30); // Reset timer for each new question
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 1) {
+            clearInterval(timer!);
+            handleTimerEnd();
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [currentQuestionIndex, mode, answered]); // Depend on currentQuestionIndex, mode, and answered state
 
   const handleNext = () => {
     if (isLastQuestion) {
@@ -65,6 +98,11 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{topic}</h1>
             <p className="text-muted-foreground">
               Question {currentQuestionIndex + 1} of {QUIZ_QUESTIONS.length}
+              {mode === "test" && (
+                <span className="ml-4 text-lg font-semibold text-primary">
+                  Time Left: {timeLeft}s
+                </span>
+              )}
             </p>
           </div>
           <Button

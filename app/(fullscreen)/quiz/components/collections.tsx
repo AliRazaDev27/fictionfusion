@@ -128,7 +128,7 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
   return (
     <main className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-card">
+      <div className="border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
@@ -150,12 +150,12 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
                   placeholder="Search quizzes..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-slate-900"
                 />
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2 bg-transparent">
+                  <Button variant="outline" className="gap-2 bg-slate-900">
                     <Filter className="h-4 w-4" />
                     {selectedTopic ? `Topic: ${selectedTopic}` : "Filter by Topic"}
                   </Button>
