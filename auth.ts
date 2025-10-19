@@ -27,7 +27,7 @@ export const signIn = async (email, password) => {
     }
   },
     AUTH_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: "7d" }
   );
   await setAuthCookie(token);
   return;
@@ -42,7 +42,7 @@ export const verifyToken = async(token) => {
 };
 
 export const setAuthCookie = async(token) => {
-  await (await cookies()).set({
+  (await cookies()).set({
     name: "auth-token",
     value: token,
     httpOnly: true,
