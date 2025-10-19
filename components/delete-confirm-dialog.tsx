@@ -24,7 +24,7 @@ export function DeleteConfirmDialog({ open, onOpenChange, quizTitle, onConfirm }
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Quiz Collection?</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete "{quizTitle}"? This action cannot be undone.
+            Are you sure you want to delete &quot;{quizTitle}&quot;? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="flex gap-2">

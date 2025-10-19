@@ -22,7 +22,7 @@ export function LoadConfirmDialog({ open, onOpenChange, quizTitle, onConfirm }: 
         <div className="flex flex-col items-center gap-4 py-6">
           <CheckCircle className="h-12 w-12 text-blue-500" />
           <div className="text-center">
-            <p className="font-medium text-foreground">"{quizTitle}"</p>
+            <p className="font-medium text-foreground">&quot;{quizTitle}&quot;</p>
             <p className="mt-2 text-sm text-muted-foreground">is ready to be loaded</p>
           </div>
         </div>
