@@ -54,9 +54,9 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
   }
 
   return (
-    <div className="min-h-[calc(100vh-70px)] bg-background flex flex-col p-3 md:p-6">
-      <div className="max-w-2xl w-full mx-auto flex-1 flex flex-col">
-        <div className="mb-2">
+    <div className="min-h-screen bg-background flex flex-col justify-center p-4 md:p-8">
+      <div className="max-w-2xl w-full mx-auto _flex-1 flex flex-col gap-4 justify-center">
+        <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{topic}</h1>
           <p className="text-muted-foreground">
             Question {currentQuestionIndex + 1} of {QUIZ_QUESTIONS.length}
@@ -67,7 +67,7 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
         <ProgressBar current={currentQuestionIndex + 1} total={QUIZ_QUESTIONS.length} />
 
         {/* Question Card */}
-        <div className="flex-1 flex items-center justify-center py-6">
+        <div className="flex-1 flex items-center justify-center">
           <QuestionCard
             question={currentQuestion.question}
             options={currentQuestion.options}
@@ -80,11 +80,14 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
         </div>
 
         {mode === "learn" && (
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4">
             <button
               onClick={handleNext}
               disabled={!answered}
-              className="bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground text-primary-foreground font-semibold py-3 px-8 rounded-lg transition-all duration-200 disabled:cursor-not-allowed hover:shadow-lg hover:shadow-primary/20"
+              className="bg-primary cursor-pointer hover:bg-primary/90 disabled:bg-muted
+               disabled:text-muted-foreground text-primary-foreground font-semibold py-3 px-8
+                rounded-lg transition-all duration-200 disabled:cursor-not-allowed
+                 hover:shadow-lg hover:shadow-primary/20"
             >
               {isLastQuestion ? "Finish" : "Next"}
             </button>

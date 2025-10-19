@@ -4,9 +4,10 @@ interface QuizResultsProps {
   score: number
   total: number
   onRestart: () => void
+  onExit: () => void
 }
 
-export default function QuizResults({ score, total, onRestart }: QuizResultsProps) {
+export default function QuizResults({ score, total, onRestart, onExit }: QuizResultsProps) {
   const percentage = Math.round((score / total) * 100)
   const getPerformanceMessage = () => {
     if (percentage === 100) return "Perfect Score! Outstanding!"
@@ -42,6 +43,15 @@ export default function QuizResults({ score, total, onRestart }: QuizResultsProp
         >
           Retake Quiz
         </button>
+        <div>
+        <button
+          onClick={onExit}
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-primary/20"
+        >
+          Exit
+        </button>
+        </div>
+
       </div>
     </div>
   )

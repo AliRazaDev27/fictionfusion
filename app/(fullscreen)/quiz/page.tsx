@@ -1,6 +1,6 @@
 "use client"
 
-import { useState,useRef } from "react"
+import { useState} from "react"
 import QuizContainer from "./components/quiz-container"
 import QuizResults from "./components/quiz-results"
 import "./styles.css"
@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button"
 import { Sparkles, BookOpen, Zap, Library } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { set } from "zod/v4"
 import { Collections } from "./components/collections"
 
 
@@ -25,7 +24,6 @@ export default function Home() {
   const [topic, setTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false)
   const [isLoadingCollections, setIsLoadingCollections] = useState(false)
-  const [loadedQuizData, setLoadedQuizData] = useState<any>(null) // New state for loaded quiz
 
   const handleQuizComplete = (score: number, total: number) => {
     setResults({ score, total })
@@ -33,8 +31,13 @@ export default function Home() {
 
   const handleRestart = () => {
     setResults(null)
+    // setQuizStarted(false)
+    // setQUIZ_QUESTIONS(shuffleArray(_QUIZ_QUESTIONS))
+  }
+
+  const handleExit = () => {
+    setResults(null)
     setQuizStarted(false)
-    setLoadedQuizData(null) // Reset loaded quiz data on restart
     // setQUIZ_QUESTIONS(shuffleArray(_QUIZ_QUESTIONS))
   }
 
@@ -63,7 +66,6 @@ export default function Home() {
   }
 
   const handleLoadQuiz = (quiz: any) => {
-    setLoadedQuizData(quiz.data) // Assuming quiz.data contains the questions
     setQUIZ_QUESTIONS(quiz.data.questions)
     setTopic(quiz.topic)
     setQuizStarted(true)
@@ -73,12 +75,12 @@ export default function Home() {
   if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} />
 
   if (results) {
-    return <QuizResults score={results.score} total={results.total} onRestart={handleRestart} />
+    return <QuizResults score={results.score} total={results.total} onRestart={handleRestart} onExit={handleExit} />
   }
 
   if (!quizStarted) {
     return (
-      <div className="min-h-[calc(100vh-70px)] bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Hero Section */}
         <div className="text-center mb-12">
@@ -92,12 +94,12 @@ export default function Home() {
         <div className="mb-8 flex justify-center">
           <Tabs value={quizMode} onValueChange={(v) => setQuizMode(v as QuizMode)} className="w-full max-w-md">
             <TabsList className="grid w-full grid-cols-2 bg-muted/50">
-              <TabsTrigger value="learn" className="flex items-center gap-2">
+              <TabsTrigger value="learn" className="flex items-center gap-2 cursor-pointer hover:bg-neutral-800">
                 <BookOpen className="w-4 h-4" />
                 <span className="hidden sm:inline">Learn Mode</span>
                 <span className="sm:hidden">Learn</span>
               </TabsTrigger>
-              <TabsTrigger value="test" className="flex items-center gap-2">
+              <TabsTrigger value="test" className="flex items-center gap-2 cursor-pointer hover:bg-neutral-800">
                 <Zap className="w-4 h-4" />
                 <span className="hidden sm:inline">Test Mode</span>
                 <span className="sm:hidden">Test</span>
@@ -127,7 +129,7 @@ export default function Home() {
               variant="outline"
               size="lg"
               onClick={handleLoadCollections}
-              className="gap-2 border-border/60 hover:bg-muted/50 bg-neutral-900"
+              className="gap-2 cursor-pointer border-border/60 hover:bg-muted/50 bg-neutral-900"
             >
               <Library className="w-4 h-4" />
               <span className="hidden sm:inline">Collections</span>
@@ -137,7 +139,8 @@ export default function Home() {
               size="lg"
               onClick={handleGenerateQuiz}
               disabled={!quizTopic.trim() || isGenerating}
-              className="gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              className="cursor-pointer disabled:cursor-not-allowed 
+              gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
             >
               {isGenerating ? (
                 <>

@@ -20,13 +20,13 @@ export default function QuestionCard({
   mode,
 }: QuestionCardProps) {
   return (
-    <div className="w-full max-w-xl">
+    <div className="w-full max-w-xl lg:max-w-2xl lg:px-6">
       {/* Question */}
-      <div className="mb-8">
-        <h2 className="text-xl md:text-2xl font-bold text-foreground text-balance leading-relaxed">{question}</h2>
+      <div className="mb-7">
+        <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-foreground text-balance leading-relaxed">{question}</h2>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2.5">
         {options.map((option, index) => {
           const isSelected = selectedAnswer === index
           const isCorrect = options[index] === correctAnswer

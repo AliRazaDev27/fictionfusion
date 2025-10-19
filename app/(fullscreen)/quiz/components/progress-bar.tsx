@@ -11,7 +11,10 @@ export default function ProgressBar({ current, total }: ProgressBarProps) {
       <div className="h-2 bg-card rounded-full overflow-hidden border border-border">
         <div
           className="h-full bg-gradient-to-r from-primary via-accent to-primary transition-all duration-500 ease-out"
-          style={{ width: `${percentage}%` }}
+          style={{ 
+            width: `${percentage}%`,
+            maskImage: 'linear-gradient(to right, black 0%, black 50%, transparent 100%)'
+           }}
         />
       </div>
     </div>
