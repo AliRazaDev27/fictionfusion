@@ -4,6 +4,9 @@ import { useRef, useState } from "react"
 import QuestionCard from "./question-card"
 import ProgressBar from "./progress-bar"
 import { Question } from "../util"
+import { Bookmark } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { SaveQuizDialog } from "@/components/save-quiz-dialog"
 
 interface QuizContainerProps {
   topic:string
@@ -17,6 +20,7 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [answered, setAnswered] = useState(false)
+  const [isSaveQuizDialogOpen, setIsSaveQuizDialogOpen] = useState(false)
   const isLastAnswerCorrect = useRef(false);
 
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex]
@@ -56,11 +60,22 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
   return (
     <div className="min-h-screen bg-background flex flex-col justify-center p-4 md:p-8">
       <div className="max-w-2xl w-full mx-auto _flex-1 flex flex-col gap-4 justify-center">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{topic}</h1>
-          <p className="text-muted-foreground">
-            Question {currentQuestionIndex + 1} of {QUIZ_QUESTIONS.length}
-          </p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{topic}</h1>
+            <p className="text-muted-foreground">
+              Question {currentQuestionIndex + 1} of {QUIZ_QUESTIONS.length}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsSaveQuizDialogOpen(true)}
+            className="text-muted-foreground hover:text-foreground"
+            title="Save Quiz"
+          >
+            <Bookmark className="w-5 h-5" />
+          </Button>
         </div>
 
         {/* Progress Bar */}
@@ -94,6 +109,12 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
           </div>
         )}
       </div>
+      <SaveQuizDialog
+        open={isSaveQuizDialogOpen}
+        onOpenChange={setIsSaveQuizDialogOpen}
+        topic={topic}
+        quizQuestions={QUIZ_QUESTIONS}
+      />
     </div>
   )
 }

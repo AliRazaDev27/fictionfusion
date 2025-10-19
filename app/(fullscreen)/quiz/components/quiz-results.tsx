@@ -43,10 +43,10 @@ export default function QuizResults({ score, total, onRestart, onExit }: QuizRes
         >
           Retake Quiz
         </button>
-        <div>
+        <div className="mt-4">
         <button
           onClick={onExit}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-primary/20"
+          className="w-full bg-red-500 hover:bg-red-600 text-primary-foreground font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:shadow-sm hover:shadow-red-500"
         >
           Exit
         </button>

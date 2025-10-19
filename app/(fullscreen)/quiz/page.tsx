@@ -93,7 +93,7 @@ export default function Home() {
         {/* Mode Selector */}
         <div className="mb-8 flex justify-center">
           <Tabs value={quizMode} onValueChange={(v) => setQuizMode(v as QuizMode)} className="w-full max-w-md">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50">
+            <TabsList className="grid w-full grid-cols-2 bg-muted/70">
               <TabsTrigger value="learn" className="flex items-center gap-2 cursor-pointer hover:bg-neutral-800">
                 <BookOpen className="w-4 h-4" />
                 <span className="hidden sm:inline">Learn Mode</span>
@@ -118,7 +118,7 @@ export default function Home() {
               placeholder="Enter a topic, subject, or concept to generate a quiz..."
               value={quizTopic}
               onChange={(e) => setQuizTopic(e.target.value)}
-              className="pl-12 h-12 text-base bg-card border-border/60 focus:border-blue-500 transition-colors"
+              className="pl-12 h-12 text-base bg-neutral-900 border-border/60 transition-colors"
               onKeyDown={(e) => e.key === "Enter" && handleGenerateQuiz()}
             />
           </div>
