@@ -13,9 +13,10 @@ interface QuizContainerProps {
   onComplete: (score: number, total: number) => void
   QUIZ_QUESTIONS: Question[]
   mode: "learn" | "test"
+  onExitToCollections: () => void
 }
 
-export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }: QuizContainerProps) {
+export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, onExitToCollections }: QuizContainerProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
@@ -113,6 +114,15 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode }:
             title="Save Quiz"
           >
             <Bookmark className="w-5 h-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onExitToCollections}
+            className="text-muted-foreground hover:text-foreground"
+            title="Exit Quiz"
+          >
+            Exit
           </Button>
         </div>
 

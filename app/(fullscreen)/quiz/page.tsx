@@ -1,16 +1,35 @@
 "use client"
 
-import { useState} from "react"
+import { useState, useEffect } from "react"
 import QuizContainer from "./components/quiz-container"
 import QuizResults from "./components/quiz-results"
 import "./styles.css"
 import { Question, shuffleArray} from "./util"
-import { generateQuiz } from "./actions"
+import { generateQuiz, getQuizzes } from "./actions"
 import { Button } from "@/components/ui/button"
 import { Sparkles, BookOpen, Zap, Library } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Collections } from "./components/collections"
+
+interface Quiz {
+  id: number
+  title: string
+  topic: string
+  description: string | null
+  questionCount: number
+  createdAt: Date
+  data: any
+}
+
+interface DisplayQuiz {
+  id: string
+  title: string
+  topic: string
+  description: string
+  questionCount: number
+  createdDate: string
+}
 
 
 type QuizMode = "learn" | "test"
@@ -24,6 +43,23 @@ export default function Home() {
   const [topic, setTopic] = useState("");
   const [isGenerating, setIsGenerating] = useState(false)
   const [isLoadingCollections, setIsLoadingCollections] = useState(false)
+  const [allQuizzes, setAllQuizzes] = useState<DisplayQuiz[]>([])
+
+  useEffect(() => {
+      const fetchQuizzes = async () => {
+        const dbQuizzes: Quiz[] = await getQuizzes()
+        const displayQuizzes: DisplayQuiz[] = dbQuizzes.map(q => ({
+          id: q.id.toString(),
+          title: q.title,
+          topic: q.topic,
+          description: q.description ?? "",
+          questionCount: q.questionCount,
+          createdDate: new Date(q.createdAt).toLocaleDateString(),
+        }))
+        setAllQuizzes(displayQuizzes)
+      }
+      fetchQuizzes()
+  }, [])
 
   const handleQuizComplete = (score: number, total: number) => {
     setResults({ score, total })
@@ -39,6 +75,12 @@ export default function Home() {
     setResults(null)
     setQuizStarted(false)
     // setQUIZ_QUESTIONS(shuffleArray(_QUIZ_QUESTIONS))
+  }
+
+  const handleExitToCollection = () => {
+    setResults(null)
+    setQuizStarted(false)
+    setIsLoadingCollections(true)
   }
 
   const handleGenerateQuiz = ()=>{
@@ -72,7 +114,7 @@ export default function Home() {
     setIsLoadingCollections(false) // Hide collections after loading quiz
   }
 
-  if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} />
+  if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} quizzes={allQuizzes} setQuizzes={setAllQuizzes} />
 
   if (results) {
     return <QuizResults score={results.score} total={results.total} onRestart={handleRestart} onExit={handleExit} />
@@ -164,5 +206,5 @@ export default function Home() {
     )
   }
 
-  return <QuizContainer onComplete={handleQuizComplete} topic={topic}  QUIZ_QUESTIONS={QUIZ_QUESTIONS!} mode={quizMode} />
+  return <QuizContainer onComplete={handleQuizComplete} topic={topic}  QUIZ_QUESTIONS={QUIZ_QUESTIONS!} mode={quizMode} onExitToCollections={handleExitToCollection} />
 }

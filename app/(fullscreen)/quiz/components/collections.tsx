@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { getQuizzes, generateQuiz, updateQuiz } from "../actions"
+import { useState, useEffect, Dispatch, SetStateAction } from "react"
+import { getQuizzes, generateQuiz, updateQuiz, getQuizById } from "../actions"
 import { QuizGrid } from "@/components/quiz-grid"
 import { CreateQuizModal } from "@/components/create-quiz-modal"
 import { EditQuizModal } from "@/components/edit-quiz-modal"
@@ -35,11 +35,11 @@ interface DisplayQuiz {
 
 interface CollectionsProps {
   onLoadQuiz: (quiz: Quiz) => void
+  quizzes: DisplayQuiz[]
+  setQuizzes: Dispatch<SetStateAction<DisplayQuiz[]>>
 }
 
-export function Collections({ onLoadQuiz }: CollectionsProps) {
-  const [quizzes, setQuizzes] = useState<DisplayQuiz[]>([])
-  const [c_quiz_data, set_c_quiz_data] = useState<Quiz[]>([])
+export function Collections({ onLoadQuiz, quizzes, setQuizzes }: CollectionsProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -48,25 +48,6 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
   const [isLoadOpen, setIsLoadOpen] = useState(false)
   const [selectedQuiz, setSelectedQuiz] = useState<DisplayQuiz | null>(null)
   const { toast } = useToast()
-
-  useEffect(() => {
-    const fetchQuizzes = async () => {
-      const dbQuizzes: Quiz[] = await getQuizzes()
-      set_c_quiz_data(dbQuizzes)
-      console.log(dbQuizzes)
-      // Map the data to match the display component's expected props
-      const displayQuizzes: DisplayQuiz[] = dbQuizzes.map(q => ({
-        id: q.id.toString(),
-        title: q.title,
-        topic: q.topic,
-        description: q.description ?? "",
-        questionCount: q.questionCount,
-        createdDate: new Date(q.createdAt).toLocaleDateString(),
-      }))
-      setQuizzes(displayQuizzes)
-    }
-    fetchQuizzes()
-  }, [])
 
   const topics = Array.from(new Set(quizzes.map((q) => q.topic)))
 
@@ -135,9 +116,9 @@ export function Collections({ onLoadQuiz }: CollectionsProps) {
   const handleLoad = async () => {
     if (selectedQuiz) {
       const quizId = Number.parseInt(selectedQuiz.id)
-      const quizData = c_quiz_data.find(q => q.id === quizId)
-      if (quizData) {
-        onLoadQuiz(quizData)
+      const fullQuizData = await getQuizById(quizId)
+      if (fullQuizData) {
+        onLoadQuiz(fullQuizData)
       }
     }
     setIsLoadOpen(false)
