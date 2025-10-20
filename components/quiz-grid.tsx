@@ -15,13 +15,14 @@ interface Quiz {
 }
 
 interface QuizGridProps {
+  isAdmin: boolean
   quizzes: Quiz[]
   onEdit: (quiz: Quiz) => void
   onDelete: (quiz: Quiz) => void
   onLoad: (quiz: Quiz) => void
 }
 
-export function QuizGrid({ quizzes, onEdit, onDelete, onLoad }: QuizGridProps) {
+export function QuizGrid({ isAdmin, quizzes, onEdit, onDelete, onLoad }: QuizGridProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {quizzes.map((quiz) => (
@@ -36,7 +37,7 @@ export function QuizGrid({ quizzes, onEdit, onDelete, onLoad }: QuizGridProps) {
                 <CardDescription className="mt-1">{quiz.topic}</CardDescription>
               </div>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger asChild className={isAdmin ? "" : "hidden"}>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -69,14 +70,14 @@ export function QuizGrid({ quizzes, onEdit, onDelete, onLoad }: QuizGridProps) {
               <span className="text-xs text-muted-foreground">{new Date(quiz.createdDate).toLocaleDateString()}</span>
             </div>
             <div className="flex gap-2 pt-2">
-              <Button onClick={() => onEdit(quiz)} variant="outline" size="sm" className="flex-1 gap-2 bg-slate-900">
+              <Button title={isAdmin ? "Edit" : "You are not an admin"} onClick={() => onEdit(quiz)} variant="outline" size="sm" disabled={!isAdmin}  className="flex-1 gap-2 bg-slate-900 disabled:invisible">
                 <Edit2 className="h-4 w-4" />
                 Edit
               </Button>
               <Button
                 onClick={() => onLoad(quiz)}
                 size="sm"
-                className="flex-1 gap-2 bg-blue-500 hover:bg-blue-600 text-white"
+                className="flex-1 gap-2 bg-blue-500 hover:bg-blue-600 text-white cursor-pointer"
               >
                 <Play className="h-4 w-4" />
                 Load

@@ -43,6 +43,7 @@ interface DisplayQuiz {
 type QuizMode = "learn" | "test"
 
 export default function Home() {
+  const [isAdmin,setIsAdmin] = useState(false)
   const [quizStarted, setQuizStarted] = useState(false)
   const [results, setResults] = useState<{ score: number; total: number } | null>(null)
   const [quizMode, setQuizMode] = useState<QuizMode>("learn")
@@ -68,6 +69,9 @@ export default function Home() {
         }))
         setAllQuizzes(displayQuizzes)
       }
+      const token = window.localStorage.getItem("auth-token");
+      console.log(`token is ${token}`);
+      setIsAdmin(!!token)
       fetchQuizzes()
   }, [])
 
@@ -130,7 +134,7 @@ export default function Home() {
     setIsQuizGenerated(false)
   }
 
-  if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} quizzes={allQuizzes} setQuizzes={setAllQuizzes} onExit={handleExitCollections} />
+  if(isLoadingCollections) return <Collections isAdmin={isAdmin} onLoadQuiz={handleLoadQuiz} quizzes={allQuizzes} setQuizzes={setAllQuizzes} onExit={handleExitCollections} />
 
   if (results) {
     return <QuizResults score={results.score} total={results.total} onRestart={handleRestart} onExit={handleExit} />

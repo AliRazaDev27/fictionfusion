@@ -27,7 +27,7 @@ export function LoadConfirmDialog({ open, onOpenChange, quizTitle, onConfirm }: 
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+          <Button onClick={() => onOpenChange(false)} className="flex-1 bg-red-500 hover:bg-red-600 text-white">
             Cancel
           </Button>
           <Button onClick={onConfirm} className="flex-1 bg-blue-500 hover:bg-blue-600 text-white">

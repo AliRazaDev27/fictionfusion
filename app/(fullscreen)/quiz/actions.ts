@@ -28,12 +28,14 @@ export const saveQuiz = async (quizData: {
   data: any
 }) => {
   try {
+    const session = await auth();
+    if(session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
     await db.insert(quizzes).values(quizData)
     revalidateTag('quiz-public')
     return { success: true }
-  } catch (error) {
+  } catch (error:any) {
     console.error("Error saving quiz:", error)
-    return { success: false, error: "Failed to save quiz" }
+    return { success: false, error:  error?.message ||"Failed to save quiz" }
   }
 }
 
@@ -59,11 +61,13 @@ export const updateQuiz = async (
   }
 ) => {
   try {
+    const session = await auth();
+    if(session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
     await db.update(quizzes).set(updatedFields).where(eq(quizzes.id, id))
     return { success: true }
-  } catch (error) {
+  } catch (error:any) {
     console.error("Error updating quiz:", error)
-    return { success: false, error: "Failed to update quiz" }
+    return { success: false, error: error?.message||"Failed to update quiz" }
   }
 }
 
