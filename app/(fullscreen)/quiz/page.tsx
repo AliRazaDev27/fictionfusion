@@ -92,6 +92,10 @@ export default function Home() {
     setIsLoadingCollections(true)
   }
 
+  const handleExitCollections = () => {
+    setIsLoadingCollections(false)
+  }
+
   const handleGenerateQuiz = ()=>{
     try{
       if(!!quizTopic){
@@ -123,7 +127,7 @@ export default function Home() {
     setIsLoadingCollections(false) // Hide collections after loading quiz
   }
 
-  if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} quizzes={allQuizzes} setQuizzes={setAllQuizzes} />
+  if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} quizzes={allQuizzes} setQuizzes={setAllQuizzes} onExit={handleExitCollections} />
 
   if (results) {
     return <QuizResults score={results.score} total={results.total} onRestart={handleRestart} onExit={handleExit} />

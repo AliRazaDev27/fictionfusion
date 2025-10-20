@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Search, Plus, Filter } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { models } from "@/lib/ai"
+import { FaCross } from "react-icons/fa6"
+import { ImCross } from "react-icons/im"
 
 interface Quiz {
   id: number
@@ -37,9 +40,10 @@ interface CollectionsProps {
   onLoadQuiz: (quiz: Quiz) => void
   quizzes: DisplayQuiz[]
   setQuizzes: Dispatch<SetStateAction<DisplayQuiz[]>>
+  onExit: () => void
 }
 
-export function Collections({ onLoadQuiz, quizzes, setQuizzes }: CollectionsProps) {
+export function Collections({ onLoadQuiz, quizzes, setQuizzes, onExit }: CollectionsProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
@@ -61,7 +65,8 @@ export function Collections({ onLoadQuiz, quizzes, setQuizzes }: CollectionsProp
 
   const handleCreate = async (newQuiz: { title: string; topic: string; description: string; questionCount: number }) => {
     const generatedData = await generateQuiz(
-      `Generate exactly ${newQuiz.questionCount} questions about this topic: ${newQuiz.topic} given this title '${newQuiz.title}' and description '${newQuiz.description}'`
+      `Generate exactly ${newQuiz.questionCount} questions about this topic: ${newQuiz.topic} given this title '${newQuiz.title}' and description '${newQuiz.description}'`,
+      models[0].model
     )
     // The logic to add to the quiz list will be handled after the user saves the generated quiz.
     // For now, we just return the generated data to the modal.
@@ -148,13 +153,21 @@ export function Collections({ onLoadQuiz, quizzes, setQuizzes }: CollectionsProp
           <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div>
+                <Button onClick={onExit} variant="outline" className="gap-2 bg-red-500 hover:bg-red-600 text-white">
+                  <ImCross className="h-2 w-2"/>
+                  Exit
+                </Button>
+              </div>
+              <div className="text-center">
                 <h1 className="text-3xl font-bold text-foreground">Quiz Collections</h1>
                 <p className="mt-2 text-muted-foreground">Manage and organize your quiz library</p>
               </div>
-              <Button onClick={() => setIsCreateOpen(true)} className="gap-2 bg-blue-500 hover:bg-blue-600 text-white">
-                <Plus className="h-4 w-4" />
-                New Quiz Collection
-              </Button>
+              <div className="">
+                <Button onClick={() => setIsCreateOpen(true)} className="gap-2 bg-blue-500 hover:bg-blue-600 text-white">
+                  <Plus className="h-4 w-4" />
+                  New<span className="hidden sm:inline">Quiz Collection</span>
+                </Button>
+              </div>
             </div>
 
             {/* Search and Filter */}
