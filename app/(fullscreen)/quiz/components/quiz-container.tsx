@@ -14,9 +14,10 @@ interface QuizContainerProps {
   QUIZ_QUESTIONS: Question[]
   mode: "learn" | "test"
   onExitToCollections: () => void
+  isGenerated: boolean
 }
 
-export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, onExitToCollections }: QuizContainerProps) {
+export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, onExitToCollections, isGenerated }: QuizContainerProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
@@ -106,20 +107,18 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
               )}
             </p>
           </div>
+          {isGenerated && (
+            <Button
+              onClick={() => setIsSaveQuizDialogOpen(true)}
+            className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2"
+              title="Save Quiz"
+            >
+              <Bookmark className="w-5 h-5" />
+            </Button>
+          )}
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSaveQuizDialogOpen(true)}
-            className="text-muted-foreground hover:text-foreground"
-            title="Save Quiz"
-          >
-            <Bookmark className="w-5 h-5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
             onClick={onExitToCollections}
-            className="text-muted-foreground hover:text-foreground"
+            className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 ms-4"
             title="Exit Quiz"
           >
             Exit

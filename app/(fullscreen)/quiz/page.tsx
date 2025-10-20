@@ -53,6 +53,7 @@ export default function Home() {
   const [isLoadingCollections, setIsLoadingCollections] = useState(false)
   const [allQuizzes, setAllQuizzes] = useState<DisplayQuiz[]>([])
   const [selectedModel, setSelectedModel] = useState(models[0].model);
+  const [isQuizGenerated, setIsQuizGenerated] = useState(false);
 
   useEffect(() => {
       const fetchQuizzes = async () => {
@@ -106,6 +107,7 @@ export default function Home() {
           setIsGenerating(false)
           setTopic(response.topic.trim());
           setQuizStarted(true)
+          setIsQuizGenerated(true)
         })
       }
     }
@@ -125,6 +127,7 @@ export default function Home() {
     setTopic(quiz.topic)
     setQuizStarted(true)
     setIsLoadingCollections(false) // Hide collections after loading quiz
+    setIsQuizGenerated(false)
   }
 
   if(isLoadingCollections) return <Collections onLoadQuiz={handleLoadQuiz} quizzes={allQuizzes} setQuizzes={setAllQuizzes} onExit={handleExitCollections} />
@@ -233,5 +236,5 @@ export default function Home() {
     )
   }
 
-  return <QuizContainer onComplete={handleQuizComplete} topic={topic}  QUIZ_QUESTIONS={QUIZ_QUESTIONS!} mode={quizMode} onExitToCollections={handleExitToCollection} />
+  return <QuizContainer onComplete={handleQuizComplete} topic={topic}  QUIZ_QUESTIONS={QUIZ_QUESTIONS!} mode={quizMode} onExitToCollections={handleExitToCollection} isGenerated={isQuizGenerated} />
 }
