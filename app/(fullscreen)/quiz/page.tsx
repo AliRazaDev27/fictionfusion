@@ -161,18 +161,6 @@ export default function Home() {
 
         {/* Input Section */}
         <div className="space-y-4 mb-8">
-          <Select value={selectedModel} onValueChange={setSelectedModel}>
-            <SelectTrigger className="w-full h-12 text-base bg-neutral-900 border-border/60 transition-colors">
-              <SelectValue placeholder="Select an AI model" />
-            </SelectTrigger>
-            <SelectContent>
-              {models.map((model) => (
-                <SelectItem key={model.model} value={model.model}>
-                  {model.name} - {model.description}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <div className="relative">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
               <Sparkles className="w-5 h-5" />
@@ -198,27 +186,41 @@ export default function Home() {
               <span className="hidden sm:inline">Collections</span>
               <span className="sm:hidden">Collections</span>
             </Button>
-            <Button
-              size="lg"
-              onClick={handleGenerateQuiz}
-              disabled={!quizTopic.trim() || isGenerating}
-              className="cursor-pointer disabled:cursor-not-allowed 
-              gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-            >
-              {isGenerating ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span className="hidden sm:inline">Generating...</span>
-                  <span className="sm:hidden">Wait...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  <span className="hidden sm:inline">Start Quiz</span>
-                  <span className="sm:hidden">Start</span>
-                </>
-              )}
-            </Button>
+            <div className="flex-grow flex gap-2">
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger className="w-full h-12 text-base bg-neutral-900 border-border/60 transition-colors">
+                  <SelectValue placeholder="Select an AI model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {models.map((model) => (
+                    <SelectItem key={model.model} value={model.model}>
+                      {model.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                size="lg"
+                onClick={handleGenerateQuiz}
+                disabled={!quizTopic.trim() || isGenerating}
+                className="cursor-pointer disabled:cursor-not-allowed 
+                gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              >
+                {isGenerating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="hidden sm:inline">Generating...</span>
+                    <span className="sm:hidden">Wait...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" />
+                    <span className="hidden sm:inline">Start Quiz</span>
+                    <span className="sm:hidden">Start</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </main>
