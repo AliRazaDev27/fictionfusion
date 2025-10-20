@@ -33,6 +33,10 @@ const links = [
     href: "/chat",
     label: "Chat",
   },
+  {
+    href: "/quiz",
+    label: "Quiz",
+  }
 ]
 
 export default function NavLinksMobile() {

@@ -186,7 +186,7 @@ export default function Home() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center justify-between">
             <Button
               variant="outline"
               size="lg"
