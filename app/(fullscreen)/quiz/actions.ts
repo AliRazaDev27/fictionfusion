@@ -9,6 +9,7 @@ import {SYSTEM} from "./util"
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { revalidateTag } from 'next/cache'
 import { models } from "@/lib/ai"
+import { auth } from "@/auth"
 export const getQuizById = async (id: number) => {
   try {
     const quiz = await db.select().from(quizzes).where(eq(quizzes.id, id))
@@ -67,7 +68,10 @@ export const updateQuiz = async (
 }
 
 export const generateQuiz = async (topic:string, modelName: string) => {
+  const session = await auth();
+  if(session?.user?.role !== "ADMIN") modelName = "gemini-2.5-flash-lite";
   const selectedModelConfig = models.find(m => m.model === modelName);
+  console.log(selectedModelConfig)
   const model = google(selectedModelConfig?.model || "gemini-2.5-flash"); // Fallback to default if not found
   const {object,finishReason,usage} = await generateObject({
     model: model,
