@@ -8,6 +8,7 @@ import { eq, sql } from "drizzle-orm"
 import {SYSTEM} from "./util"
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { revalidateTag } from 'next/cache'
+import { models } from "@/lib/ai"
 export const getQuizById = async (id: number) => {
   try {
     const quiz = await db.select().from(quizzes).where(eq(quizzes.id, id))
@@ -65,8 +66,9 @@ export const updateQuiz = async (
   }
 }
 
-export const generateQuiz = async (topic:string) => {
-  const model = google("gemini-2.5-flash");
+export const generateQuiz = async (topic:string, modelName: string) => {
+  const selectedModelConfig = models.find(m => m.model === modelName);
+  const model = google(selectedModelConfig?.model || "gemini-2.5-flash"); // Fallback to default if not found
   const {object,finishReason,usage} = await generateObject({
     model: model,
     system: SYSTEM,

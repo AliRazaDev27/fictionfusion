@@ -11,6 +11,14 @@ import { Sparkles, BookOpen, Zap, Library } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Collections } from "./components/collections"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { models } from "@/lib/ai"
 
 interface Quiz {
   id: number
@@ -44,6 +52,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [isLoadingCollections, setIsLoadingCollections] = useState(false)
   const [allQuizzes, setAllQuizzes] = useState<DisplayQuiz[]>([])
+  const [selectedModel, setSelectedModel] = useState(models[0].model);
 
   useEffect(() => {
       const fetchQuizzes = async () => {
@@ -87,7 +96,7 @@ export default function Home() {
     try{
       if(!!quizTopic){
         setIsGenerating(true)
-        generateQuiz(quizTopic).then((response)=>{
+        generateQuiz(quizTopic, selectedModel).then((response)=>{
           setQUIZ_QUESTIONS(response.questions)
           console.log(response)
           setIsGenerating(false)
@@ -152,6 +161,18 @@ export default function Home() {
 
         {/* Input Section */}
         <div className="space-y-4 mb-8">
+          <Select value={selectedModel} onValueChange={setSelectedModel}>
+            <SelectTrigger className="w-full h-12 text-base bg-neutral-900 border-border/60 transition-colors">
+              <SelectValue placeholder="Select an AI model" />
+            </SelectTrigger>
+            <SelectContent>
+              {models.map((model) => (
+                <SelectItem key={model.model} value={model.model}>
+                  {model.name} - {model.description}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <div className="relative">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
               <Sparkles className="w-5 h-5" />
