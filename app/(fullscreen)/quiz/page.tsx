@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { models } from "@/lib/ai"
+import { useToast } from "@/components/ui/use-toast"
 
 interface Quiz {
   id: number
@@ -55,6 +56,7 @@ export default function Home() {
   const [allQuizzes, setAllQuizzes] = useState<DisplayQuiz[]>([])
   const [selectedModel, setSelectedModel] = useState(models[0].model);
   const [isQuizGenerated, setIsQuizGenerated] = useState(false);
+  const {toast} = useToast();
 
   useEffect(() => {
       const fetchQuizzes = async () => {
@@ -106,12 +108,22 @@ export default function Home() {
       if(!!quizTopic){
         setIsGenerating(true)
         generateQuiz(quizTopic, selectedModel).then((response)=>{
-          setQUIZ_QUESTIONS(response.questions)
-          console.log(response)
           setIsGenerating(false)
-          setTopic(response.topic.trim());
+          if(response.success && response.data){
+          setQUIZ_QUESTIONS(response.data.questions)
+          console.log(response)
+          setTopic(response.data.topic.trim());
           setQuizStarted(true)
           setIsQuizGenerated(true)
+          }
+          else{
+            toast({
+              title: "Error",
+              description: response.error,
+              variant: "destructive",
+              duration: 2500,
+            })
+          }
         })
       }
     }

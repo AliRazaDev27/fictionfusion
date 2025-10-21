@@ -5,7 +5,7 @@ import { z } from "zod/v4"
 import { db } from "@/lib/database"
 import { quizzes } from "@/lib/database/quizSchema"
 import { eq, sql } from "drizzle-orm"
-import {SYSTEM} from "./util"
+import {SCHEMA_QUIZ_AI, SYSTEM} from "./util"
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { revalidateTag } from 'next/cache'
 import { models } from "@/lib/ai"
@@ -72,6 +72,7 @@ export const updateQuiz = async (
 }
 
 export const generateQuiz = async (topic:string, modelName: string) => {
+try{
   const session = await auth();
   if(session?.user?.role !== "ADMIN") modelName = "gemini-2.5-flash-lite";
   const selectedModelConfig = models.find(m => m.model === modelName);
@@ -82,18 +83,14 @@ export const generateQuiz = async (topic:string, modelName: string) => {
     system: SYSTEM,
     prompt: topic.trim(),
     output: "object",
-    schema: z.object({
-  topic: z.string(),
-  questions: z.array(
-    z.object({
-      question: z.string(),
-      options: z.array(z.string()),
-      answer: z.string()
-    })
-  )
-})
+    schema: SCHEMA_QUIZ_AI,
   })
   console.log(finishReason,usage)
   console.log(object);
-  return object;
+  return {success:true,data:object,error:null};
+}
+catch(error:any){
+  console.log(error);
+  return {success:false,data:null,error:error?.message||"Failed to generate quiz"}
+}
 }
