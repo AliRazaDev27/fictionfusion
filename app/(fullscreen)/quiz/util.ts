@@ -11,9 +11,14 @@ export function shuffleArray(array) {
 
 
 export interface Question {
+  type: "multiple-choice" | "debug" | "output" | "fill-blanks" | "concept"
   question: string
   options: string[]
   answer: string
+  difficulty: "beginner" | "intermediate" | "advanced"
+  explanation?: string
+  code?: string
+  language?: string
 }
 
 export const SYSTEM = `
@@ -36,6 +41,7 @@ Each question must have:
 - "language": must include a string for question types "output" and "debug" to specify the programming language like jsx(for react snippets), javascript,html,css.
 
 Rules:
+0. If question type is not mentioned explicitly, generate mixed types.
 1. The "topic" field must summarize the quiz subject in 2-4 words.
 2. Each option must be short and easy to display — ideally one short phrase or sentence.
 3. The "answer" field must exactly equal one of the strings inside "options".
@@ -51,6 +57,7 @@ Rules:
 11. All questions must include options — even for "output", "debug", "fill-blanks", and "concept" types.
 12. Each "question" must be clear, concise, and focused on web development.
 13. For "cocept" type, the question 
+14. if difficulty is not specified, generate a mix of beginner, intermediate, and advanced questions.
 
 Question Type Guidelines:
 1. "multiple-choice":
@@ -95,6 +102,14 @@ Question Type Guidelines:
         Options: ["To store all component data", "To improve performance by minimizing real DOM updates", "To apply CSS faster", "To handle routing automatically"]
         Answer: "To improve performance by minimizing real DOM updates"
 
+When including code in any question (for types "output" or "debug"):
+- Always format code neatly and concisely.
+- Avoid extremely long lines (maximum 80 characters per line).
+- Break complex expressions into multiple lines for readability.
+- Keep indentation consistent (2 spaces or standard JSX/JS indentation).
+- Do not include unnecessary blank lines or excessive comments.
+- Prefer minimal, self-contained examples that demonstrate the concept.
+        
 Example (for understanding only, do not include in output):
 {
   topic: "JavaScript Functions",
@@ -156,9 +171,7 @@ Example (for understanding only, do not include in output):
 export const SCHEMA_QUIZ_AI =  z.object({
   topic: z
     .string()
-    .min(2, "Topic must be at least 2 characters")
-    .max(100, "Topic must be at most 100 characters"),
-
+    .min(2, "Topic must be at least 2 characters"),
   questions: z.array(
     z.object({
       type: z.enum([
@@ -170,30 +183,25 @@ export const SCHEMA_QUIZ_AI =  z.object({
       ]),
       question: z
         .string()
-        .min(5, "Question must be at least 5 characters")
-        .max(240, "Question must be at most 240 characters"),
+        .min(5, "Question must be at least 5 characters"),
       options: z
         .array(
           z
             .string()
             .min(1, "Option cannot be empty")
-            .max(80, "Option must be at most 80 characters")
-        )
-        .length(4, "Exactly 4 options are required"),
+        ),
       answer: z
         .string()
         .min(1, "Answer cannot be empty"),
       difficulty: z.enum(["beginner", "intermediate", "advanced"]),
       explanation: z
         .string()
-        .max(360, "Explanation must be at most 360 characters")
         .optional(),
       code: z
         .string()
-        .max(1000, "Code must be at most 1000 characters")
         .optional(),
       language: z
-        .enum(["javascript", "jsx", "html", "css"])
+        .string()
         .optional(),
     })
     .superRefine((data,ctx)=>{

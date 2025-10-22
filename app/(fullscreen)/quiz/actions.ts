@@ -1,10 +1,9 @@
 "use server"
 import { google } from "@ai-sdk/google"
-import { generateObject } from "ai"
-import { z } from "zod/v4"
+import { generateObject, NoObjectGeneratedError } from "ai"
 import { db } from "@/lib/database"
 import { quizzes } from "@/lib/database/quizSchema"
-import { eq, sql } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import {SCHEMA_QUIZ_AI, SYSTEM} from "./util"
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { revalidateTag } from 'next/cache'
@@ -91,6 +90,14 @@ try{
 }
 catch(error:any){
   console.log(error);
-  return {success:false,data:null,error:error?.message||"Failed to generate quiz"}
+  if(NoObjectGeneratedError.isInstance(error)){
+    console.log('NoObjectGeneratedError');
+    console.log('Cause:', error.cause);
+    console.log('Text:', error.text);
+    console.log('Response:', error.response);
+    console.log('Usage:', error.usage);
+    console.log('Finish Reason:', error.finishReason);
+  }
+  return {success:false,data:null,error:error?.message || error?.cause ||"Failed to generate quiz"}
 }
 }

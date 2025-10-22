@@ -45,6 +45,7 @@ interface CollectionsProps {
 }
 
 export function Collections({ isAdmin, onLoadQuiz, quizzes, setQuizzes, onExit }: CollectionsProps) {
+  console.log(isAdmin);
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)

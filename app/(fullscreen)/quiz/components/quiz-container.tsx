@@ -93,13 +93,20 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center p-4 md:p-8">
-      <div className="max-w-2xl w-full mx-auto _flex-1 flex flex-col gap-4 justify-center">
+    <div className="min-h-screen bg-background flex flex-col justify-start pt-4 p-0">
+      <div className="max-w-7xl w-full mx-auto flex flex-col gap-4 justify-center">
         <div className="flex justify-between items-center">
-          <div>
+          <Button
+            onClick={onExitToCollections}
+            className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 ms-4"
+            title="Exit Quiz"
+          >
+            Exit
+          </Button>
+          <div className="text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{topic}</h1>
             <p className="text-muted-foreground">
-              Question {currentQuestionIndex + 1} of {QUIZ_QUESTIONS.length}
+              Question <span>{currentQuestionIndex + 1}</span> of {QUIZ_QUESTIONS.length}
               {mode === "test" && (
                 <span className="ml-4 text-lg font-semibold text-primary">
                   Time Left: {timeLeft}s
@@ -116,20 +123,31 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
               <Bookmark className="w-5 h-5" />
             </Button>
           )}
-          <Button
-            onClick={onExitToCollections}
-            className="bg-red-500 text-white hover:bg-red-600 px-4 py-2 ms-4"
-            title="Exit Quiz"
-          >
-            Exit
-          </Button>
+
+        {mode === "learn" && (
+          <div>
+            <button
+              onClick={handleNext}
+              disabled={!answered}
+              className="bg-primary cursor-pointer hover:bg-primary/90 disabled:bg-muted
+               disabled:text-muted-foreground text-primary-foreground font-semibold py-3 px-6
+                rounded-lg transition-all duration-200 disabled:cursor-not-allowed
+                 hover:shadow-lg hover:shadow-primary/30"
+            >
+              {isLastQuestion ? "Finish" : "Next"}
+            </button>
+          </div>
+        )}
+        {mode === "test" && (
+          <div/>
+        )}
         </div>
 
         {/* Progress Bar */}
         <ProgressBar current={currentQuestionIndex + 1} total={QUIZ_QUESTIONS.length} />
 
         {/* Question Card */}
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-center justify-center mt-2">
           <QuestionCard
             question={currentQuestion.question}
             options={currentQuestion.options}
@@ -138,23 +156,14 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
             answered={answered}
             onSelectAnswer={handleSelectAnswer}
             mode={mode}
+            type={currentQuestion.type}
+            code={currentQuestion.code}
+            language={currentQuestion.language}
+            explanation={currentQuestion.explanation}
+            difficulty={currentQuestion.difficulty}
           />
         </div>
 
-        {mode === "learn" && (
-          <div className="flex justify-end mt-4">
-            <button
-              onClick={handleNext}
-              disabled={!answered}
-              className="bg-primary cursor-pointer hover:bg-primary/90 disabled:bg-muted
-               disabled:text-muted-foreground text-primary-foreground font-semibold py-3 px-8
-                rounded-lg transition-all duration-200 disabled:cursor-not-allowed
-                 hover:shadow-lg hover:shadow-primary/20"
-            >
-              {isLastQuestion ? "Finish" : "Next"}
-            </button>
-          </div>
-        )}
       </div>
       <SaveQuizDialog
         open={isSaveQuizDialogOpen}

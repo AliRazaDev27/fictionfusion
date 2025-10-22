@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select"
 import { models } from "@/lib/ai"
 import { useToast } from "@/components/ui/use-toast"
+import { auth } from "@/auth"
 
 interface Quiz {
   id: number
@@ -71,9 +72,14 @@ export default function Home() {
         }))
         setAllQuizzes(displayQuizzes)
       }
-      const token = window.localStorage.getItem("auth-token");
-      console.log(`token is ${token}`);
+      const getAuthToken = async () => {
+        const session = await auth();
+        if(!!session){
+        const token = session?.user?.role === "ADMIN"
       setIsAdmin(!!token)
+      }
+      }
+      getAuthToken()
       fetchQuizzes()
   }, [])
 
