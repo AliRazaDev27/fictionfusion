@@ -11,7 +11,7 @@ interface QuestionCardProps {
   selectedAnswer: number | null
   correctAnswer: string
   answered: boolean
-  onSelectAnswer: (index: number) => void
+  onSelectAnswer: (selectedOption: string, index: number) => void
   mode: "learn" | "test"
   type: "multiple-choice" | "debug" | "output" | "fill-blanks" | "concept"
   code?: string
@@ -71,7 +71,7 @@ export default function QuestionCard({
           return (
             <button
               key={index}
-              onClick={() => onSelectAnswer(index)}
+              onClick={() => onSelectAnswer(option, index)}
               disabled={answered}
               className={`w-full p-3 rounded-lg text-left font-medium bg-neutral-900 transition-all duration-200 border-2 ${showCorrect
                   ? "bg-green-500/20 border-green-500 text-foreground"

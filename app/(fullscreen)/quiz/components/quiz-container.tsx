@@ -24,23 +24,23 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
   const [answered, setAnswered] = useState(false)
   const [isSaveQuizDialogOpen, setIsSaveQuizDialogOpen] = useState(false)
   const [timeLeft, setTimeLeft] = useState(30) // 30 seconds timer
-  const isLastAnswerCorrect = useRef(false);
+  const isLastAnswerCorrect = useRef(false)
 
   const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex]
   const isLastQuestion = currentQuestionIndex === QUIZ_QUESTIONS.length - 1
 
-  const handleSelectAnswer = (optionIndex: number) => {
+  const handleSelectAnswer = (selectedOption: string, optionIndex: number) => {
     if (answered) return
 
     setSelectedAnswer(optionIndex)
     setAnswered(true)
 
-    const isCorrect = currentQuestion.options[optionIndex] === currentQuestion.answer
+    const isCorrect = selectedOption === currentQuestion.answer
     if (!isLastQuestion && isCorrect) {
       setScore(score + 1)
     }
-    if(isLastQuestion && isCorrect) {
-      isLastAnswerCorrect.current = true;
+    if (isLastQuestion && isCorrect) {
+      isLastAnswerCorrect.current = true
     }
 
     if (mode === "test") {
