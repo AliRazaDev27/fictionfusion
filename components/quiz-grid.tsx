@@ -28,7 +28,7 @@ export function QuizGrid({ isAdmin, quizzes, onEdit, onDelete, onLoad }: QuizGri
       {quizzes.map((quiz) => (
         <Card
           key={quiz.id}
-          className="group relative overflow-hidden border-border bg-card transition-all duration-300 hover:shadow-lg hover:border-blue-500/50 animate-in fade-in slide-in-from-bottom-4"
+          className="group relative overflow-hidden border-border bg-[#111827] hover:bg-[#1e293b] transition-all duration-300 hover:shadow-lg hover:border-blue-500/50 animate-in fade-in slide-in-from-bottom-4"
         >
           <CardHeader>
             <div className="flex items-start justify-between gap-2">

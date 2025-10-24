@@ -45,25 +45,35 @@ interface CollectionsProps {
 }
 
 export function Collections({ isAdmin, onLoadQuiz, quizzes, setQuizzes, onExit }: CollectionsProps) {
-  console.log(isAdmin);
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null)
+  const [selectedTopicFilter, setSelectedTopicFilter] = useState<string | null>(null) // Renamed to avoid conflict
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isLoadOpen, setIsLoadOpen] = useState(false)
   const [selectedQuiz, setSelectedQuiz] = useState<DisplayQuiz | null>(null)
+  const [selectedTopicView, setSelectedTopicView] = useState<string | null>(null) // New state for topic view
   const { toast } = useToast()
 
-  const topics = Array.from(new Set(quizzes.map((q) => q.topic)))
+  const allTopics = Array.from(new Set(quizzes.map((q) => q.topic)))
+
+  const quizzesGroupedByTopic = quizzes.reduce((acc, quiz) => {
+    if (!acc[quiz.topic]) {
+      acc[quiz.topic] = []
+    }
+    acc[quiz.topic].push(quiz)
+    return acc
+  }, {} as Record<string, DisplayQuiz[]>)
 
   const filteredQuizzes = quizzes.filter((quiz) => {
     const matchesSearch =
       quiz.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quiz.topic.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesTopic = !selectedTopic || quiz.topic === selectedTopic
-    return matchesSearch && matchesTopic
+    const matchesTopicFilter = !selectedTopicFilter || quiz.topic === selectedTopicFilter
+    return matchesSearch && matchesTopicFilter
   })
+
+  const quizzesToDisplay = selectedTopicView ? quizzesGroupedByTopic[selectedTopicView] || [] : filteredQuizzes
 
   const handleCreate = async (newQuiz: { title: string; topic: string; description: string; questionCount: number }) => {
     const generatedData = await generateQuiz(
@@ -148,7 +158,7 @@ export function Collections({ isAdmin, onLoadQuiz, quizzes, setQuizzes, onExit }
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[#0a0f1a]">
       {/* Header */}
       <div className="border-b border-border">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -156,7 +166,7 @@ export function Collections({ isAdmin, onLoadQuiz, quizzes, setQuizzes, onExit }
             <div className="flex items-center justify-between">
               <div>
                 <Button onClick={onExit} variant="outline" className="gap-2 bg-red-500 hover:bg-red-600 text-white">
-                  <ImCross className="h-2 w-2"/>
+                  <ImCross className="h-2 w-2" />
                   Exit
                 </Button>
               </div>
@@ -187,13 +197,13 @@ export function Collections({ isAdmin, onLoadQuiz, quizzes, setQuizzes, onExit }
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="gap-2 bg-slate-900">
                     <Filter className="h-4 w-4" />
-                    {selectedTopic ? `Topic: ${selectedTopic}` : "Filter by Topic"}
+                    {selectedTopicFilter ? `Topic: ${selectedTopicFilter}` : "Filter by Topic"}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={() => setSelectedTopic(null)}>All Topics</DropdownMenuItem>
-                  {topics.map((topic) => (
-                    <DropdownMenuItem key={topic} onClick={() => setSelectedTopic(topic)}>
+                  <DropdownMenuItem onClick={() => setSelectedTopicFilter(null)}>All Topics</DropdownMenuItem>
+                  {allTopics.map((topic) => (
+                    <DropdownMenuItem key={topic} onClick={() => setSelectedTopicFilter(topic)}>
                       {topic}
                     </DropdownMenuItem>
                   ))}
@@ -204,18 +214,44 @@ export function Collections({ isAdmin, onLoadQuiz, quizzes, setQuizzes, onExit }
         </div>
       </div>
 
-      {/* Quiz Grid */}
+      {/* Content Area */}
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {filteredQuizzes.length > 0 ? (
-          <QuizGrid isAdmin={isAdmin} quizzes={filteredQuizzes} onEdit={openEdit} onDelete={openDelete} onLoad={openLoad} />
+        {selectedTopicView ? (
+          <>
+            <Button onClick={() => setSelectedTopicView(null)} variant="outline" className="mb-6 gap-2">
+              <ImCross className="h-2 w-2" /> Back to Topics
+            </Button>
+            {quizzesToDisplay.length > 0 ? (
+              <QuizGrid isAdmin={isAdmin} quizzes={quizzesToDisplay} onEdit={openEdit} onDelete={openDelete} onLoad={openLoad} />
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-12 text-center">
+                <p className="text-lg text-muted-foreground">No quizzes found for this topic</p>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-12 text-center">
-            <p className="text-lg text-muted-foreground">No quizzes found</p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {searchTerm || selectedTopic
-                ? "Try adjusting your search or filters"
-                : "Create your first quiz collection"}
-            </p>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {allTopics.length > 0 ? (
+              allTopics.map((topic) => (
+                <Button
+                  key={topic}
+                  variant="outline"
+                  className="flex flex-col items-center justify-center h-32 sm:text-lg font-semibold bg-[#111827] hover:bg-[#1e293b] border-border"
+                  onClick={() => setSelectedTopicView(topic)}
+                >
+                  {topic} ({quizzesGroupedByTopic[topic]?.length || 0})
+                </Button>
+              ))
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-border bg-card p-12 text-center col-span-full">
+                <p className="text-lg text-muted-foreground">No quizzes found</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {searchTerm || selectedTopicFilter
+                    ? "Try adjusting your search or filters"
+                    : "Create your first quiz collection"}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
