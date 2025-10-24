@@ -1,7 +1,9 @@
 "use client"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import { useEffect, useState } from "react"
 import clsx from "clsx"
+import { shuffleArray } from "../util"
 
 interface QuestionCardProps {
   question: string
@@ -32,6 +34,12 @@ export default function QuestionCard({
   explanation,
   difficulty
 }: QuestionCardProps) {
+  const [shuffledOptions, setShuffledOptions] = useState<string[]>([])
+
+  useEffect(() => {
+    setShuffledOptions(shuffleArray(options))
+  }, [options])
+
   return (
     <div className={clsx(`w-full max-w-3xl grid-cols-1 grid items-start px-2 gap-6 `, (type === "output" || type === "debug") && "md:grid-cols-2 max-w-7xl")}>
       {/* Question */}
@@ -54,9 +62,9 @@ export default function QuestionCard({
         <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-foreground text-balance leading-relaxed">{question}</h2>
 
       <div className="space-y-2.5">
-        {options.map((option, index) => {
+        {shuffledOptions.map((option, index) => {
           const isSelected = selectedAnswer === index
-          const isCorrect = options[index] === correctAnswer
+          const isCorrect = option === correctAnswer
           const showCorrect = mode === "learn" && answered && isCorrect
           const showIncorrect = mode === "learn" && answered && isSelected && !isCorrect
 
