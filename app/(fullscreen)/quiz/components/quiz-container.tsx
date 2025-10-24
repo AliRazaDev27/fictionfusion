@@ -7,6 +7,7 @@ import { Question } from "../util"
 import { Bookmark } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SaveQuizDialog } from "@/components/save-quiz-dialog"
+import { shuffleArray } from "../util"
 
 interface QuizContainerProps {
   topic:string
@@ -17,7 +18,8 @@ interface QuizContainerProps {
   isGenerated: boolean
 }
 
-export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, onExitToCollections, isGenerated }: QuizContainerProps) {
+export default function QuizContainer({ topic, onComplete, QUIZ_QUESTIONS, mode, onExitToCollections, isGenerated }: QuizContainerProps) {
+  const [shuffledQuizQuestions, setShuffledQuizQuestions] = useState<Question[]>([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
@@ -26,8 +28,12 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
   const [timeLeft, setTimeLeft] = useState(30) // 30 seconds timer
   const isLastAnswerCorrect = useRef(false)
 
-  const currentQuestion = QUIZ_QUESTIONS[currentQuestionIndex]
-  const isLastQuestion = currentQuestionIndex === QUIZ_QUESTIONS.length - 1
+  useEffect(() => {
+    setShuffledQuizQuestions(shuffleArray(QUIZ_QUESTIONS))
+  }, [QUIZ_QUESTIONS])
+
+  const currentQuestion = shuffledQuizQuestions[currentQuestionIndex]
+  const isLastQuestion = currentQuestionIndex === shuffledQuizQuestions.length - 1
 
   const handleSelectAnswer = (selectedOption: string, optionIndex: number) => {
     if (answered) return
@@ -60,31 +66,31 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
   }
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
+    let timer: NodeJS.Timeout | null = null
     if (mode === "test" && !answered) {
-      setTimeLeft(30); // Reset timer for each new question
+      setTimeLeft(30) // Reset timer for each new question
       timer = setInterval(() => {
         setTimeLeft((prevTime) => {
           if (prevTime <= 1) {
-            clearInterval(timer!);
-            handleTimerEnd();
-            return 0;
+            clearInterval(timer!)
+            handleTimerEnd()
+            return 0
           }
-          return prevTime - 1;
-        });
-      }, 1000);
+          return prevTime - 1
+        })
+      }, 1000)
     }
 
     return () => {
       if (timer) {
-        clearInterval(timer);
+        clearInterval(timer)
       }
-    };
-  }, [currentQuestionIndex, mode, answered]); // Depend on currentQuestionIndex, mode, and answered state
+    }
+  }, [currentQuestionIndex, mode, answered]) // Depend on currentQuestionIndex, mode, and answered state
 
   const handleNext = () => {
     if (isLastQuestion) {
-      onComplete(isLastAnswerCorrect.current ? score+1:score, QUIZ_QUESTIONS.length)
+      onComplete(isLastAnswerCorrect.current ? score + 1 : score, shuffledQuizQuestions.length)
     } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
       setSelectedAnswer(null)
@@ -106,7 +112,7 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
           <div className="text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">{topic}</h1>
             <p className="text-muted-foreground">
-              Question <span>{currentQuestionIndex + 1}</span> of {QUIZ_QUESTIONS.length}
+              Question <span>{currentQuestionIndex + 1}</span> of {shuffledQuizQuestions.length}
               {mode === "test" && (
                 <span className="ml-4 text-lg font-semibold text-primary">
                   Time Left: {timeLeft}s
@@ -117,7 +123,7 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
           {isGenerated && (
             <Button
               onClick={() => setIsSaveQuizDialogOpen(true)}
-            className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2"
+              className="bg-sky-600 hover:bg-sky-700 text-white px-3 py-2"
               title="Save Quiz"
             >
               <Bookmark className="w-5 h-5" />
@@ -144,24 +150,26 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
         </div>
 
         {/* Progress Bar */}
-        <ProgressBar current={currentQuestionIndex + 1} total={QUIZ_QUESTIONS.length} />
+        <ProgressBar current={currentQuestionIndex + 1} total={shuffledQuizQuestions.length} />
 
         {/* Question Card */}
         <div className="flex-1 flex items-center justify-center mt-2">
-          <QuestionCard
-            question={currentQuestion.question}
-            options={currentQuestion.options}
-            selectedAnswer={selectedAnswer}
-            correctAnswer={currentQuestion.answer}
-            answered={answered}
-            onSelectAnswer={handleSelectAnswer}
-            mode={mode}
-            type={currentQuestion.type}
-            code={currentQuestion.code}
-            language={currentQuestion.language}
-            explanation={currentQuestion.explanation}
-            difficulty={currentQuestion.difficulty}
-          />
+          {currentQuestion && (
+            <QuestionCard
+              question={currentQuestion.question}
+              options={currentQuestion.options}
+              selectedAnswer={selectedAnswer}
+              correctAnswer={currentQuestion.answer}
+              answered={answered}
+              onSelectAnswer={handleSelectAnswer}
+              mode={mode}
+              type={currentQuestion.type}
+              code={currentQuestion.code}
+              language={currentQuestion.language}
+              explanation={currentQuestion.explanation}
+              difficulty={currentQuestion.difficulty}
+            />
+          )}
         </div>
 
       </div>
@@ -169,7 +177,7 @@ export default function QuizContainer({ topic,onComplete,QUIZ_QUESTIONS, mode, o
         open={isSaveQuizDialogOpen}
         onOpenChange={setIsSaveQuizDialogOpen}
         topic={topic}
-        quizQuestions={QUIZ_QUESTIONS}
+        quizQuestions={shuffledQuizQuestions}
       />
     </div>
   )
