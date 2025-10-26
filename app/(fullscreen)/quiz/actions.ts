@@ -4,7 +4,7 @@ import { generateObject, NoObjectGeneratedError } from "ai"
 import { db } from "@/lib/database"
 import { quizzes } from "@/lib/database/quizSchema"
 import { eq } from "drizzle-orm"
-import {SCHEMA_QUIZ_AI, SYSTEM} from "./util"
+import {SCHEMA_QUIZ_AI, STRICT_SYSTEM, SYSTEM} from "./util"
 import { unstable_cacheTag as cacheTag } from 'next/cache'
 import { revalidateTag } from 'next/cache'
 import { models } from "@/lib/ai"
@@ -79,7 +79,7 @@ try{
   const model = google(selectedModelConfig?.model || "gemini-2.5-flash"); // Fallback to default if not found
   const {object,finishReason,usage} = await generateObject({
     model: model,
-    system: SYSTEM,
+    system: STRICT_SYSTEM,
     prompt: topic.trim(),
     output: "object",
     schema: SCHEMA_QUIZ_AI,
