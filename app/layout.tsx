@@ -7,8 +7,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const experimental_ppr = true;
-
 export const metadata: Metadata = {
   title: "FictionFusion - Your Entertainment Hub",
   description: "Track, discover, and personalize your favorite books, movies, TV shows, and music all in one place.",

@@ -5,7 +5,7 @@ import { db } from "@/lib/database"
 import { quizzes } from "@/lib/database/quizSchema"
 import { eq } from "drizzle-orm"
 import {SCHEMA_QUIZ_AI, STRICT_SYSTEM, SYSTEM} from "./util"
-import { unstable_cacheTag as cacheTag } from 'next/cache'
+import { cacheTag } from 'next/cache'
 import { revalidateTag } from 'next/cache'
 import { models } from "@/lib/ai"
 import { auth } from "@/auth"
