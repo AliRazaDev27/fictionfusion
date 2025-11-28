@@ -4,18 +4,25 @@ import { ShowMyDramalist } from "@/types";
 import { mydramalistScrapper } from "@/lib/mydramalistScrapper";
 import { auth } from "@/auth";
 import { addShow } from "./showActions";
+import { Impit } from 'impit';
 
 import * as cheerio from 'cheerio';
 
 
 export async function getWatchlist(url: string,email:string|null) {
-  console.log(email);
+  const impit = new Impit({
+    browser: "chrome", // or "firefox"
+    proxyUrl: "http://localhost:8080",
+    ignoreTlsErrors: true,
+});
   const a = performance.now();
-  const [result, ignoreList] = await Promise.all([fetch(url), getIgnoreList(email)]);
+  const [result, ignoreList] = await Promise.all([impit.fetch(url), getIgnoreList(email)]);
+  console.log("res:",result)
   // const result = await fetch(url);
   // const ignoreList = { success: false, items: Array() };
   console.log("fetch+ignorelist: ",performance.now() - a);
-  const html = await result.text()
+  const html = await result.text();
+  console.log("html:", html);
   const start = performance.now();
   const $ = cheerio.load(html);
 

@@ -24,10 +24,10 @@ import { FaClipboard } from "react-icons/fa6";
 
 
 export default function Page() {
-    const modelRef = useRef<string>('gemini-2.5-flash');
+    const modelRef = useRef<string>('gemini-3-pro-preview');
     const systemRef = useRef<string>('storygen');
     const tempRef = useRef<number>(0.5);
-    const responseTypeRef = useRef<string>('stream');
+    const responseTypeRef = useRef<string>('text');
     const textcontent = useRef<HTMLTextAreaElement>(null);
     const queryRef = useRef<HTMLTextAreaElement>(null);
     const [disabled, setDisabled] = useState(false);
