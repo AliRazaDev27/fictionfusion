@@ -3,7 +3,7 @@ import { db } from "@/lib/database";
 import { CelebListTable, NewCelebList } from "@/lib/database/celebSchema";
 import { eq } from "drizzle-orm";
 import * as cheerio from "cheerio"
-import { revalidatePath } from "next/cache";
+import { cacheTag, revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 
 export async function createCeleb(values: NewCelebList) {
@@ -38,9 +38,16 @@ export async function setupCelebInfo(url: string) {
   }
 }
 export async function getCelebs() {
+  "use cache";
+  cacheTag("get-celebs");
   // don't include the ignoredList in it
-  return await db.select().from(CelebListTable)
+  const data =  await db.select().from(CelebListTable)
+  return data;
 }
+
+// export async function getCelebs() {
+//   return [{id:0,title:"",avatar:""}]
+// }
 
 export async function getCelebInfo(id: number) {
   if (!id) return

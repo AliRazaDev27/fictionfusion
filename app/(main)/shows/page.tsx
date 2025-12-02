@@ -1,5 +1,4 @@
 import { getFilteredShows } from "@/actions/showActions";
-import { DeleteShow } from "@/components/delete_show";
 import { ShowCard } from "@/components/show_card";
 import { FaFilter} from "react-icons/fa6";
 import { SearchControlls } from "@/components/search_controlls";

@@ -1,5 +1,4 @@
 import { searchBookByTitle } from "@/actions/bookActions"
-export const dynamic = "force-dynamic"
 import { BookItem } from "./book-item"
 
 export default async function Page(props: { searchParams: Promise<any> }) {

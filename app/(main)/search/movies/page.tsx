@@ -1,7 +1,6 @@
 import { getMovieByTitle } from "@/actions/movieActions";
 import { AddMovieToDB } from "@/components/add_movie_to_db";
 import { auth } from "@/auth";
-
 import { MovieCard } from "@/components/movie_card";
 
 export default async function Page(props: { searchParams: Promise<any> }) {

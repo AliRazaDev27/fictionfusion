@@ -1,11 +1,15 @@
-import { defineConfig } from "eslint/config";
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import next from "eslint-config-next";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+/** @type {import('eslint').Linter.FlatConfig[]} */
+const config = [
+    {
+        files: ["**/*.ts", "**/*.tsx"],
+        ...next,
+    },
+    {
+        files: ["**/*.ts", "**/*.tsx"],
+        ...next.configs["core-web-vitals"],
+    }
+];
 
-export default defineConfig([{
-    extends: [...nextCoreWebVitals],
-}]);
+export default config;

@@ -2,10 +2,8 @@
 import withPWAInit from "@ducanh2912/next-pwa";
 
 const nextConfig = {
-    experimental: {
-        useCache: true,
-        ppr: "incremental",
-    },
+    cacheComponents: true,
+    serverExternalPackages: ['impit'],
     images: {
         remotePatterns: [
             {

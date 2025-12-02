@@ -12,7 +12,6 @@ import * as cheerio from 'cheerio';
 export async function getWatchlist(url: string,email:string|null) {
   const impit = new Impit({
     browser: "chrome", // or "firefox"
-    proxyUrl: "http://localhost:8080",
     ignoreTlsErrors: true,
 });
   const a = performance.now();

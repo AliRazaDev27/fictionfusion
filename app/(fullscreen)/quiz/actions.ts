@@ -30,7 +30,7 @@ export const saveQuiz = async (quizData: {
     const session = await auth();
     if(session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
     await db.insert(quizzes).values(quizData)
-    revalidateTag('quiz-public')
+    revalidateTag('quiz-public',"max")
     return { success: true }
   } catch (error:any) {
     console.error("Error saving quiz:", error)

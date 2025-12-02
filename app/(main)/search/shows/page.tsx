@@ -3,7 +3,6 @@ import { auth } from "@/auth"
 import { AddShowToDB } from "@/components/add_show_to_db"
 import { ShowCard } from "@/components/show_card"
 import { Show } from "@/types"
-export const dynamic = "force-dynamic"
 export default async function Page(props:{searchParams: Promise<any>}) {
     const searchParams = await props.searchParams;
     const query = searchParams.query

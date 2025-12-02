@@ -30,6 +30,7 @@ export async function createPlaylist(title: string) {
     }
 }
 export async function getAllMusicPlaylists(){
+    "use cache"
     try{
         const email = "alirazadev27@gmail.com"
         const userLists = await db.select({musicLists:UserListTable.musicLists}).from(UserListTable).where(eq(UserListTable.email,email)).limit(1)

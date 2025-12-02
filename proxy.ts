@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { cookies } from 'next/headers';
  
 // This function can be marked `async` if using `await` inside
-export async function proxy(request: NextRequest) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("auth-token")?.value;
+export function proxy(request: NextRequest) {
+  const token = request.cookies.get("auth-token")?.value;
   if(token) return NextResponse.next();
   return NextResponse.redirect(new URL('/login', request.url))
 }
