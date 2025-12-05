@@ -5,7 +5,7 @@ import { NewMusic } from "@/lib/database/musicSchema";
 import {  desc, eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import { deleteMusicFileOnCloudinary } from "@/lib/cloudinaryHelper";
-import { revalidatePath } from "next/cache";
+import { cacheTag, revalidatePath } from "next/cache";
 
 export async function revalidateMusic() {
     revalidatePath("/music");
@@ -24,6 +24,8 @@ export async function addMusic(music: NewMusic) {
     }
 }
 export async function getMusic(offset: number = 0, limit: number = -1) {
+    "use cache";
+    cacheTag("actions-music-getmusic");
     try {
         const music = await db.select().from(MusicTable)
             .orderBy(desc(MusicTable.modifiedDate))

@@ -2,6 +2,7 @@
 import { Book, BookTable, NewBook } from "@/lib/database/bookSchema";
 import { db } from "@/lib/database";
 import { count } from "drizzle-orm";
+import { cacheTag } from "next/cache";
 
 export type bookSearchResult = {
   author_key: string[];
@@ -46,8 +47,10 @@ export async function addBookToDB(book: NewBook) {
 }
 
 export async function getBooks() {
+  "use cache";
+  cacheTag("actions-books-getbooks");
   try {
-    const result = await db.select().from(BookTable).limit(10);
+    const result = await db.select().from(BookTable);
     return { success: true, books: result };
   } catch (error) {
     console.error("Error fetching books:", error);

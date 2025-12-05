@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { ListTable } from "@/lib/database/listSchema";
 import { UserListTable } from "@/lib/database/userListTable";
 import { eq, inArray } from "drizzle-orm";
+import { cacheTag } from "next/cache";
 
 export async function createPlaylist(title: string) {
     try{
@@ -31,6 +32,7 @@ export async function createPlaylist(title: string) {
 }
 export async function getAllMusicPlaylists(){
     "use cache"
+    cacheTag("actions-playlist-getallmusicplaylists");
     try{
         const email = "alirazadev27@gmail.com"
         const userLists = await db.select({musicLists:UserListTable.musicLists}).from(UserListTable).where(eq(UserListTable.email,email)).limit(1)

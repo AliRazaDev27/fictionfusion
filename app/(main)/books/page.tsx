@@ -1,38 +1,68 @@
+"use client";
 import BookCard from "@/components/book_card";
-import { auth } from "@/auth";
-import { getBookList } from "@/actions/userListActions";
-import PaginationControll from "@/components/pagination"
-import SearchAndFilter from "@/components/seach_filter_sheet"
-import { Sidebar } from "./components/sidebar";
 import { getBooks } from "@/actions/bookActions";
+import { useEffect, useState, useRef, useCallback } from "react";
 
-export const metadata = {
-  title: "Books",
-}
+export default function Page() {
+  const limit = 12;
+  const [allBooks, setAllBooks] = useState<any[]>([]);
+  const [displayedBooks, setDisplayedBooks] = useState<any[]>([]);
+  const [offset, setOffset] = useState(0);
+  const triggerRef = useRef<HTMLDivElement>(null);
 
-export default async function Page(props:{searchParams: Promise<any>}) {
-  const searchParams = await props.searchParams;
-  const page = Number(searchParams.page) || 1;
-  const search = searchParams.search;
-  const sort = searchParams.sort;
-  const LIMIT = 10;
-  const {books} = await getBooks();
-  console.log(books)
+  useEffect(() => {
+    getBooks().then((res) => {
+      if (res.success && res.books) {
+        setAllBooks(res.books);
+        console.log(res.books);
+        setDisplayedBooks(res.books.slice(0, limit));
+        setOffset(limit);
+      }
+    });
+  }, []);
+
+  const loadMoreBooks = useCallback(() => {
+    if (offset >= allBooks.length) {
+      return;
+    }
+    const newOffset = offset + limit;
+    const newBooks = allBooks.slice(offset, newOffset);
+    setDisplayedBooks((prevBooks) => [...prevBooks, ...newBooks]);
+    setOffset(newOffset);
+  }, [offset, allBooks, limit]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMoreBooks();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    const currentRef = triggerRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [loadMoreBooks]);
+
   return (
     <div className="relative min-h-[100svh - 70px]">
-      {/* <SearchAndFilter type="books" /> */}
       <div className="flex items-center">
-      {/* <Sidebar /> */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-8 w-full overflow-y-auto">
-        {books &&
-        books.map((book, index) => (
-            <BookCard key={index} book={book}/>
-        ))}
-      </section>
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-8 w-full overflow-y-auto">
+          {displayedBooks.map((book, index) => (
+            <BookCard key={index} book={book} />
+          ))}
+        </section>
       </div>
-    {/* <section className="py-2">
-      <PaginationControll count={result?.total || 0} limit={LIMIT} />
-    </section> */}
+      {offset < allBooks.length && <div ref={triggerRef} />}
     </div>
   );
 }
