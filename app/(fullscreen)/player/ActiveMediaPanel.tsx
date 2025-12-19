@@ -4,65 +4,17 @@ import { Disc, Mic2, Activity } from 'lucide-react';
 import { useMusicStore } from '@/app/(main)/music/music-context';
 import { Music } from '@/lib/database/musicSchema';
 import { useVisualizer } from './VisualizerContext';
+import VisualizerCanvas from './VisualizerCanvas';
 
 const ActiveMediaPanel = () => {
    const { music, current, setCurrent } = useMusicStore((state: any) => state);
    const currentTrack: Music | undefined = music && music[current];
 
    // Visualizer Context
-   const { analyser, isInitialized } = useVisualizer();
-   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+   const { isInitialized } = useVisualizer();
 
    // Get next 3 songs for the queue
    const queue = music ? music.slice(current + 1, current + 4) : [];
-
-   // Visualizer Loop
-   useEffect(() => {
-      if (!analyser || !canvasRef.current) return;
-
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
-      let animationId: number;
-
-      const draw = () => {
-         animationId = requestAnimationFrame(draw);
-         analyser.getByteFrequencyData(dataArray);
-
-         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
-
-         // Drawing Setup
-         const barWidth = (canvas.width / bufferLength) * 2.5;
-         let barHeight;
-         let x = 0;
-
-         for (let i = 0; i < bufferLength; i++) {
-            // Adjusted sensitivity: / 4 maps 0-255 range to 0-63.75px (fitting 64px height)
-            barHeight = dataArray[i] / 4;
-
-            // Dynamic Color: Cyberpunk Spectrum (Purple -> Cyan -> Green)
-            // Mapping index i to Hue (approx 260 to 160 range reverse or full spectrum)
-            // Let's do a full spectrum loop for maximum color
-            const hue = (i / bufferLength) * 360;
-
-            ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-
-            // Draw Bar
-            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-
-            x += barWidth + 1;
-         }
-      }
-
-      draw();
-
-      return () => {
-         cancelAnimationFrame(animationId);
-      }
-   }, [analyser]);
 
    return (
       <aside className="w-[300px] border-l border-slate-800 bg-slate-950 flex-col hidden lg:flex">
@@ -111,12 +63,8 @@ const ActiveMediaPanel = () => {
                      WAITING FOR SIGNAL...
                   </div>
                )}
-               <canvas
-                  ref={canvasRef}
-                  width={266}
-                  height={64}
-                  className="w-full h-full opacity-80"
-               ></canvas>
+               {/* Replaced inline logic with reusable component */}
+               <VisualizerCanvas width={266} height={64} className="w-full h-full opacity-80" />
             </div>
          </div>
 

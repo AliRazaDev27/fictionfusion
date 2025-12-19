@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useMusicStore } from '@/app/(main)/music/music-context';
 import { useVisualizer } from './VisualizerContext';
+import EqualizerModal from './EqualizerModal';
 
 const PlayerDeck = () => {
    const { music, current, setCurrent } = useMusicStore((state: any) => state);
@@ -22,6 +23,7 @@ const PlayerDeck = () => {
    const currentTrack = music && music[current];
 
    const [isPlaying, setIsPlaying] = useState(false);
+   const [showEq, setShowEq] = useState(false);
    const [volume, setVolume] = useState(75);
    const [progress, setProgress] = useState(0);
    const [currentTime, setCurrentTime] = useState(0);
@@ -216,7 +218,7 @@ const PlayerDeck = () => {
    }
 
    return (
-      <div className="h-full w-full bg-slate-950 border-t border-slate-800 flex items-center justify-between px-6 relative overflow-hidden">
+      <div className="h-full w-full bg-slate-950 border-t border-slate-800 flex items-center justify-between px-6 relative">
          <audio
             ref={audioRef}
             crossOrigin="anonymous"
@@ -339,10 +341,16 @@ const PlayerDeck = () => {
             </div>
 
             {/* Extra Options */}
-            <div className="flex gap-1 border-l border-slate-800 pl-4">
-               <button className="p-2 text-slate-500 hover:text-white hover:bg-slate-900 rounded-sm">
+            <div className="flex gap-1 border-l border-slate-800 pl-4 relative">
+               <button
+                  onClick={() => setShowEq(!showEq)}
+                  className={`p-2 rounded-sm transition-colors ${showEq ? 'text-cyan-400 bg-slate-900' : 'text-slate-500 hover:text-white hover:bg-slate-900'}`}
+               >
                   <Settings2 className="w-4 h-4" />
                </button>
+
+               {showEq && <EqualizerModal onClose={() => setShowEq(false)} />}
+
                <button className="p-2 text-slate-500 hover:text-white hover:bg-slate-900 rounded-sm lg:hidden">
                   <ListMusic className="w-4 h-4" />
                </button>

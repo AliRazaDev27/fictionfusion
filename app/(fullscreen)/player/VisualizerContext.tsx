@@ -7,6 +7,9 @@ interface VisualizerContextType {
     source: MediaElementAudioSourceNode | null;
     initializeAudio: (audioElement: HTMLAudioElement) => void;
     isInitialized: boolean;
+    // EQ
+    setEQGain: (index: number, value: number) => void;
+    eqGains: number[];
 }
 
 const VisualizerContext = createContext<VisualizerContextType | undefined>(undefined);
@@ -17,6 +20,10 @@ export const VisualizerProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const analyserRef = useRef<AnalyserNode | null>(null);
     const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
 
+    // EQ Filters Refs
+    const filtersRef = useRef<BiquadFilterNode[]>([]);
+    const [eqGains, setEqGains] = useState<number[]>([0, 0, 0, 0, 0]);
+
     const initializeAudio = (audioElement: HTMLAudioElement) => {
         if (sourceRef.current) return; // Already initialized
 
@@ -26,22 +33,60 @@ export const VisualizerProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             audioContextRef.current = ctx;
 
             const analyser = ctx.createAnalyser();
-            analyser.fftSize = 256; // Controls bar count (128 bins)
+            analyser.fftSize = 256;
             analyserRef.current = analyser;
 
             const source = ctx.createMediaElementSource(audioElement);
-            source.connect(analyser);
-            analyser.connect(ctx.destination);
             sourceRef.current = source;
 
+            // Create EQ Filters (5 Bands)
+            // 60Hz (Low), 310Hz (Low-Mid), 1.5kHz (Mid), 6kHz (High-Mid), 16kHz (High)
+            const frequencies = [60, 310, 1500, 6000, 16000];
+            const filters = frequencies.map((freq, i) => {
+                const filter = ctx.createBiquadFilter();
+                filter.frequency.value = freq;
+                // Types: LowShelf for bass, HighShelf for treble, Peaking for mids
+                if (i === 0) filter.type = 'lowshelf';
+                else if (i === frequencies.length - 1) filter.type = 'highshelf';
+                else filter.type = 'peaking';
+
+                // Q value for peaking (bandwidth)
+                if (filter.type === 'peaking') filter.Q.value = 1;
+
+                return filter;
+            });
+            filtersRef.current = filters;
+
+            // Connect Chain: Source -> Filter[0] -> ... -> Filter[4] -> Analyser -> Destination
+            source.connect(filters[0]);
+            for (let i = 0; i < filters.length - 1; i++) {
+                filters[i].connect(filters[i + 1]);
+            }
+            filters[filters.length - 1].connect(analyser); // Connect last filter to analyser
+            analyser.connect(ctx.destination);
+
             setIsInitialized(true);
-            console.log("Audio Context Initialized");
+            console.log("Audio Context & EQ Initialized");
         } catch (error) {
             console.error("Failed to init audio context:", error);
         }
     };
 
-    // Auto-resume context if suspended (browser autoplay policy)
+    const setEQGain = (index: number, value: number) => {
+        // Value between -12 and 12 dB usually
+        if (filtersRef.current[index] && audioContextRef.current) {
+            filtersRef.current[index].gain.value = value;
+
+            // Update state for UI
+            setEqGains(prev => {
+                const newGains = [...prev];
+                newGains[index] = value;
+                return newGains;
+            });
+        }
+    }
+
+    // Auto-resume context if suspended
     useEffect(() => {
         const handleInteraction = () => {
             if (audioContextRef.current?.state === 'suspended') {
@@ -58,7 +103,9 @@ export const VisualizerProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             analyser: analyserRef.current,
             source: sourceRef.current,
             initializeAudio,
-            isInitialized
+            isInitialized,
+            setEQGain,
+            eqGains
         }}>
             {children}
         </VisualizerContext.Provider>
