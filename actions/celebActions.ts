@@ -5,15 +5,16 @@ import { eq } from "drizzle-orm";
 import * as cheerio from "cheerio"
 import { cacheTag, revalidatePath } from "next/cache";
 import { auth } from "@/auth";
+import { Impit } from 'impit';
 
 export async function createCeleb(values: NewCelebList) {
-  try{
-  const session = await auth();
-  if(session?.user?.role !== "ADMIN") return
-  await db.insert(CelebListTable).values(values);
-  revalidatePath("/people")
+  try {
+    const session = await auth();
+    if (session?.user?.role !== "ADMIN") return
+    await db.insert(CelebListTable).values(values);
+    revalidatePath("/people")
   }
-  catch(e){
+  catch (e) {
     console.log(e)
   }
 }
@@ -23,7 +24,7 @@ export async function setupCelebInfo(url: string) {
     if (!url) return
     if (!url.startsWith('https://mydramalist.com/people/')) return
     const session = await auth();
-    if(session?.user?.role !== "ADMIN") return
+    if (session?.user?.role !== "ADMIN") return
     const result = await fetch(url)
     const response = await result.text()
     const content = cheerio.load(response)
@@ -41,7 +42,7 @@ export async function getCelebs() {
   "use cache";
   cacheTag("get-celebs");
   // don't include the ignoredList in it
-  const data =  await db.select().from(CelebListTable)
+  const data = await db.select().from(CelebListTable)
   return data;
 }
 
@@ -55,9 +56,14 @@ export async function getCelebInfo(id: number) {
   return celeb;
 }
 
-export async function extractRealTimeWorkInfo(url: string): Promise<{data:Record<string, Film[]>, info:{nationality:string, gender:string, age:string}}> {
+export async function extractRealTimeWorkInfo(url: string): Promise<{ data: Record<string, Film[]>, info: { nationality: string, gender: string, age: string } }> {
   const store: Record<string, Film[]> = {}
-  const result = await fetch(url)
+  const impit = new Impit({
+    browser: "chrome", // or "firefox"
+    ignoreTlsErrors: true,
+  });
+  const result = await impit.fetch(url)
+
   const response = await result.text()
   const content = cheerio.load(response)
   // const name = content("#content > div > div.container-fluid > div > div.col-lg-4.col-md-4 > div > div:nth-child(1) > div.box-header.p-b-0.text-center > h1").text()
@@ -103,14 +109,14 @@ export async function extractRealTimeWorkInfo(url: string): Promise<{data:Record
     // use the header as key of object and store the table as named indexed, the entire table as the content like this
     // { [header]: content }
   })
-  return {data:store,info:{nationality,gender,age}};
+  return { data: store, info: { nationality, gender, age } };
 }
 
 export async function addWorkInIgnoredList(id: number, title: string) {
   try {
     const session = await auth();
-    if(session?.user?.role !== "ADMIN") return false;
-    if(!id || !title) return false;
+    if (session?.user?.role !== "ADMIN") return false;
+    if (!id || !title) return false;
     const [data] = await db.select({ ignoredTitles: CelebListTable.ignoredTitles }).from(CelebListTable).where(eq(CelebListTable.id, id)).limit(1);
     if (!data) return false;
     const list = data?.ignoredTitles;
@@ -129,8 +135,8 @@ export async function addWorkInIgnoredList(id: number, title: string) {
 export async function addWorkInFavouritedList(id: number, title: string) {
   try {
     const session = await auth();
-    if(session?.user?.role !== "ADMIN") return false;
-    if(!id || !title) return false;
+    if (session?.user?.role !== "ADMIN") return false;
+    if (!id || !title) return false;
     const [data] = await db.select({ favouritedTitles: CelebListTable.favouritedTitles }).from(CelebListTable).where(eq(CelebListTable.id, id)).limit(1);
     if (!data) return false;
     const list = data?.favouritedTitles;

@@ -23,7 +23,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#082635" />
       </head>
-      <body className={`${inter.className} bg-stone-900`}>
+      <body className={`${inter.className} bg-slate-900`}>
         <main>{children}</main>
         <Toaster />
         <Analytics />

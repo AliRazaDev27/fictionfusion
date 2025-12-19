@@ -4,10 +4,9 @@ import Link from "next/link";
 
 export default async function Page() {
   const data = await getCelebs();
-  // const data= [{id:1,avatar:"",title:""}];
   return (
     <div className="">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 px-2 md:px-4 md:py-4 ">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-2 md:px-4 md:py-4 ">
         {data.map((celeb) => (
           <div key={celeb?.id} className="flex flex-col items-center justify-between rounded-xl overflow-hidden bg-gray-800">
             <div className="w-full bg-gray-800">

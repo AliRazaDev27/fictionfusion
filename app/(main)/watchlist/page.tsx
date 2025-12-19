@@ -25,10 +25,10 @@ export default function Page() {
                 setData([...data, ...result]);
                 setIsFetching(false);
             }
-            if(email !== ""){
-            fetcher()
+            if (email !== "") {
+                fetcher()
             }
-        }, [page,email]
+        }, [page, email]
     )
     useEffect(() => {
         if (observerRef.current) observerRef.current.disconnect(); // Cleanup previous observer
@@ -59,7 +59,7 @@ export default function Page() {
                 setEmail(session.user.email);
                 console.log("witchhunter: ")
             }
-            else{
+            else {
                 setEmail(null);
             }
         }
@@ -72,7 +72,7 @@ export default function Page() {
         <div className="w-full" style={{ minHeight: "calc(100vh - 70px)", overflowY: "auto" }}>
             {data.length === 0 && <div className="w-full text-center  text-5xl text-white">Loading Please Wait...</div>}
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
                 {data.map((item) => (
                     <MyDramaShowCard key={item.title} item={item} />
                 ))}

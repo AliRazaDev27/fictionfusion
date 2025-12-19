@@ -20,7 +20,7 @@ export default async function Header() {
     const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
     return( 
-        <header className="top-0 relative z-50 flex justify-between h-[70px] items-center  bg-stone-900 px-4 md:px-6">
+        <header className="top-0 relative z-50 flex justify-between h-[70px] items-center  bg-slate-900 px-4 md:px-6">
           <div className="hidden md:block">
           <Link
             href="/"

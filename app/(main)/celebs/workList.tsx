@@ -4,20 +4,21 @@ import { Button } from "@/components/ui/button";
 import { FilmData } from "@/lib";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-// const sample = ["Nirvana in Fire","The Disguiser","Sound of the Desert","You Are the Best","Refresh 3+7"]
-export function WorkList({ id, workInfo, ignoredTitles,favouritedTitles,extraInfo }:
-  { id: number,
-    workInfo: FilmData, 
+
+export function WorkList({ id, workInfo, ignoredTitles, favouritedTitles, extraInfo }:
+  {
+    id: number,
+    workInfo: FilmData,
     ignoredTitles: string[],
     favouritedTitles: string[],
-    extraInfo:{
-      title:string,
-      avatar:string,
-      nationality:string,
-      gender:string,
-      age:string
+    extraInfo: {
+      title: string,
+      avatar: string,
+      nationality: string,
+      gender: string,
+      age: string
     }
-   }) {
+  }) {
   const [list, setList] = useState(workInfo);
 
   const handleIgnore = async (category, title) => {
@@ -37,31 +38,30 @@ export function WorkList({ id, workInfo, ignoredTitles,favouritedTitles,extraInf
     if (!result) return
     // maybe add a heart?
   }
-  const filterAll = ()=>{
-      setList(workInfo);
-    }
-    const filterWatchlist = ()=>{
-      console.log(list)
+  const filterAll = () => {
+    setList(workInfo);
+  }
+  const filterWatchlist = () => {
     const updatedList = { ...workInfo };
     for (const category in updatedList) {
       updatedList[category] = updatedList[category].filter((film) => !ignoredTitles.includes(film.title));
     }
     setList(updatedList);
+  }
+  const filterFavourites = () => {
+    const updatedList = { ...workInfo };
+    for (const category in updatedList) {
+      updatedList[category] = updatedList[category].filter((film) => favouritedTitles.includes(film.title));
     }
-    const filterFavourites = ()=>{
-      const updatedList = { ...workInfo };
-      for (const category in updatedList) {
-        updatedList[category] = updatedList[category].filter((film) => favouritedTitles.includes(film.title));
-      }
-      setList(updatedList);
-    }
+    setList(updatedList);
+  }
   useEffect(() => {
     filterWatchlist();
   }, [])
   return (
     <div className="space-y-4">
       <div className="flex items-start gap-4 sm:gap-8">
-        <img src={extraInfo.avatar || ""} alt={extraInfo.title} className="w-32 h-32 rounded-xl mb-4" />
+        <img src={extraInfo.avatar || ""} alt={extraInfo.title} className="w-36 md:w-48 lg:w-60 aspect-square rounded-xl mb-4" />
         <div>
           <h1 className="text-3xl font-bold">{extraInfo.title}</h1>
           <p>{extraInfo.nationality}</p><p>{extraInfo.gender}</p><p>{extraInfo.age}</p>
@@ -92,12 +92,12 @@ export function WorkList({ id, workInfo, ignoredTitles,favouritedTitles,extraInf
                       }
                     </p>
                     <div className="flex items-center gap-2">
-                    <Button
-                      className="cursor-pointer hover:bg-green-600"
-                      onClick={() => handleFavourite(category, film.title)}>Favourite</Button>
-                    <Button
-                      className="cursor-pointer hover:bg-green-600"
-                      onClick={() => handleIgnore(category, film.title)}>Ignore</Button>
+                      <Button
+                        className="cursor-pointer hover:bg-green-600"
+                        onClick={() => handleFavourite(category, film.title)}>Favourite</Button>
+                      <Button
+                        className="cursor-pointer hover:bg-green-600"
+                        onClick={() => handleIgnore(category, film.title)}>Ignore</Button>
                     </div>
                   </div>
 
