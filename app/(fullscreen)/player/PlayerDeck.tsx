@@ -14,9 +14,11 @@ import {
    Repeat1
 } from 'lucide-react';
 import { useMusicStore } from '@/app/(main)/music/music-context';
+import { useVisualizer } from './VisualizerContext';
 
 const PlayerDeck = () => {
    const { music, current, setCurrent } = useMusicStore((state: any) => state);
+   const { initializeAudio } = useVisualizer();
    const currentTrack = music && music[current];
 
    const [isPlaying, setIsPlaying] = useState(false);
@@ -44,6 +46,8 @@ const PlayerDeck = () => {
          if (isPlaying) {
             audioRef.current.play().catch(e => console.log("Autoplay blocked", e));
          }
+         // Init Visualizer immediately
+         initializeAudio(audioRef.current);
       }
    }, [currentTrack]);
 
@@ -215,6 +219,7 @@ const PlayerDeck = () => {
       <div className="h-full w-full bg-slate-950 border-t border-slate-800 flex items-center justify-between px-6 relative overflow-hidden">
          <audio
             ref={audioRef}
+            crossOrigin="anonymous"
             onTimeUpdate={handleTimeUpdate}
             onEnded={handleEnded}
             onError={(e) => console.log("Audio Error", e)}
@@ -325,8 +330,8 @@ const PlayerDeck = () => {
                         key={level}
                         onClick={() => setVolume(level)}
                         className={`w-1.5 h-4 rounded-[1px] transition-all ${volume >= level
-                              ? 'bg-cyan-500 shadow-[0_0_5px_rgba(6,182,212,0.5)]'
-                              : 'bg-slate-800 group-hover:bg-slate-700'
+                           ? 'bg-cyan-500 shadow-[0_0_5px_rgba(6,182,212,0.5)]'
+                           : 'bg-slate-800 group-hover:bg-slate-700'
                            }`}
                      ></div>
                   ))}

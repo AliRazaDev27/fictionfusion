@@ -1,15 +1,68 @@
 "use client";
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Disc, Mic2, Activity } from 'lucide-react';
 import { useMusicStore } from '@/app/(main)/music/music-context';
 import { Music } from '@/lib/database/musicSchema';
+import { useVisualizer } from './VisualizerContext';
 
 const ActiveMediaPanel = () => {
    const { music, current, setCurrent } = useMusicStore((state: any) => state);
    const currentTrack: Music | undefined = music && music[current];
 
+   // Visualizer Context
+   const { analyser, isInitialized } = useVisualizer();
+   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
    // Get next 3 songs for the queue
    const queue = music ? music.slice(current + 1, current + 4) : [];
+
+   // Visualizer Loop
+   useEffect(() => {
+      if (!analyser || !canvasRef.current) return;
+
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      let animationId: number;
+
+      const draw = () => {
+         animationId = requestAnimationFrame(draw);
+         analyser.getByteFrequencyData(dataArray);
+
+         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+         // Drawing Setup
+         const barWidth = (canvas.width / bufferLength) * 2.5;
+         let barHeight;
+         let x = 0;
+
+         for (let i = 0; i < bufferLength; i++) {
+            // Adjusted sensitivity: / 4 maps 0-255 range to 0-63.75px (fitting 64px height)
+            barHeight = dataArray[i] / 4;
+
+            // Dynamic Color: Cyberpunk Spectrum (Purple -> Cyan -> Green)
+            // Mapping index i to Hue (approx 260 to 160 range reverse or full spectrum)
+            // Let's do a full spectrum loop for maximum color
+            const hue = (i / bufferLength) * 360;
+
+            ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+
+            // Draw Bar
+            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+
+            x += barWidth + 1;
+         }
+      }
+
+      draw();
+
+      return () => {
+         cancelAnimationFrame(animationId);
+      }
+   }, [analyser]);
 
    return (
       <aside className="w-[300px] border-l border-slate-800 bg-slate-950 flex-col hidden lg:flex">
@@ -21,7 +74,7 @@ const ActiveMediaPanel = () => {
                Audio_Telemetry
             </span>
             <div className="flex gap-1">
-               <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></div>
+               <div className={`w-1.5 h-1.5 rounded-full ${isInitialized ? 'bg-cyan-500 animate-pulse' : 'bg-red-500'}`}></div>
             </div>
          </div>
 
@@ -50,19 +103,20 @@ const ActiveMediaPanel = () => {
             </div>
          </div>
 
-         {/* 3. Signal Analysis (Fake Visualizer) */}
-         <div className="px-4 pb-6 border-b border-slate-800">
-            <div className="flex justify-between text-[10px] text-slate-500 mb-2 font-mono uppercase">
-               <span>L Channel</span>
-               <span>R Channel</span>
-            </div>
-            {/* A fake spectrum analyzer */}
-            <div className="flex items-end justify-between h-12 gap-1 opacity-60">
-               {[40, 70, 35, 60, 80, 50, 90, 30, 60, 40, 70, 20].map((h, i) => (
-                  <div key={i} className="w-full bg-cyan-900/50 rounded-t-sm relative overflow-hidden group">
-                     <div className="absolute bottom-0 w-full bg-cyan-500 transition-all duration-300 animate-pulse" style={{ height: `${h}%` }}></div>
+         {/* 3. Real-Time Signal Analysis */}
+         <div className="px-4 pb-6 border-b border-slate-800 h-24 flex items-end">
+            <div className="w-full h-16 bg-black/20 rounded border border-slate-800/50 relative overflow-hidden">
+               {!isInitialized && (
+                  <div className="absolute inset-0 flex items-center justify-center text-[9px] text-slate-600 font-mono">
+                     WAITING FOR SIGNAL...
                   </div>
-               ))}
+               )}
+               <canvas
+                  ref={canvasRef}
+                  width={266}
+                  height={64}
+                  className="w-full h-full opacity-80"
+               ></canvas>
             </div>
          </div>
 

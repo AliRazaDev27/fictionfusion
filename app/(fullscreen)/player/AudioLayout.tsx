@@ -15,6 +15,7 @@ import PlayerDeck from './PlayerDeck';
 import TrackRow from './track-row';
 import { useMusicStore } from '@/app/(main)/music/music-context';
 import { Music } from '@/lib/database/musicSchema';
+import { VisualizerProvider } from './VisualizerContext';
 import { List } from '@/lib/database/listSchema';
 
 interface AudioLayoutProps {
@@ -135,186 +136,188 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
   }
 
   return (
-    <div className="flex h-screen w-screen bg-slate-950 text-slate-400 font-mono overflow-hidden selection:bg-cyan-900 selection:text-cyan-200">
+    <VisualizerProvider>
+      <div className="flex h-screen w-screen bg-slate-950 text-slate-400 font-mono overflow-hidden selection:bg-cyan-900 selection:text-cyan-200">
 
-      {/* --- LEFT DOCK: SOURCES & LIBRARY (260px) --- */}
-      <aside className="w-[260px] flex flex-col border-r border-slate-800 bg-slate-950/50">
+        {/* --- LEFT DOCK: SOURCES & LIBRARY (260px) --- */}
+        <aside className="w-[260px] flex flex-col border-r border-slate-800 bg-slate-950/50">
 
-        {/* App Title / Home Button */}
-        <div className="h-14 flex items-center px-4 border-b border-slate-800">
-          <div className="flex items-center gap-2 text-slate-100 font-bold tracking-tight">
-            <div className="w-3 h-3 bg-emerald-500 rounded-sm animate-pulse"></div>
-            AUDIO_NODE
-          </div>
-        </div>
-
-        {/* Connection Status (PWA Flex) */}
-        <div className="px-4 py-3 border-b border-slate-800 bg-slate-900/30">
-          <div className="flex justify-between items-center text-[10px] uppercase tracking-wider mb-2">
-            <span>Connection</span>
-            <span className="text-emerald-500">Secure</span>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div
-              onClick={() => applySourceFilter('ALL')}
-              className={`flex items-center gap-2 p-1.5 border rounded text-xs cursor-pointer transition-colors ${activeFilter === 'ALL' ? 'bg-cyan-950/30 border-cyan-500/50 text-cyan-400' : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'} `}
-            >
-              <Server className="w-3 h-3 text-cyan-500" />
-              <span>Cloud</span>
-            </div>
-            <div
-              onClick={() => applySourceFilter('LOCAL')}
-              className={`flex items-center gap-2 p-1.5 border rounded text-xs cursor-pointer transition-colors ${activeFilter === 'LOCAL' ? 'bg-emerald-950/30 border-emerald-500/50 text-emerald-400' : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'} `}
-            >
-              <Wifi className="w-3 h-3 text-emerald-500" />
-              <span>Local</span>
+          {/* App Title / Home Button */}
+          <div className="h-14 flex items-center px-4 border-b border-slate-800">
+            <div className="flex items-center gap-2 text-slate-100 font-bold tracking-tight">
+              <div className="w-3 h-3 bg-emerald-500 rounded-sm animate-pulse"></div>
+              AUDIO_NODE
             </div>
           </div>
-        </div>
 
-        {/* Navigation / Folders */}
-        <nav className="flex-1 overflow-y-auto p-2 space-y-6">
-
-          {/* Section: Input */}
-          <div>
-            <h3 className="px-2 text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2">// INPUT_SOURCES</h3>
-            <ul className="space-y-0.5">
-              <li
-                onClick={() => applySourceFilter('LOCAL')}
-                className={`group flex items-center gap-3 px-2 py-2 rounded cursor-pointer transition-colors ${activeFilter === 'LOCAL' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900 hover:text-white'} `}
-              >
-                <FolderOpen className="w-4 h-4 text-amber-500" />
-                <span className="text-sm">Local Files</span>
-                <span className="ml-auto text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 group-hover:text-slate-300">
-                  {cachedTracks.size}
-                </span>
-              </li>
-              <li
+          {/* Connection Status (PWA Flex) */}
+          <div className="px-4 py-3 border-b border-slate-800 bg-slate-900/30">
+            <div className="flex justify-between items-center text-[10px] uppercase tracking-wider mb-2">
+              <span>Connection</span>
+              <span className="text-emerald-500">Secure</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div
                 onClick={() => applySourceFilter('ALL')}
-                className={`group flex items-center gap-3 px-2 py-2 rounded cursor-pointer transition-colors ${activeFilter === 'ALL' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900 hover:text-white'} `}
+                className={`flex items-center gap-2 p-1.5 border rounded text-xs cursor-pointer transition-colors ${activeFilter === 'ALL' ? 'bg-cyan-950/30 border-cyan-500/50 text-cyan-400' : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'} `}
               >
-                <Server className="w-4 h-4 text-cyan-500" />
-                <span className="text-sm">Cloud Library</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Section: Playlists (Frequency Channels) */}
-          <div>
-            <div className="px-2 flex justify-between items-center mb-2">
-              <h3 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">// FREQUENCY_CHANNELS</h3>
-              <button className="text-slate-600 hover:text-white"><Plus className="w-3 h-3" /></button>
+                <Server className="w-3 h-3 text-cyan-500" />
+                <span>Cloud</span>
+              </div>
+              <div
+                onClick={() => applySourceFilter('LOCAL')}
+                className={`flex items-center gap-2 p-1.5 border rounded text-xs cursor-pointer transition-colors ${activeFilter === 'LOCAL' ? 'bg-emerald-950/30 border-emerald-500/50 text-emerald-400' : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'} `}
+              >
+                <Wifi className="w-3 h-3 text-emerald-500" />
+                <span>Local</span>
+              </div>
             </div>
-            <ul className="space-y-0.5">
-              {playlist && playlist.length > 0 ? (
-                playlist.map((list: List, idx: number) => (
-                  <li
-                    key={list.id || idx}
-                    onClick={() => handlePlaylistClick(list.id)}
-                    className="flex items-center gap-3 px-2 py-2 hover:bg-slate-900 hover:text-cyan-400 rounded cursor-pointer group"
-                  >
-                    <ListMusic className="w-4 h-4 text-slate-600 group-hover:text-cyan-500" />
-                    <span className="text-sm truncate">{list.listName}</span>
-                    <span className="ml-auto text-[10px] text-slate-600">{list.items?.length || 0}</span>
-                  </li>
-                ))
-              ) : (
-                <li className="px-2 py-2 text-xs text-slate-600">No signals detected...</li>
-              )}
-            </ul>
-          </div>
-        </nav>
-
-        {/* Storage Health (Footer of Sidebar) */}
-        <div className="p-4 border-t border-slate-800">
-          <div className="flex justify-between text-[10px] mb-1">
-            <span>CACHE_STORAGE</span>
-            <span>45%</span>
-          </div>
-          <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-            <div className="h-full bg-emerald-600 w-[45%]"></div>
-          </div>
-        </div>
-      </aside>
-
-
-      {/* --- MAIN TERMINAL: TRACK MATRIX (Flex-1) --- */}
-      <main className="flex-1 flex flex-col min-w-0 bg-black/20">
-
-        {/* Top Bar: Search & Filter */}
-        <header className="h-14 border-b border-slate-800 flex items-center px-4 justify-between bg-slate-950/80 backdrop-blur">
-          <div className="flex items-center gap-3 w-96 bg-slate-900/50 border border-slate-800 rounded px-3 py-1.5 focus-within:border-cyan-500/50 transition-colors">
-            <Search className="w-4 h-4 text-slate-500" />
-            <input
-              type="text"
-              placeholder="Query Database..."
-              onChange={handleSearch}
-              className="bg-transparent border-none outline-none text-sm w-full placeholder:text-slate-600 text-slate-200"
-            />
           </div>
 
-          <div className="flex gap-2">
-            <button className="p-2 hover:bg-slate-800 rounded text-slate-500 hover:text-white border border-transparent hover:border-slate-700">
-              <Filter className="w-4 h-4" />
-            </button>
-            <button className="p-2 hover:bg-slate-800 rounded text-slate-500 hover:text-white border border-transparent hover:border-slate-700">
-              <Maximize2 className="w-4 h-4" />
-            </button>
-          </div>
-        </header>
+          {/* Navigation / Folders */}
+          <nav className="flex-1 overflow-y-auto p-2 space-y-6">
 
-        {/* The Track Table Header */}
-        <div className="grid grid-cols-[40px_60px_1fr_120px_80px_80px] px-4 py-2 border-b border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-950/30">
-          <div className="text-center">#</div>
-          <div className="text-center">ART</div>
-          <div>Title / Identity</div>
-          <div>Artist</div>
-          <div className="text-right">Album</div>
-          <div className="text-right">Time</div>
-        </div>
-
-        {/* The Content Area */}
-        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
-          {music && music.length > 0 ? (
-            <>
-              {music.slice(0, visibleCount).map((track: Music, index: number) => (
-                <div key={track.id} onClick={() => setCurrent(index)}>
-                  <TrackRow
-                    index={index + 1}
-                    title={track.title}
-                    artist={track.artist}
-                    album={track?.album || ""}
-                    duration={track.duration || "00:00"}
-                    bitrate="320kbps"
-                    format={track.fileUrlPrivate?.endsWith('.flac') ? 'FLAC' : 'MP3'}
-                    source={cachedTracks.has(track.id) ? 'LOCAL' : 'CLOUD'}
-                    isPlaying={current === index}
-                    coverImage={track.coverArt || undefined}
-                  />
-                </div>
-              ))}
-              {visibleCount < music.length && (
-                <div ref={scrollTrigger} className="h-10 w-full flex items-center justify-center text-slate-700 text-xs animate-pulse">
-                  LOADING_DATA...
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="p-8 text-center text-slate-600 font-mono">
-              NO DATA AVAILABLE
+            {/* Section: Input */}
+            <div>
+              <h3 className="px-2 text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2">// INPUT_SOURCES</h3>
+              <ul className="space-y-0.5">
+                <li
+                  onClick={() => applySourceFilter('LOCAL')}
+                  className={`group flex items-center gap-3 px-2 py-2 rounded cursor-pointer transition-colors ${activeFilter === 'LOCAL' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900 hover:text-white'} `}
+                >
+                  <FolderOpen className="w-4 h-4 text-amber-500" />
+                  <span className="text-sm">Local Files</span>
+                  <span className="ml-auto text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 group-hover:text-slate-300">
+                    {cachedTracks.size}
+                  </span>
+                </li>
+                <li
+                  onClick={() => applySourceFilter('ALL')}
+                  className={`group flex items-center gap-3 px-2 py-2 rounded cursor-pointer transition-colors ${activeFilter === 'ALL' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900 hover:text-white'} `}
+                >
+                  <Server className="w-4 h-4 text-cyan-500" />
+                  <span className="text-sm">Cloud Library</span>
+                </li>
+              </ul>
             </div>
-          )}
-        </div>
 
-        {/* --- BOTTOM DECK: CONTROLS (90px) --- */}
-        <div className="h-24 border-t border-slate-800 bg-slate-950 flex flex-col relative z-20">
-          <PlayerDeck />
-        </div>
-      </main>
-      <aside>
-        <ActiveMediaPanel />
-      </aside>
-    </div>
+            {/* Section: Playlists (Frequency Channels) */}
+            <div>
+              <div className="px-2 flex justify-between items-center mb-2">
+                <h3 className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">// FREQUENCY_CHANNELS</h3>
+                <button className="text-slate-600 hover:text-white"><Plus className="w-3 h-3" /></button>
+              </div>
+              <ul className="space-y-0.5">
+                {playlist && playlist.length > 0 ? (
+                  playlist.map((list: List, idx: number) => (
+                    <li
+                      key={list.id || idx}
+                      onClick={() => handlePlaylistClick(list.id)}
+                      className="flex items-center gap-3 px-2 py-2 hover:bg-slate-900 hover:text-cyan-400 rounded cursor-pointer group"
+                    >
+                      <ListMusic className="w-4 h-4 text-slate-600 group-hover:text-cyan-500" />
+                      <span className="text-sm truncate">{list.listName}</span>
+                      <span className="ml-auto text-[10px] text-slate-600">{list.items?.length || 0}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li className="px-2 py-2 text-xs text-slate-600">No signals detected...</li>
+                )}
+              </ul>
+            </div>
+          </nav>
+
+          {/* Storage Health (Footer of Sidebar) */}
+          <div className="p-4 border-t border-slate-800">
+            <div className="flex justify-between text-[10px] mb-1">
+              <span>CACHE_STORAGE</span>
+              <span>45%</span>
+            </div>
+            <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-emerald-600 w-[45%]"></div>
+            </div>
+          </div>
+        </aside>
+
+
+        {/* --- MAIN TERMINAL: TRACK MATRIX (Flex-1) --- */}
+        <main className="flex-1 flex flex-col min-w-0 bg-black/20">
+
+          {/* Top Bar: Search & Filter */}
+          <header className="h-14 border-b border-slate-800 flex items-center px-4 justify-between bg-slate-950/80 backdrop-blur">
+            <div className="flex items-center gap-3 w-96 bg-slate-900/50 border border-slate-800 rounded px-3 py-1.5 focus-within:border-cyan-500/50 transition-colors">
+              <Search className="w-4 h-4 text-slate-500" />
+              <input
+                type="text"
+                placeholder="Query Database..."
+                onChange={handleSearch}
+                className="bg-transparent border-none outline-none text-sm w-full placeholder:text-slate-600 text-slate-200"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <button className="p-2 hover:bg-slate-800 rounded text-slate-500 hover:text-white border border-transparent hover:border-slate-700">
+                <Filter className="w-4 h-4" />
+              </button>
+              <button className="p-2 hover:bg-slate-800 rounded text-slate-500 hover:text-white border border-transparent hover:border-slate-700">
+                <Maximize2 className="w-4 h-4" />
+              </button>
+            </div>
+          </header>
+
+          {/* The Track Table Header */}
+          <div className="grid grid-cols-[40px_60px_1fr_120px_80px_80px] px-4 py-2 border-b border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-950/30">
+            <div className="text-center">#</div>
+            <div className="text-center">ART</div>
+            <div>Title / Identity</div>
+            <div>Artist</div>
+            <div className="text-right">Album</div>
+            <div className="text-right">Time</div>
+          </div>
+
+          {/* The Content Area */}
+          <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-800 scrollbar-track-transparent">
+            {music && music.length > 0 ? (
+              <>
+                {music.slice(0, visibleCount).map((track: Music, index: number) => (
+                  <div key={track.id} onClick={() => setCurrent(index)}>
+                    <TrackRow
+                      index={index + 1}
+                      title={track.title}
+                      artist={track.artist}
+                      album={track?.album || ""}
+                      duration={track.duration || "00:00"}
+                      bitrate="320kbps"
+                      format={track.fileUrlPrivate?.endsWith('.flac') ? 'FLAC' : 'MP3'}
+                      source={cachedTracks.has(track.id) ? 'LOCAL' : 'CLOUD'}
+                      isPlaying={current === index}
+                      coverImage={track.coverArt || undefined}
+                    />
+                  </div>
+                ))}
+                {visibleCount < music.length && (
+                  <div ref={scrollTrigger} className="h-10 w-full flex items-center justify-center text-slate-700 text-xs animate-pulse">
+                    LOADING_DATA...
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="p-8 text-center text-slate-600 font-mono">
+                NO DATA AVAILABLE
+              </div>
+            )}
+          </div>
+
+          {/* --- BOTTOM DECK: CONTROLS (90px) --- */}
+          <div className="h-24 border-t border-slate-800 bg-slate-950 flex flex-col relative z-20">
+            <PlayerDeck />
+          </div>
+        </main>
+        <aside>
+          <ActiveMediaPanel />
+        </aside>
+      </div>
+    </VisualizerProvider>
   );
 };
 
