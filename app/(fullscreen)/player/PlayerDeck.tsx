@@ -221,7 +221,7 @@ const PlayerDeck = () => {
       <div className="h-full w-full bg-slate-950 border-t border-slate-800 flex items-center justify-between px-6 relative">
          <audio
             ref={audioRef}
-            // crossOrigin="anonymous"
+            crossOrigin="anonymous"
             onTimeUpdate={handleTimeUpdate}
             onEnded={handleEnded}
             onError={(e) => console.log("Audio Error", e)}

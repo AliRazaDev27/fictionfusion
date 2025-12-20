@@ -69,13 +69,14 @@ const withPWA = withPWAInit({
                 options: {
                     cacheName: "cloudinary-media",
                     cacheableResponse: {
-                        statuses: [0, 200],
+                        statuses: [200],
                     },
+                    rangeRequests: true,
                 },
             },
             {
                 // Cache static assets like JS, CSS
-                urlPattern: ({request})=> request.destination === 'image',
+                urlPattern: ({ request }) => request.destination === 'image',
                 handler: 'CacheFirst',
                 options: {
                     cacheName: 'image-assets',
