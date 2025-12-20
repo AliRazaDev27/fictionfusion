@@ -218,7 +218,7 @@ const PlayerDeck = () => {
    }
 
    return (
-      <div className="h-full w-full bg-slate-950 border-t border-slate-800 flex items-center justify-between px-6 relative">
+      <div className="h-24 w-full bg-slate-950 border-t border-slate-800 flex items-center justify-between px-2 md:px-6 relative">
          <audio
             ref={audioRef}
             crossOrigin="anonymous"
@@ -232,8 +232,8 @@ const PlayerDeck = () => {
             style={{ backgroundImage: 'radial-gradient(#22d3ee 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
          </div>
 
-         {/* --- LEFT SECTOR: TIMECODE & META --- */}
-         <div className="w-[200px] flex items-center gap-4 relative z-10">
+         {/* --- LEFT SECTOR: TIMECODE & META (Hidden on Mobile) --- */}
+         <div className="hidden lg:flex w-[200px] items-center gap-4 relative z-10">
             {/* Time Display (LED Style) */}
             <div className="bg-black/50 border border-slate-800 px-3 py-1 rounded-sm font-mono text-cyan-500 text-lg tracking-widest shadow-[0_0_10px_rgba(6,182,212,0.15)]">
                {formatTime(currentTime)}<span className="text-slate-600 text-xs">{formatTimeSubtitle(currentTime)}</span>
@@ -246,12 +246,17 @@ const PlayerDeck = () => {
 
 
          {/* --- CENTER SECTOR: TRANSPORT & SCRUBBER --- */}
-         <div className="flex-1 max-w-2xl flex flex-col gap-2 items-center relative z-10">
+         <div className="flex-1 max-w-2xl flex flex-col gap-2 items-center relative z-10 px-2">
 
             {/* 1. The Scrubber (Segmented LED Bar) */}
             <div className="w-full flex items-center gap-3 group">
-               <span className="text-[10px] font-mono text-slate-600 group-hover:text-cyan-500 transition-colors">
+               <span className="text-[10px] font-mono text-slate-600 group-hover:text-cyan-500 transition-colors hidden md:block">
                   {currentTime > 0 ? "-" + formatTime(duration - currentTime) : "00:00"}
+               </span>
+
+               {/* Mobile Time (Current) */}
+               <span className="text-[10px] font-mono text-slate-500 md:hidden">
+                  {formatTime(currentTime)}
                </span>
 
                <div
@@ -314,8 +319,8 @@ const PlayerDeck = () => {
          </div>
 
 
-         {/* --- RIGHT SECTOR: OUTPUT / GAIN --- */}
-         <div className="w-[200px] flex items-center justify-end gap-6 relative z-10">
+         {/* --- RIGHT SECTOR: OUTPUT / GAIN (Hidden on Mobile) --- */}
+         <div className="hidden lg:flex w-[200px] items-center justify-end gap-6 relative z-10">
 
             {/* Volume Gain Blocks */}
             <div className="flex items-center gap-2 group">

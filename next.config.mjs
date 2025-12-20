@@ -50,7 +50,7 @@ const withPWA = withPWAInit({
     workboxOptions: {
         runtimeCaching: [
             {
-                urlPattern: /\/music/,
+                urlPattern: /\/music|\/player/,
                 handler: 'NetworkFirst',
                 options: {
                     cacheName: 'music-cache',

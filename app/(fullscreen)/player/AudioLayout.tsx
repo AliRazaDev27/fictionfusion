@@ -8,7 +8,9 @@ import {
   Plus,
   Filter,
   ListMusic,
-  Maximize2
+  Maximize2,
+  Menu, // New import
+  X     // New import
 } from 'lucide-react';
 import ActiveMediaPanel from './ActiveMediaPanel';
 import PlayerDeck from './PlayerDeck';
@@ -42,6 +44,8 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
   const [cachedTracks, setCachedTracks] = useState<Set<number>>(new Set());
   const [activeFilter, setActiveFilter] = useState<'ALL' | 'LOCAL'>('ALL'); // Filters
   const [visibleCount, setVisibleCount] = useState(20);
+
+  const [showMobileMenu, setShowMobileMenu] = useState(false); // New State
 
   // Zen Mode
   const [zenMode, setZenMode] = useState(false);
@@ -143,16 +147,33 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
     <VisualizerProvider>
       <div className="flex h-screen w-screen bg-slate-950 text-slate-400 font-mono overflow-hidden selection:bg-cyan-900 selection:text-cyan-200">
 
+        {/* --- MOBILE SIDEBAR BACKDROP --- */}
+        {showMobileMenu && (
+          <div
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
+            onClick={() => setShowMobileMenu(false)}
+          />
+        )}
+
         {/* --- LEFT DOCK: SOURCES & LIBRARY (260px) --- */}
         {!zenMode && (
-          <aside className="w-[260px] flex flex-col border-r border-slate-800 bg-slate-950/50">
+          <aside className={`
+              fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col border-r border-slate-800 bg-slate-950 transition-transform duration-300 ease-in-out md:static md:translate-x-0
+              ${showMobileMenu ? 'translate-x-0' : '-translate-x-full'}
+          `}>
 
             {/* App Title / Home Button */}
-            <div className="h-14 flex items-center px-4 border-b border-slate-800">
+            <div className="h-14 flex items-center px-4 border-b border-slate-800 justify-between">
               <div className="flex items-center gap-2 text-slate-100 font-bold tracking-tight">
                 <div className="w-3 h-3 bg-emerald-500 rounded-sm animate-pulse"></div>
                 AUDIO_NODE
               </div>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                className="md:hidden text-slate-500 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             {/* ... (Rest of sidebar) ... */}
@@ -189,7 +210,7 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
                 <h3 className="px-2 text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2">// INPUT_SOURCES</h3>
                 <ul className="space-y-0.5">
                   <li
-                    onClick={() => applySourceFilter('LOCAL')}
+                    onClick={() => { applySourceFilter('LOCAL'); setShowMobileMenu(false); }}
                     className={`group flex items-center gap-3 px-2 py-2 rounded cursor-pointer transition-colors ${activeFilter === 'LOCAL' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900 hover:text-white'} `}
                   >
                     <FolderOpen className="w-4 h-4 text-amber-500" />
@@ -199,7 +220,7 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
                     </span>
                   </li>
                   <li
-                    onClick={() => applySourceFilter('ALL')}
+                    onClick={() => { applySourceFilter('ALL'); setShowMobileMenu(false); }}
                     className={`group flex items-center gap-3 px-2 py-2 rounded cursor-pointer transition-colors ${activeFilter === 'ALL' ? 'bg-slate-900 text-white' : 'hover:bg-slate-900 hover:text-white'} `}
                   >
                     <Server className="w-4 h-4 text-cyan-500" />
@@ -219,7 +240,7 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
                     playlist.map((list: List, idx: number) => (
                       <li
                         key={list.id || idx}
-                        onClick={() => handlePlaylistClick(list.id)}
+                        onClick={() => { handlePlaylistClick(list.id); setShowMobileMenu(false); }}
                         className="flex items-center gap-3 px-2 py-2 hover:bg-slate-900 hover:text-cyan-400 rounded cursor-pointer group"
                       >
                         <ListMusic className="w-4 h-4 text-slate-600 group-hover:text-cyan-500" />
@@ -252,8 +273,19 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
         <main className="flex-1 flex flex-col min-w-0 bg-black/20">
 
           {/* Top Bar: Search & Filter */}
-          <header className="h-14 border-b border-slate-800 flex items-center px-4 justify-between bg-slate-950/80 backdrop-blur">
-            <div className="flex items-center gap-3 w-96 bg-slate-900/50 border border-slate-800 rounded px-3 py-1.5 focus-within:border-cyan-500/50 transition-colors">
+          <header className="h-14 border-b border-slate-800 flex items-center px-4 justify-between bg-slate-950/80 backdrop-blur gap-4">
+
+            {/* Mobile Menu Button */}
+            {!zenMode && (
+              <button
+                onClick={() => setShowMobileMenu(true)}
+                className="md:hidden p-2 -ml-2 text-slate-500 hover:text-white"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            )}
+
+            <div className="flex items-center gap-3 flex-1 md:w-96 md:flex-none bg-slate-900/50 border border-slate-800 rounded px-3 py-1.5 focus-within:border-cyan-500/50 transition-colors">
               <Search className="w-4 h-4 text-slate-500" />
               <input
                 type="text"
@@ -296,13 +328,15 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
           ) : (
             <>
               {/* The Track Table Header */}
-              <div className="grid grid-cols-[40px_60px_1fr_120px_80px_80px] px-4 py-2 border-b border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-950/30">
-                <div className="text-center">#</div>
-                <div className="text-center">ART</div>
+              <div className="grid grid-cols-[50px_1fr_40px] md:grid-cols-[40px_60px_1fr_120px_80px_80px] px-4 py-2 border-b border-slate-800 text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-950/30">
+                <div className="hidden md:block text-center">#</div>
+                <div className="md:hidden text-center">ART</div>
+                <div className="hidden md:block text-center">ART</div>
                 <div>Title / Identity</div>
-                <div>Artist</div>
-                <div className="text-right">Album</div>
-                <div className="text-right">Time</div>
+                <div className="hidden md:block">Artist</div>
+                <div className="hidden md:block text-right">Album</div>
+                <div className="text-right">Action</div>
+                <div className="hidden md:block text-right">Time</div>
               </div>
 
               {/* The Content Area */}
@@ -323,6 +357,7 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
                           source={cachedTracks.has(track.id) ? 'LOCAL' : 'CLOUD'}
                           isPlaying={current === index}
                           coverImage={track.coverArt || undefined}
+                          audioSrc={track.fileUrlPublic || undefined}
                         />
                       </div>
                     ))}
