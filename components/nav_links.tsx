@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 
 const links = [
   { href: "/music", label: "Music" },
+  { href: "/player", label: "Player" },
   { href: "/books", label: "Books" },
   { href: "/movies", label: "Movies" },
   { href: "/shows", label: "Shows" },
@@ -59,19 +60,19 @@ export default function NavLinks() {
         <p className="text-white/60 text-xl">AI</p>
         <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-linear-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 mt-2 rounded-lg">
           <div className="flex flex-col items-center gap-4">
-        <Link
-          href='/quiz'
-          prefetch={false}
-          className={cn(`text-xl transition-colors duration-100 hover:text-orange-500`, pathname === '/quiz' ? "text-white font-semibold" : "text-white/60")}>
-          Quiz
-        </Link>
+            <Link
+              href='/quiz'
+              prefetch={false}
+              className={cn(`text-xl transition-colors duration-100 hover:text-orange-500`, pathname === '/quiz' ? "text-white font-semibold" : "text-white/60")}>
+              Quiz
+            </Link>
 
-        <Link
-          href='/chat'
-          prefetch={false}
-          className={cn(`text-xl transition-colors duration-100 hover:text-orange-500`, pathname === '/chat' ? "text-white font-semibold" : "text-white/60")}>
-          Chat
-        </Link>
+            <Link
+              href='/chat'
+              prefetch={false}
+              className={cn(`text-xl transition-colors duration-100 hover:text-orange-500`, pathname === '/chat' ? "text-white font-semibold" : "text-white/60")}>
+              Chat
+            </Link>
           </div>
         </div>
       </div>

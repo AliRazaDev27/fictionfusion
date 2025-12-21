@@ -20,6 +20,7 @@ import { Music } from '@/lib/database/musicSchema';
 import { VisualizerProvider } from './VisualizerContext';
 import VisualizerCanvas from './VisualizerCanvas';
 import { List } from '@/lib/database/listSchema';
+import Link from 'next/link';
 
 interface AudioLayoutProps {
   children?: React.ReactNode;
@@ -166,7 +167,9 @@ const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutPr
             <div className="h-14 flex items-center px-4 border-b border-slate-800 justify-between">
               <div className="flex items-center gap-2 text-slate-100 font-bold tracking-tight">
                 <div className="w-3 h-3 bg-emerald-500 rounded-sm animate-pulse"></div>
-                AUDIO_NODE
+                <Link href="/" className="text-lg font-semibold text-white">
+                  FictionFusion
+                </Link>
               </div>
               <button
                 onClick={() => setShowMobileMenu(false)}

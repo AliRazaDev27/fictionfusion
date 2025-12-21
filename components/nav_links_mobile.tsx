@@ -10,6 +10,10 @@ const links = [
     label: "Music",
   },
   {
+    href: "/player",
+    label: "Player",
+  },
+  {
     href: "/watchlist",
     label: "Watchlist",
   },
@@ -44,25 +48,25 @@ export default function NavLinksMobile() {
   return (
     <nav className="flex flex-col justify-center text-center gap-6 text-lg font-medium">
       <SheetClose asChild>
-      <Link
-        href="/"
-        prefetch={false}
-        className="text-lg font-semibold text-white"
-      >
-        Fiction
-        <span className="text-orange-500 text-xl">Fusion</span>
-      </Link>
+        <Link
+          href="/"
+          prefetch={false}
+          className="text-lg font-semibold text-white"
+        >
+          Fiction
+          <span className="text-orange-500 text-xl">Fusion</span>
+        </Link>
       </SheetClose>
       {
-        links.map((link,index) => {
+        links.map((link, index) => {
           return (
             <SheetClose asChild key={index}>
-            <Link
-              href={link.href}
-              prefetch={false}
-              className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === '/chat' ? "text-white font-semibold" : "text-white/60")}>
-              {link.label}
-            </Link>
+              <Link
+                href={link.href}
+                prefetch={false}
+                className={cn(`transition-colors duration-100 hover:text-orange-500`, pathname === '/chat' ? "text-white font-semibold" : "text-white/60")}>
+                {link.label}
+              </Link>
             </SheetClose>
           )
         })
