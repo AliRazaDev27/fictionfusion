@@ -8,7 +8,7 @@ import { useEffect, useState, useRef } from "react";
 
 export default function Page() {
     const [data, setData] = useState(Array<ShowMyDramalist>())
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [isFetching, setIsFetching] = useState(false);
     const observerRef = useRef<IntersectionObserver | null>(null);
     const [email, setEmail] = useState<string | null>("");
