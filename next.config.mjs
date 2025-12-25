@@ -2,6 +2,11 @@
 import withPWAInit from "@ducanh2912/next-pwa";
 
 const nextConfig = {
+    experimental: {
+        serverActions: {
+            bodySizeLimit: '25mb',
+        },
+    },
     cacheComponents: true,
     serverExternalPackages: ['impit'],
     images: {
