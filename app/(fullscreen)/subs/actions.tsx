@@ -1,24 +1,8 @@
 "use server";
-// import { experimental_transcribe as transcribe } from 'ai';
-// import { groq } from '@ai-sdk/groq';
+import { groq as groqProvider } from '@ai-sdk/groq';
+import { generateText } from 'ai';
 import Groq from "groq-sdk";
 
-
-// export async function getSubs(audio: Blob) {
-//     console.log('starting call...')
-//     const result = await transcribe({
-//         model: groq.transcription('whisper-large-v3'),
-//         audio: await audio.arrayBuffer(),
-//         providerOptions: {
-//             groq: {
-//                 language: 'tr',
-//                 timestampGranularities: ['segment'],
-//             }
-//         },
-//     });
-//     console.log(result)
-//     return result.text;
-// }
 
 export async function getSubs(audio: File) {
     const groq = new Groq();
@@ -54,4 +38,59 @@ function convertToSRT(segments) {
 
         return `${index + 1}\n${start} --> ${end}\n${text}\n`;
     }).join('\n');
+}
+
+// Parse SRT content into individual subtitle blocks
+function parseSRTBlocks(srtContent: string): string[] {
+    // Split by double newlines (or more) to get individual subtitle blocks
+    // Each block format: index\ntimestamp\ntext\n
+    const blocks = srtContent.trim().split(/\n\n+/);
+    return blocks.filter(block => block.trim().length > 0);
+}
+
+// Combine subtitle blocks back into SRT format
+function combineSRTBlocks(blocks: string[]): string {
+    return blocks.join('\n\n') + '\n';
+}
+
+// Translate a batch of subtitle blocks
+async function translateBatch(batch: string[]): Promise<string[]> {
+    const batchContent = batch.join('\n\n');
+
+    const result = await generateText({
+        model: groqProvider("moonshotai/kimi-k2-instruct-0905"),
+        system:
+            `You are a skilled turkish to english subtitle translator.
+        Translate the turkish text to english.
+        Don't translate names, characters, places, and proper nouns.
+        Don't translate it one-to-one, translate it to make it sound natural in english.
+        Don't change the original timestamps.
+        Keep the exact same format (index number, timestamp, text).
+        Output only the translated subtitles, nothing else.
+        `,
+        prompt: batchContent,
+    });
+
+    // Parse the translated result back into blocks
+    return parseSRTBlocks(result.text);
+}
+
+export async function translateSubs(subs: string, batchSize: number = 50): Promise<string> {
+    // Parse all subtitle blocks
+    const allBlocks = parseSRTBlocks(subs);
+    console.log(`Total subtitle blocks: ${allBlocks.length}`);
+
+    // Process in batches
+    const translatedBlocks: string[] = [];
+
+    for (let i = 0; i < allBlocks.length; i += batchSize) {
+        const batch = allBlocks.slice(i, i + batchSize);
+        console.log(`Translating batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(allBlocks.length / batchSize)} (${batch.length} blocks)`);
+
+        const translatedBatch = await translateBatch(batch);
+        translatedBlocks.push(...translatedBatch);
+    }
+
+    // Combine all translated blocks
+    return combineSRTBlocks(translatedBlocks);
 }
