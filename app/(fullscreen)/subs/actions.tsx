@@ -32,12 +32,33 @@ function extractFileIndex(filename: string): number {
     return 0;
 }
 
-// Transcribe audio and return segments with duration info
-async function transcribeAudio(audio: File): Promise<{ srt: string; duration: number }> {
+// Whisper models to alternate between to maximize rate limits
+const WHISPER_MODELS = [
+    "whisper-large-v3",
+    "whisper-large-v3-turbo"
+] as const;
+
+type WhisperModel = typeof WHISPER_MODELS[number];
+
+// Check if error is a rate limit error
+function isRateLimitError(error: any): boolean {
+    const message = error?.message?.toLowerCase() || '';
+    const status = error?.status || error?.statusCode;
+    return status === 429 ||
+        message.includes('rate limit') ||
+        message.includes('rate_limit') ||
+        message.includes('too many requests');
+}
+
+// Transcribe audio with a specific model
+async function transcribeWithModel(
+    audio: File,
+    model: WhisperModel
+): Promise<{ srt: string; duration: number }> {
     const groq = new Groq();
     const transcription = await groq.audio.transcriptions.create({
         file: audio,
-        model: "whisper-large-v3-turbo",
+        model: model,
         response_format: "verbose_json",
         timestamp_granularities: ["segment"],
         language: "tr",
@@ -46,13 +67,40 @@ async function transcribeAudio(audio: File): Promise<{ srt: string; duration: nu
     const segments = (transcription as any)?.segments || [];
     const srt = convertToSRT(segments);
 
-    // Get duration from last segment's end time, or 0 if no segments
     const duration = segments.length > 0
         ? segments[segments.length - 1].end
         : (transcription as any)?.duration || 0;
 
-    console.log(`Transcribed: ${audio.name}, Duration: ${duration}s, Segments: ${segments.length}`);
+    console.log(`Transcribed with ${model}: ${audio.name}, Duration: ${duration}s, Segments: ${segments.length}`);
     return { srt, duration };
+}
+
+// Transcribe audio with model rotation and automatic fallback on rate limit
+async function transcribeAudio(
+    audio: File,
+    fileIndex: number = 0
+): Promise<{ srt: string; duration: number }> {
+    // Alternate between models based on file index
+    const primaryModel = WHISPER_MODELS[fileIndex % WHISPER_MODELS.length];
+    const fallbackModel = WHISPER_MODELS[(fileIndex + 1) % WHISPER_MODELS.length];
+
+    try {
+        console.log(`[${audio.name}] Trying primary model: ${primaryModel}`);
+        return await transcribeWithModel(audio, primaryModel);
+    } catch (error) {
+        if (isRateLimitError(error)) {
+            console.log(`[${audio.name}] Rate limit hit on ${primaryModel}, switching to ${fallbackModel}`);
+            try {
+                return await transcribeWithModel(audio, fallbackModel);
+            } catch (fallbackError) {
+                if (isRateLimitError(fallbackError)) {
+                    throw new Error(`Rate limit exceeded on both Whisper models. Please wait a few minutes and try again.`);
+                }
+                throw fallbackError;
+            }
+        }
+        throw error;
+    }
 }
 
 export async function getSubs(audio: File) {
@@ -191,7 +239,7 @@ export async function processMultipleAudioFiles(files: File[]): Promise<Processi
         const file = sortedFiles[i];
         console.log(`[${i + 1}/${sortedFiles.length}] Transcribing: ${file.name}`);
 
-        const { srt, duration } = await transcribeAudio(file);
+        const { srt, duration } = await transcribeAudio(file, i);
 
         // Apply offset to this SRT
         const offsettedSRT = offsetSRT(srt, cumulativeOffset);

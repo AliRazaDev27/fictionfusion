@@ -4,7 +4,7 @@ import withPWAInit from "@ducanh2912/next-pwa";
 const nextConfig = {
     experimental: {
         serverActions: {
-            bodySizeLimit: '25mb',
+            bodySizeLimit: '100mb',
         },
     },
     cacheComponents: true,
