@@ -9,14 +9,24 @@ export default function page() {
         if (!file) return;
         const result = await getSubs(file);
         setResult(result);
+        // download result as a sub.srt file
+        const blob = new Blob([result], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sub.srt';
+        document.body.appendChild(a);
+        a.click();
+        // document.body.removeChild(a);
+        // URL.revokeObjectURL(url);
     }
     return (
         <div className=" p-4 text-white text-2xl">
             <input ref={fileRef} type="file" accept="audio/*" />
             <button onClick={handleTranscribe}>Transcribe</button>
-            <div className="overflow-y-auto w-full">
+            <pre className="overflow-y-auto w-full">
                 {result}
-            </div>
+            </pre>
         </div>
     )
 }

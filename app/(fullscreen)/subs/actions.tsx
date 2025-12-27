@@ -25,14 +25,33 @@ export async function getSubs(audio: File) {
     // Create a transcription job
     const transcription = await groq.audio.transcriptions.create({
         file: audio, // Required path to audio file - replace with your audio file!
-        model: "whisper-large-v3", // Required model to use for transcription
+        model: "whisper-large-v3-turbo", // Required model to use for transcription
         // prompt: "Specify context or spelling", // Optional
         response_format: "verbose_json", // Optional
-        timestamp_granularities: ["word", "segment"], // Optional (must set response_format to "json" to use and can specify "word", "segment" (default), or both)
+        timestamp_granularities: ["segment"], // Optional (must set response_format to "json" to use and can specify "word", "segment" (default), or both)
         language: "tr", // Optional
-        temperature: 0.0, // Optional
     });
     // To print only the transcription text, you'd use console.log(transcription.text); (here we're printing the entire transcription object to access timestamps)
-    console.log(JSON.stringify(transcription, null, 2));
-    return transcription.text;
+    // console.log(JSON.stringify(transcription, null, 2));
+    console.log(transcription?.text);
+    return convertToSRT((transcription as any)?.segments);
+}
+
+function formatTimestamp(seconds) {
+    const date = new Date(0);
+    date.setMilliseconds(seconds * 1000);
+
+    const isoString = date.toISOString().substr(11, 12);
+    // ISO is HH:MM:SS.mmm, SRT needs HH:MM:SS,mmm (comma)
+    return isoString.replace('.', ',');
+}
+
+function convertToSRT(segments) {
+    return segments.map((segment, index) => {
+        const start = formatTimestamp(segment.start);
+        const end = formatTimestamp(segment.end);
+        const text = segment.text.trim();
+
+        return `${index + 1}\n${start} --> ${end}\n${text}\n`;
+    }).join('\n');
 }
