@@ -1,30 +1,62 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useGLTF, useAnimations, useFBX } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-export function Avatar() {
-    const group = useRef<any>(null);
-    // 1. Load the GLB model
-    // Ensure you have a valid model at this path or handle the error
-    const { scene } = useGLTF('/models/avatar-optimized.glb', 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
-    const { animations: defeatedAnimations } = useFBX('/models/Defeated.fbx');
-    defeatedAnimations[0].name = 'Defeated';
-    const { actions } = useAnimations([defeatedAnimations[0]], group);
+interface AvatarProps {
+    morphTargetInfluences?: Record<string, number>;
+    onMorphTargetsLoaded?: (morphTargets: string[]) => void;
+}
 
+export function Avatar({ morphTargetInfluences = {}, onMorphTargetsLoaded }: AvatarProps) {
+    const { scene, nodes } = useGLTF('/models/final.glb');
+    const meshesRef = useRef<(THREE.Mesh | THREE.SkinnedMesh)[]>([]);
+    const [morphTargetNames, setMorphTargetNames] = useState<string[]>([]);
+
+    // Find all meshes with morph targets
     useEffect(() => {
-        if (!actions) return;
-        // actions['Defeated']?.reset().play();
-    }, [actions]);
+        const meshesWithMorphs: (THREE.Mesh | THREE.SkinnedMesh)[] = [];
+        const morphTargetSet = new Set<string>();
 
-    // Positioned to align the head near (0,0,0) based on typical RPM avatars. 
-    // y = -1.65 usually centers the face of a standard 1.7m avatar at y=0.
+        scene.traverse((child) => {
+            if ((child instanceof THREE.Mesh || child instanceof THREE.SkinnedMesh) && child.morphTargetDictionary) {
+                meshesWithMorphs.push(child);
+                Object.keys(child.morphTargetDictionary).forEach((name) => {
+                    morphTargetSet.add(name);
+                });
+            }
+        });
+
+        // Convert Set to sorted array for consistent ordering
+        const uniqueMorphTargets = Array.from(morphTargetSet).sort();
+
+        if (meshesWithMorphs.length > 0) {
+            meshesRef.current = meshesWithMorphs;
+            setMorphTargetNames(uniqueMorphTargets);
+            onMorphTargetsLoaded?.(uniqueMorphTargets);
+        }
+    }, [scene, nodes, onMorphTargetsLoaded]);
+
+    // Apply morph target influences to all meshes
+    useFrame(() => {
+        meshesRef.current.forEach((mesh) => {
+            if (!mesh.morphTargetDictionary || !mesh.morphTargetInfluences) return;
+
+            const dict = mesh.morphTargetDictionary;
+            const influences = mesh.morphTargetInfluences;
+
+            Object.entries(morphTargetInfluences).forEach(([name, value]) => {
+                const index = dict[name];
+                if (index !== undefined) {
+                    influences[index] = value;
+                }
+            });
+        });
+    });
+
     return (
-        <group ref={group} dispose={null}>
-            {/*  0, -1.65, 0*/}
-            <primitive object={scene} position={[0, 1, -0.85]} />
-        </group>
-    )
+        <primitive object={scene} position={[0, 0, 0]} />
+    );
 }
