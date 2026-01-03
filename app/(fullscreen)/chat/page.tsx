@@ -1,10 +1,9 @@
 "use client";
 import "./styles.css";
-import { models, systems } from "@/lib/ai";
+import { models_groq, systems } from "@/lib/ai";
 import { generateMessage } from "@/actions/chatActions";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
-import { readStreamableValue } from "@ai-sdk/rsc";
 import {
     Select,
     SelectContent,
@@ -24,10 +23,9 @@ import { FaClipboard } from "react-icons/fa6";
 
 
 export default function Page() {
-    const modelRef = useRef<string>('gemini-3-pro-preview');
+    const modelRef = useRef<string>(models_groq[0].id);
     const systemRef = useRef<string>('storygen');
     const tempRef = useRef<number>(0.5);
-    const responseTypeRef = useRef<string>('text');
     const textcontent = useRef<HTMLTextAreaElement>(null);
     const queryRef = useRef<HTMLTextAreaElement>(null);
     const [disabled, setDisabled] = useState(false);
@@ -35,25 +33,14 @@ export default function Page() {
     const handleSend = async (message: string) => {
         if (!message) return
         const start = performance.now();
-        console.log(message)
+        console.log('[handleSend] Starting with message:', message);
         setDisabled(true);
-        const { output, success, message: msg } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current, responseTypeRef.current);
-        if (responseTypeRef.current === 'stream' && output && typeof output === 'object') {
-            let finalOutput = '';
-            for await (const delta of readStreamableValue(output!)) {
-                finalOutput = delta as string;
-                console.log(`${performance.now() - start} ${finalOutput}`)
-                if (textcontent.current) {
-                    textcontent.current.value = `${textcontent.current.value}${finalOutput}`;
-                }
-            }
-            if (textcontent.current) {
-                textcontent.current.value = `${textcontent.current.value}\n\n`;
-            }
-        }
+        const { output, success, message: msg } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current);
         setDisabled(false);
         const end = ((performance.now() - start) / 1000);
-        if (!success || !output){
+        console.log('[handleSend] Response received in', Math.round(end), 'seconds');
+        if (!success || !output) {
+            console.error('[handleSend] Error:', msg);
             toast({
                 title: "Error",
                 description: msg,
@@ -62,14 +49,15 @@ export default function Page() {
             })
             return;
         }
-        else{
+        else {
+            console.log('[handleSend] Success, output length:', output.length);
             toast({
                 title: "Success",
                 description: `Took ${Math.round(end)} seconds`,
                 duration: 1500,
             })
-        } 
-        if (textcontent.current && typeof output === 'string') {
+        }
+        if (textcontent.current) {
             textcontent.current.value = `${textcontent.current.value}${output.trim()}\n\n`
             window.localStorage.setItem("chat", textcontent.current.value);
         }
@@ -85,23 +73,14 @@ export default function Page() {
         `;
         const start = performance.now();
 
+        console.log('[handleNext] Making continuation request');
         setDisabled(true);
-        const { output, success, message: msg } = await generateMessage(message, modelRef.current, systemRef.current, tempRef.current, responseTypeRef.current);
-        if (responseTypeRef.current === 'stream' && output && typeof output === 'object') {
-            let finalOutput = '';
-            for await (const delta of readStreamableValue(output)) {
-                finalOutput = delta as string;
-                if (textcontent.current) {
-                    textcontent.current.value = `${textcontent.current.value}${finalOutput}`;
-                }
-            }
-            if (textcontent.current) {
-                textcontent.current.value = `${textcontent.current.value}\n\n`;
-            }
-        }
+        const { output, success, message: msg } = await generateMessage(message, modelRef.current, systemRef.current, tempRef.current);
         const end = ((performance.now() - start) / 1000);
         setDisabled(false);
-        if (!success || !output){
+        console.log('[handleNext] Response received in', Math.round(end), 'seconds');
+        if (!success || !output) {
+            console.error('[handleNext] Error:', msg);
             toast({
                 title: "Error",
                 description: msg,
@@ -110,7 +89,8 @@ export default function Page() {
             })
             return;
         }
-        else{
+        else {
+            console.log('[handleNext] Success, output length:', output.length);
             toast({
                 title: "Success",
                 description: `Took ${Math.round(end)} seconds`,
@@ -118,29 +98,29 @@ export default function Page() {
             })
         }
 
-        if (textcontent.current && typeof output === 'string') {
+        if (textcontent.current) {
             textcontent.current.value = `${textcontent.current.value}${output.trim()}\n\n`;
             window.localStorage.setItem("chat", textcontent.current.value);
         }
     }
 
     const handleGen = async () => {
-        if(textcontent.current){
-            if(textcontent.current.value){
+        if (textcontent.current) {
+            if (textcontent.current.value) {
                 console.log('next')
                 handleNext();
             }
-            else{
+            else {
                 console.log('send')
                 handleSend(queryRef.current?.value.trim() || "");
             }
-        }   
+        }
     }
     const handleReGen = async () => {
         if (textcontent.current && textcontent.current.value) {
             const contentArray = textcontent.current.value.split("\n\n");
             console.log(contentArray)
-            if(contentArray.at(-1) === '') contentArray.pop();
+            if (contentArray.at(-1) === '') contentArray.pop();
             const contentSlice = contentArray.slice(0, -1);
             console.log(contentSlice)
             const contentJoin = contentSlice.join("\n\n");
@@ -152,9 +132,9 @@ export default function Page() {
 
     useEffect(() => {
         console.log('starting');
-        if(window.localStorage){
+        if (window.localStorage) {
             console.log('localstorage')
-            if(textcontent.current){
+            if (textcontent.current) {
                 console.log('textcontent')
                 const content = window.localStorage.getItem("chat") || "";
                 console.log(`content: ${content}`)
@@ -163,7 +143,7 @@ export default function Page() {
         }
     }, [])
     return (
-        <div className="flex flex-col gap-2 w-full p-2 min-h-[calc(100vh-70px)] bg-gray-900 text-white/90">
+        <div className="flex flex-col gap-2 w-full p-2 min-h-screen bg-gray-900 text-white/90">
             <textarea id='chat' ref={textcontent}
                 className="w-full h-[72dvh] text-lg  text-wrap prose prose-invert prose-neutral bg-gray-950
             flex-1 border border-neutral-400 rounded-xl overflow-y-auto max-w-3xl 
@@ -173,7 +153,7 @@ export default function Page() {
                 <div className="w-full overflow-hidden flex items-center justify-evenly pb-2">
                     <Dialog>
                         <DialogTrigger className="bg-gray-700 px-4 py-2.5 rounded-md cursor-pointer">
-                            <IoSettings/>
+                            <IoSettings />
                         </DialogTrigger>
                         <DialogContent className="bg-gray-950 text-gray-300">
                             <DialogHeader>
@@ -182,14 +162,14 @@ export default function Page() {
                             </DialogHeader>
                             <div className="flex items-center justify-between w-full">
                                 {/* MODEL SELECTION */}
-                                <Select onValueChange={(e) => { modelRef.current = e }}>
+                                <Select defaultValue={models_groq[0].id} onValueChange={(e) => { modelRef.current = e }}>
                                     <SelectTrigger className="w-fit bg-gray-700">
                                         <SelectValue placeholder="Models" />
                                     </SelectTrigger>
                                     <SelectContent className="bg-slate-800 text-slate-400">
                                         {
-                                            models.map((model) => (
-                                                <SelectItem key={model.model} value={model.model}>{model.name}</SelectItem>
+                                            models_groq.map((model) => (
+                                                <SelectItem key={model.id} value={model.id}>{model.name}</SelectItem>
                                             ))
                                         }
                                     </SelectContent>
@@ -221,22 +201,13 @@ export default function Page() {
                                     </SelectContent>
                                 </Select>
 
-                                {/* RESPONSE TYPE SELECTION */}
-                                <Select onValueChange={(e) => { responseTypeRef.current = e }}>
-                                    <SelectTrigger className="w-fit bg-gray-700">
-                                        <SelectValue placeholder="Response Type" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-slate-800 text-slate-400">
-                                        <SelectItem value="text">Text</SelectItem>
-                                        <SelectItem value="stream">Stream</SelectItem>
-                                    </SelectContent>
-                                </Select>
+
                             </div>
                         </DialogContent>
                     </Dialog>
 
                     <Dialog>
-                        <DialogTrigger className="bg-gray-700 px-4 py-2.5 rounded-md cursor-pointer"><FaClipboard/></DialogTrigger>
+                        <DialogTrigger className="bg-gray-700 px-4 py-2.5 rounded-md cursor-pointer"><FaClipboard /></DialogTrigger>
                         <DialogContent className="bg-gray-950 text-gray-300">
                             <DialogHeader>
                                 <DialogTitle>Manage</DialogTitle>
@@ -260,13 +231,13 @@ export default function Page() {
                                     </AlertDialogContent>
                                 </AlertDialog>
                             </div>
-                            </DialogContent>
+                        </DialogContent>
                     </Dialog>
                     <Button className="bg-gray-700 px-4 py-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleReGen}>
-                    <IoReloadSharp/>
+                        <IoReloadSharp />
                     </Button>
                     <Button className="bg-gray-700 px-4 py-2 rounded-md cursor-pointer" disabled={disabled} onClick={handleGen}>
-                    <FaPlay/>
+                        <FaPlay />
                     </Button>
                 </div>
                 <Textarea

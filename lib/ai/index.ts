@@ -3,6 +3,26 @@ import { google } from '@ai-sdk/google';
 
 export const models_groq = [
   {
+    id: "groq/compound",
+    name: "Compound"
+  },
+  {
+    id: "groq/compound-mini",
+    name: "Compound Mini"
+  },
+  {
+    id: "llama-3.1-8b-instant",
+    name: "LLAMA 3.1 Instant"
+  },
+  {
+    id: "llama-3.3-70b-versatile",
+    name: "LLAMA 3.3 Versatile"
+  },
+  {
+    id: "qwen/qwen3-32b",
+    name: "Qwen 3"
+  },
+  {
     id: "openai/gpt-oss-20b",
     name: "GPT-OSS 20B",
   },

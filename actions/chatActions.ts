@@ -1,58 +1,50 @@
 "use server"
-import { google } from '@ai-sdk/google';
-import { generateText, streamText } from 'ai';
-import { createStreamableValue } from '@ai-sdk/rsc';
+import { generateText } from 'ai';
 import { auth } from '@/auth';
-import { success } from 'zod/v4';
-import { safetySettings, systems, tools } from '@/lib/ai';
+import { systems } from '@/lib/ai';
+import { groq } from '@ai-sdk/groq';
 
+export async function generateMessage(message: string, model: string, system: string, temp: number = 0.7) {
+  console.log('[generateMessage] Starting request');
+  console.log('[generateMessage] Model:', model);
+  console.log('[generateMessage] System:', system);
+  console.log('[generateMessage] Temperature:', temp);
+  console.log('[generateMessage] Message length:', message.length);
 
-
-export async function generateMessage(message: string, model: string, system: string, temp: number = 0.7, responseType: string = 'stream') {
   try {
-    console.log(responseType)
-    const session = await auth()
-    if (session?.user.role !== 'ADMIN') throw new Error("Not Authorized")
+    const session = await auth();
+    console.log('[generateMessage] Auth session:', session?.user?.email || 'No session');
 
-    if (responseType === 'stream') {
-      const stream = createStreamableValue('');
-      (async () => {
-        const { textStream } = await streamText({
-          model: google(model || 'gemini-2.5-flash-lite'),
-          system: systems[system || 'storygen'],
-          prompt: message,
-          temperature: temp,
-          // tools: tools[model],
-          providerOptions: {
-            google: {
-              safetySettings: safetySettings
-            },
-          }
-        });
-        for await (const delta of textStream) {
-          stream.update(delta);
-        }
-        stream.done();
-      })();
-      return { output: stream.value, success: true, message: "Success" };
-    } else {
-      const { text, finishReason, usage, warnings } = await generateText({
-        model: google(model || 'gemini-2.0-flash'),
-        system: systems[system || 'storygen'],
-        prompt: message,
-        temperature: temp,
-        // tools: tools[model],
-        providerOptions: {
-          google: {
-            safetySettings: safetySettings
-          },
-        }
-      });
-      console.log(finishReason, usage, warnings)
-      return { output: text, success: true, message: "Success" };
+    if (session?.user.role !== 'ADMIN') {
+      console.log('[generateMessage] Authorization failed - user role:', session?.user?.role);
+      throw new Error("Not Authorized");
     }
+    console.log('[generateMessage] Authorization passed');
+
+    const selectedModel = model || 'llama-3.1-8b-instant';
+    console.log('[generateMessage] Using model:', selectedModel);
+
+    const startTime = performance.now();
+    const { text, finishReason, usage, warnings } = await generateText({
+      model: groq(selectedModel),
+      system: systems[system || 'storygen'],
+      prompt: message,
+      temperature: temp,
+    });
+    const endTime = performance.now();
+
+    console.log('[generateMessage] Generation completed');
+    console.log('[generateMessage] Finish reason:', finishReason);
+    console.log('[generateMessage] Usage:', JSON.stringify(usage));
+    console.log('[generateMessage] Warnings:', warnings);
+    console.log('[generateMessage] Response length:', text?.length || 0);
+    console.log('[generateMessage] Time taken:', Math.round(endTime - startTime), 'ms');
+
+    return { output: text, success: true, message: "Success" };
   }
   catch (error: any) {
+    console.error('[generateMessage] Error occurred:', error.message);
+    console.error('[generateMessage] Error stack:', error.stack);
     return { output: null, success: false, message: error.message };
   }
 }
