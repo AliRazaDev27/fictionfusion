@@ -1,5 +1,5 @@
 "use server";
-import { experimental_transcribe as transcribe } from 'ai';
+import { experimental_transcribe as transcribe, generateText } from 'ai';
 import { groq } from '@ai-sdk/groq';
 
 export async function sample(audio: Blob) {
@@ -10,4 +10,12 @@ export async function sample(audio: Blob) {
     });
     console.log(result)
     return result.text;
+}
+
+export async function generateResponse(prompt: string) {
+    const { text } = await generateText({
+        model: groq('groq/compound'),
+        prompt: prompt,
+    });
+    return text;
 }

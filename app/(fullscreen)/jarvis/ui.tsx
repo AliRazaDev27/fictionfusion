@@ -1,45 +1,49 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { sample } from './actions';
+import { sample, generateResponse } from './actions';
 import { motion, AnimatePresence } from 'motion/react';
-import Visualizer from './components/Visualizer';
-import { Mic, MicOff, Send } from 'lucide-react';
+import { Mic, Square, X, Loader2, Sparkles, Send } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const useAudioRecorder = () => {
     const [isRecording, setIsRecording] = useState(false);
-    const [stream, setStream] = useState<MediaStream | null>(null);
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
 
     const startRecording = async () => {
         try {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            setStream(mediaStream);
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            const mediaRecorder = new MediaRecorder(mediaStream);
+            // value mimeTypes in order of preference
+            const mimeType = [
+                'audio/webm;codecs=opus',
+                'audio/webm',
+                'audio/mp4',
+                'audio/ogg',
+                ''
+            ].find(type => type === '' || MediaRecorder.isTypeSupported(type)) || '';
+
+            const mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
             mediaRecorderRef.current = mediaRecorder;
             chunksRef.current = [];
 
             mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    chunksRef.current.push(event.data);
-                }
+                if (event.data.size > 0) chunksRef.current.push(event.data);
             };
 
             mediaRecorder.onstop = () => {
-                const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-                setAudioBlob(blob);
-
-                // Don't stop tracks immediately if we want to visualize "finishing" or keep stream warm, 
-                // but usually good practice to stop. For visualizer, we might need stream until component unmounts 
-                // or specific stop. For this logic, we'll stop tracks here to be clean.
-                mediaStream.getTracks().forEach((track) => track.stop());
-                setStream(null);
+                const blob = new Blob(chunksRef.current, { type: mimeType || 'audio/webm' });
+                if (blob.size > 0) {
+                    setAudioBlob(blob);
+                }
+                stream.getTracks().forEach((track) => track.stop());
             };
 
-            mediaRecorder.start();
+            // Request data every 200ms to ensure we have chunks
+            mediaRecorder.start(200);
             setIsRecording(true);
         } catch (error) {
             console.error("Error accessing microphone:", error);
@@ -53,127 +57,216 @@ const useAudioRecorder = () => {
         }
     };
 
-    return { isRecording, stream, audioBlob, startRecording, stopRecording, setAudioBlob };
+    return { isRecording, audioBlob, startRecording, stopRecording, setAudioBlob };
 };
 
 export default function JarvisInterface() {
-    const { isRecording, stream, audioBlob, startRecording, stopRecording, setAudioBlob } = useAudioRecorder();
+    const { isRecording, audioBlob, startRecording, stopRecording, setAudioBlob } = useAudioRecorder();
     const [isProcessing, setIsProcessing] = useState(false);
     const [transcript, setTranscript] = useState<string>("");
-    const [showTranscript, setShowTranscript] = useState(false);
+    const [response, setResponse] = useState<string>("");
+    const [isOpen, setIsOpen] = useState(false);
+    const [inputValue, setInputValue] = useState<string>("");
 
     useEffect(() => {
         if (audioBlob) {
-            handleTranscribe(audioBlob);
+            handleProcess(audioBlob);
         }
     }, [audioBlob]);
 
-    const handleTranscribe = async (blob: Blob) => {
+    const handleProcess = async (blob: Blob) => {
         setIsProcessing(true);
-        setShowTranscript(true);
+        setIsOpen(true);
+        setTranscript("");
+        setResponse("");
+
         try {
-            // Optimistically show processing state
-            const result = await sample(blob);
-            setTranscript(result || "I couldn't hear that properly.");
+            // 1. Transcribe
+            const text = await sample(blob);
+            setTranscript(text);
+
+            if (text && text.trim().length > 0) {
+                // 2. Generate Response
+                const aiResponse = await generateResponse(text);
+                setResponse(aiResponse);
+            } else {
+                setResponse("I didn't catch that. Please try again.");
+            }
         } catch (e) {
-            console.error(e);
-            setTranscript("Error processing audio.");
+            setResponse("Error processing request.");
         } finally {
             setIsProcessing(false);
-            setAudioBlob(null); // Reset blob so we can record again without re-triggering immediately
+            setAudioBlob(null);
         }
     };
 
-    const handleToggleRecord = () => {
+    const handleTextSubmit = async () => {
+        if (!inputValue.trim() || isProcessing) return;
+
+        const userMessage = inputValue.trim();
+        setInputValue("");
+        setTranscript(userMessage);
+        setResponse("");
+        setIsProcessing(true);
+
+        try {
+            const aiResponse = await generateResponse(userMessage);
+            setResponse(aiResponse);
+        } catch (e) {
+            setResponse("Error processing request.");
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    // Keyboard shortcut: Alt+Space to hold-to-record
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.code === 'Backquote') {
+                if (!isRecording && !isProcessing) {
+                    e.preventDefault();
+                    startRecording();
+                }
+                else if (isRecording) {
+                    e.preventDefault();
+                    stopRecording();
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [isRecording, isProcessing, startRecording, stopRecording]);
+
+    const toggleRecording = () => {
         if (isRecording) {
             stopRecording();
         } else {
-            console.log("Starting recording...");
-            setTranscript(""); // Clear previous
-            setShowTranscript(false);
             startRecording();
+            // Optional: Close dialog when starting new recording?
+            // setIsOpen(false); 
         }
     };
 
     return (
-        <div className="relative min-h-screen w-full bg-black text-cyan-500 overflow-hidden font-mono flex flex-col items-center justify-center">
-
-            {/* Background Grid / HUD elements */}
-            <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(to_right,#111_1px,transparent_1px),linear-gradient(to_bottom,#111_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-            <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-black to-transparent z-10"></div>
-            <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-10"></div>
-
-            {/* Header */}
-            <header className="absolute top-8 w-full flex justify-between px-12 z-20 uppercase tracking-[0.3em] text-xs opacity-70">
-                <span>System: Online</span>
-                <span>Jarvis OS v2.0</span>
-                <span>Battery: 100%</span>
-            </header>
-
-            {/* Main Visualizer Area */}
-            <main className="relative z-10 flex flex-col items-center justify-center space-y-8">
-
-                <div
-                    className="cursor-pointer transition-transform hover:scale-105 active:scale-95"
-                    onClick={handleToggleRecord}
-                >
-                    <Visualizer
-                        stream={stream}
-                        isListening={isRecording}
-                        isProcessing={isProcessing}
-                    />
-                </div>
-
-                {/* Status Indicator */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-center h-8"
-                >
-                    {isRecording && <p className="animate-pulse tracking-widest text-red-500">LISTENING...</p>}
-                    {isProcessing && <p className="animate-pulse tracking-widest text-yellow-400">PROCESSING...</p>}
-                    {!isRecording && !isProcessing && !transcript && <p className="tracking-widest opacity-50">TAP CORE TO INITIALIZE</p>}
-                </motion.div>
-
-                {/* Transcription Output */}
-                <AnimatePresence>
-                    {(transcript || showTranscript) && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 20 }}
-                            className="max-w-2xl w-full text-center px-6"
+        <div className="fixed inset-0 pointer-events-none z-50">
+            {/* Detached Dialog Window */}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        transition={{ type: "spring", duration: 0.5 }}
+                        className="fixed inset-0 flex items-center justify-center p-4 pointer-events-auto bg-black/20 backdrop-blur-sm"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        <div
+                            className="w-full max-w-3xl max-h-[80vh] overflow-hidden bg-[#0a0a0a] border border-cyan-500/20 rounded-2xl shadow-[0_0_40px_rgba(0,255,255,0.1)] flex flex-col"
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="border border-cyan-500/30 bg-black/50 backdrop-blur-md p-6 rounded-lg shadow-[0_0_15px_rgba(0,255,255,0.1)]">
-                                <h3 className="text-xs text-cyan-300 uppercase tracking-widest mb-2 border-b border-cyan-800 pb-1 w-fit mx-auto">
-                                    Transcribed Data
-                                </h3>
-                                <p className="text-lg text-white/90 leading-relaxed min-h-[1.5rem]">
-                                    {isProcessing ? <span className="animate-pulse">Analyzing audio stream...</span> : transcript}
-                                </p>
+                            {/* Header */}
+                            <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
+                                <div className="flex items-center gap-2 text-cyan-400">
+                                    <Sparkles className="w-4 h-4" />
+                                    <span className="text-sm font-medium tracking-widest uppercase">Jarvis AI</span>
+                                </div>
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="p-1 hover:bg-white/10 rounded-full transition-colors text-white/50 hover:text-white"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
                             </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
 
-            </main>
+                            {/* Content */}
+                            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                                {/* User Transcript */}
+                                {transcript && (
+                                    <div className="flex justify-end">
+                                        <div className="bg-white/10 text-white/80 px-4 py-2 rounded-2xl rounded-tr-sm max-w-[80%]">
+                                            <p className="text-sm">{transcript}</p>
+                                        </div>
+                                    </div>
+                                )}
 
-            {/* Controls (Alternative to clicking center) */}
-            <div className="absolute bottom-12 flex items-center gap-6 z-20">
-                <button
-                    onClick={handleToggleRecord}
+                                {/* AI Response */}
+                                <div className="flex justify-start">
+                                    <div className="space-y-2 max-w-[90%]">
+                                        {isProcessing && !response ? (
+                                            <div className="flex items-center gap-2 text-cyan-500/50">
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                <span className="text-xs tracking-wider">PROCESSING...</span>
+                                            </div>
+                                        ) : (
+                                            <div className="prose prose-invert prose-cyan max-w-none text-white/90 leading-relaxed">
+                                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                                    {response}
+                                                </ReactMarkdown>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Input Field */}
+                            <div className="p-4 border-t border-white/5 bg-white/5">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={inputValue}
+                                        onChange={(e) => setInputValue(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleTextSubmit()}
+                                        placeholder="Type a message..."
+                                        disabled={isProcessing}
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white placeholder-white/30 focus:outline-none focus:border-cyan-500/50 transition-colors disabled:opacity-50"
+                                    />
+                                    <button
+                                        onClick={handleTextSubmit}
+                                        disabled={isProcessing || !inputValue.trim()}
+                                        className="p-2 bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 rounded-xl hover:bg-cyan-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <Send className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Sticky Button */}
+            <div className="fixed bottom-6 left-6 pointer-events-auto">
+                <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={toggleRecording}
                     className={`
-                        p-4 rounded-full border transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.5)]
+                        relative group flex items-center justify-center w-14 h-14 rounded-full 
+                        backdrop-blur-md border transition-all duration-300 shadow-lg overflow-hidden
                         ${isRecording
-                            ? 'bg-red-500/20 border-red-500 text-red-500 hover:bg-red-500/40 hover:shadow-[0_0_30px_rgba(255,0,0,0.4)]'
-                            : 'bg-cyan-500/10 border-cyan-500 text-cyan-500 hover:bg-cyan-500/20 hover:shadow-[0_0_30px_rgba(0,255,255,0.4)]'
+                            ? 'bg-red-500/20 border-red-500 shadow-[0_0_20px_rgba(255,0,0,0.4)]'
+                            : 'bg-black/80 border-cyan-500/30 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(0,255,255,0.2)]'
                         }
                     `}
                 >
-                    {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-                </button>
-            </div>
+                    {/* Ripple/Glow effect when recording */}
+                    {isRecording && (
+                        <span className="absolute inset-0 rounded-full bg-red-500/20 animate-ping" />
+                    )}
 
+                    <div className={`relative z-10 transition-colors ${isRecording ? 'text-red-500' : 'text-cyan-400'}`}>
+                        {isRecording ? (
+                            <Square className="w-5 h-5 fill-current" />
+                        ) : (
+                            <Mic className="w-6 h-6" />
+                        )}
+                    </div>
+                </motion.button>
+            </div>
         </div>
     );
 }
