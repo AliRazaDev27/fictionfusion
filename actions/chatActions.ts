@@ -4,6 +4,30 @@ import { auth } from '@/auth';
 import { systems } from '@/lib/ai';
 import { groq } from '@ai-sdk/groq';
 
+// Fast summarization using cheap model
+export async function summarizeContent(content: string) {
+  console.log('[summarizeContent] Starting summarization, length:', content.length);
+  const startTime = performance.now();
+
+  try {
+    const { text, usage } = await generateText({
+      model: groq('llama-3.1-8b-instant'), // Fast & cheap model
+      system: systems['storygen_summarize'],
+      prompt: content,
+      temperature: 0.3, // Low temp for factual summary
+    });
+
+    console.log('[summarizeContent] Complete, summary length:', text?.length);
+    console.log('[summarizeContent] Usage:', JSON.stringify(usage));
+    console.log('[summarizeContent] Time:', Math.round(performance.now() - startTime), 'ms');
+
+    return { summary: text, success: true };
+  } catch (error: any) {
+    console.error('[summarizeContent] Error:', error.message);
+    return { summary: null, success: false };
+  }
+}
+
 export async function generateMessage(message: string, model: string, system: string, temp: number = 0.7) {
   console.log('[generateMessage] Starting request');
   console.log('[generateMessage] Model:', model);
@@ -40,11 +64,11 @@ export async function generateMessage(message: string, model: string, system: st
     console.log('[generateMessage] Response length:', text?.length || 0);
     console.log('[generateMessage] Time taken:', Math.round(endTime - startTime), 'ms');
 
-    return { output: text, success: true, message: "Success" };
+    return { output: text, success: true, message: "Success", usage };
   }
   catch (error: any) {
     console.error('[generateMessage] Error occurred:', error.message);
     console.error('[generateMessage] Error stack:', error.stack);
-    return { output: null, success: false, message: error.message };
+    return { output: null, success: false, message: error.message, usage: null };
   }
 }

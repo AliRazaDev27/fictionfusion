@@ -164,6 +164,13 @@ Rules and guidelines:
 9. Keep continuity between multiple generations when context is provided, expanding naturally from the last segment.
 10. Do not include meta text like “Here’s your story” or “The following story”; write as if the text itself is the final output.
 `,
+  storygen_continue: `Continue the story naturally. Maintain the exact tone, rhythm, and style. Progress the narrative without deviation. Output only the new content—no summaries or explanations.`,
+  storygen_summarize: `Summarize this story content concisely (~300 words), preserving:
+- Main characters and their current states
+- Key plot events and conflicts  
+- Current setting/location
+- Important unresolved threads
+Output only the summary.`,
   recommendation: `
   You are an expert Recommendation Engine with a deep understanding of pop culture, literature, cinema, and gaming.
   Your goal is to provide highly personalized, insightful, and accurate recommendations based on the user's input.

@@ -1,7 +1,7 @@
 "use client";
 import "./styles.css";
 import { models_groq, systems } from "@/lib/ai";
-import { generateMessage } from "@/actions/chatActions";
+import { generateMessage, summarizeContent } from "@/actions/chatActions";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -29,14 +29,18 @@ export default function Page() {
     const textcontent = useRef<HTMLTextAreaElement>(null);
     const queryRef = useRef<HTMLTextAreaElement>(null);
     const [disabled, setDisabled] = useState(false);
+    const [totalTokens, setTotalTokens] = useState(0);
     const { toast } = useToast();
     const handleSend = async (message: string) => {
         if (!message) return
         const start = performance.now();
         console.log('[handleSend] Starting with message:', message);
         setDisabled(true);
-        const { output, success, message: msg } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current);
+        const { output, success, message: msg, usage } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current);
         setDisabled(false);
+        if (usage?.totalTokens) {
+            setTotalTokens(prev => prev + usage.totalTokens);
+        }
         const end = ((performance.now() - start) / 1000);
         console.log('[handleSend] Response received in', Math.round(end), 'seconds');
         if (!success || !output) {
@@ -62,22 +66,54 @@ export default function Page() {
             window.localStorage.setItem("chat", textcontent.current.value);
         }
     }
+    // Context building with automatic summarization for token optimization
+    const CONTEXT_THRESHOLD = 8000; // chars (~2000 words)
+    const RECENT_WINDOW = 4000;     // Keep last ~1000 words verbatim
+
+    const buildContext = async (fullText: string) => {
+        if (fullText.length <= CONTEXT_THRESHOLD) {
+            console.log('[buildContext] Content short enough, using as-is:', fullText.length, 'chars');
+            return fullText;
+        }
+
+        console.log('[buildContext] Content exceeds threshold, summarizing older portion');
+        const olderContent = fullText.slice(0, -RECENT_WINDOW);
+        const recentContent = fullText.slice(-RECENT_WINDOW);
+
+        const { summary, success } = await summarizeContent(olderContent);
+
+        if (!success || !summary) {
+            console.warn('[buildContext] Summarization failed, using truncated context');
+            return recentContent;
+        }
+
+        console.log('[buildContext] Summary created:', summary.length, 'chars from', olderContent.length, 'chars');
+        return `[Story Summary]\n${summary}\n\n[Recent Events]\n${recentContent}`;
+    };
+
     const handleNext = async () => {
         if (!textcontent.current || !textcontent.current.value) return;
-        const message = `Given this context: \n ${textcontent.current.value} \n
-        Continue this in the same tone, rhythm, and style as before. 
-        Do not change the writing form. 
-        Generate the next part, which should maintain the continuity and progress it further.
-        Do not deviate too much.
-        Only return the new response.
-        `;
         const start = performance.now();
 
-        console.log('[handleNext] Making continuation request');
+        console.log('[handleNext] Building optimized context');
         setDisabled(true);
-        const { output, success, message: msg } = await generateMessage(message, modelRef.current, systemRef.current, tempRef.current);
+
+        // Build token-optimized context
+        const context = await buildContext(textcontent.current.value);
+        console.log('[handleNext] Context ready, length:', context.length, 'chars');
+
+        // Use storygen_continue system prompt - instructions are in system, not message
+        const { output, success, message: msg, usage } = await generateMessage(
+            context,
+            modelRef.current,
+            'storygen_continue', // Use continuation-specific system prompt
+            tempRef.current
+        );
         const end = ((performance.now() - start) / 1000);
         setDisabled(false);
+        if (usage?.totalTokens) {
+            setTotalTokens(prev => prev + usage.totalTokens);
+        }
         console.log('[handleNext] Response received in', Math.round(end), 'seconds');
         if (!success || !output) {
             console.error('[handleNext] Error:', msg);
@@ -90,10 +126,11 @@ export default function Page() {
             return;
         }
         else {
-            console.log('[handleNext] Success, output length:', output.length);
+            const tokens = usage?.totalTokens ? ` (${usage.totalTokens} tokens)` : '';
+            console.log('[handleNext] Success, output length:', output.length, 'tokens:', usage);
             toast({
                 title: "Success",
-                description: `Took ${Math.round(end)} seconds`,
+                description: `Took ${Math.round(end)}s${tokens}`,
                 duration: 1500,
             })
         }
@@ -230,6 +267,18 @@ export default function Page() {
                                         </AlertDialogFooter>
                                     </AlertDialogContent>
                                 </AlertDialog>
+                            </div>
+                            <div className="mt-4 pt-4 border-t border-gray-700 w-full">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-400">Total Tokens Used:</span>
+                                    <span className="font-mono text-lg text-cyan-400">{totalTokens.toLocaleString()}</span>
+                                </div>
+                                <button
+                                    onClick={() => setTotalTokens(0)}
+                                    className="mt-2 text-xs text-gray-500 hover:text-gray-300 cursor-pointer"
+                                >
+                                    Reset counter
+                                </button>
                             </div>
                         </DialogContent>
                     </Dialog>
