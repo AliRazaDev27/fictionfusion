@@ -39,7 +39,7 @@ export default function Page() {
         const { output, success, message: msg, usage } = await generateMessage(message.trim(), modelRef.current, systemRef.current, tempRef.current);
         setDisabled(false);
         if (usage?.totalTokens) {
-            setTotalTokens(prev => prev + usage.totalTokens);
+            setTotalTokens(prev => prev + usage?.totalTokens!);
         }
         const end = ((performance.now() - start) / 1000);
         console.log('[handleSend] Response received in', Math.round(end), 'seconds');
@@ -112,7 +112,7 @@ export default function Page() {
         const end = ((performance.now() - start) / 1000);
         setDisabled(false);
         if (usage?.totalTokens) {
-            setTotalTokens(prev => prev + usage.totalTokens);
+            setTotalTokens(prev => prev + usage?.totalTokens!);
         }
         console.log('[handleNext] Response received in', Math.round(end), 'seconds');
         if (!success || !output) {
