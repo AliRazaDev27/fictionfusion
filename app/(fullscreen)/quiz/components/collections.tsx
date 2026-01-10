@@ -12,8 +12,7 @@ import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Search, Plus, Filter } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
-import { models } from "@/lib/ai"
-import { FaCross } from "react-icons/fa6"
+import { models_groq } from "@/lib/ai"
 import { ImCross } from "react-icons/im"
 
 interface Quiz {
@@ -78,7 +77,7 @@ export function Collections({ isAdmin, onLoadQuiz, quizzes, setQuizzes, onExit }
   const handleCreate = async (newQuiz: { title: string; topic: string; description: string; questionCount: number }) => {
     const generatedData = await generateQuiz(
       `Generate exactly ${newQuiz.questionCount} questions about this topic: ${newQuiz.topic} given this title '${newQuiz.title}' and description '${newQuiz.description}'`,
-      models[0].model
+      models_groq[0].id
     )
     // The logic to add to the quiz list will be handled after the user saves the generated quiz.
     // For now, we just return the generated data to the modal.
