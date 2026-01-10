@@ -4,43 +4,60 @@ import { useRef, useState, useEffect } from "react";
 import { generateMessage, summarizeContent } from "@/actions/chatActions";
 import { useToast } from "@/components/ui/use-toast";
 
-const CONTEXT_THRESHOLD = 16000;
-const RECENT_WINDOW = 8000;
+
 
 export function useChat() {
     const modelRef = useRef<string>('llama-3.3-70b-versatile');
     const systemRef = useRef<string>('storygen');
     const textcontentRef = useRef<HTMLTextAreaElement>(null);
     const queryRef = useRef<HTMLTextAreaElement>(null);
+    const summaryRef = useRef<string>('');
     const [disabled, setDisabled] = useState(false);
     const [totalTokens, setTotalTokens] = useState(0);
     const [fontSize, setFontSize] = useState('16px');
+    const [paragraphs, setParagraphs] = useState(2);
     const { toast } = useToast();
 
     useEffect(() => {
         if (typeof window !== "undefined" && window.localStorage) {
             const content = window.localStorage.getItem("chat") || "";
+            const summary = window.localStorage.getItem("chat_summary") || "";
             if (textcontentRef.current) {
                 textcontentRef.current.value = content;
             }
+            summaryRef.current = summary;
+            console.log("[useChat] Initialized. Story length:", content.length, "Summary length:", summary.length);
         }
     }, []);
 
     const buildContext = async (fullText: string) => {
-        if (fullText.length <= CONTEXT_THRESHOLD) {
+        const BUF_LIMIT = 8000; // Maximum prose to send
+        console.log("[buildContext] Analysis started. total_chars:", fullText.length);
+
+        if (fullText.length <= BUF_LIMIT) {
+            console.log("[buildContext] Story is short. Sending full text.");
             return fullText;
         }
 
-        const olderContent = fullText.slice(0, -RECENT_WINDOW);
-        const recentContent = fullText.slice(-RECENT_WINDOW);
+        const recentProse = fullText.slice(-BUF_LIMIT);
 
-        const { summary, success } = await summarizeContent(olderContent);
-
-        if (!success || !summary) {
-            return recentContent;
+        // Check if we need to initialize or update Lore
+        if (!summaryRef.current) {
+            console.log("[buildContext] Lorebook missing. Generating initial Lorebook from previous parts using Compound model...");
+            const olderPart = fullText.slice(0, -BUF_LIMIT);
+            const { output, success } = await generateMessage(olderPart, 'groq/compound', 'storygen_extract_lore', 0.3);
+            if (success && output) {
+                summaryRef.current = output;
+                window.localStorage.setItem("chat_summary", output);
+                console.log("[buildContext] Initial Lorebook saved. Length:", output.length);
+            }
+        } else if (fullText.length > BUF_LIMIT * 2) {
+            // Logic for incremental update could go here, but for now we prioritize using existing lore + window
+            console.log("[buildContext] Using existing Lorebook + sliding window.");
         }
 
-        return `[Story Summary]\n${summary}\n\n[Recent Events]\n${recentContent}`;
+        console.log("[buildContext] Optimized context ready. Lore:", !!summaryRef.current, "RecentProse:", recentProse.length);
+        return `[LOREBOOK]\n${summaryRef.current}\n\n[RECENT STORY]\n${recentProse}`;
     };
 
     const handleSend = async (message: string) => {
@@ -48,8 +65,9 @@ export function useChat() {
         const start = performance.now();
         setDisabled(true);
 
+        const instruction = `\n\n[Instruction: Write exactly ${paragraphs} paragraphs.]`;
         const { output, success, message: msg, usage } = await generateMessage(
-            message.trim(),
+            message.trim() + instruction,
             modelRef.current,
             systemRef.current,
         );
@@ -90,8 +108,9 @@ export function useChat() {
 
         const context = await buildContext(textcontentRef.current.value);
 
+        const instruction = `\n\n[Instruction: Write exactly ${paragraphs} paragraphs.]`;
         const { output, success, message: msg, usage } = await generateMessage(
-            context,
+            context + instruction,
             modelRef.current,
             'storygen_continue',
         );
@@ -112,15 +131,7 @@ export function useChat() {
                 duration: 2000,
             });
             return;
-        } else {
-            const tokens = usage?.totalTokens ? ` (${usage.totalTokens} tokens)` : '';
-            toast({
-                title: "Success",
-                description: `Took ${Math.round(end)}s${tokens}`,
-                duration: 1500,
-            });
         }
-
         if (textcontentRef.current) {
             textcontentRef.current.value = `${textcontentRef.current.value}${textcontentRef.current.value.endsWith('\n\n') || !textcontentRef.current.value ? '' : '\n\n'}${output.trim()}\n\n`;
             window.localStorage.setItem("chat", textcontentRef.current.value);
@@ -152,6 +163,9 @@ export function useChat() {
         if (textcontentRef.current) {
             textcontentRef.current.value = "";
             window.localStorage.removeItem("chat");
+            window.localStorage.removeItem("chat_summary");
+            summaryRef.current = "";
+            console.log("[useChat] Chat and Lore cleared.");
         }
     };
 
@@ -165,6 +179,8 @@ export function useChat() {
         setTotalTokens,
         fontSize,
         setFontSize,
+        paragraphs,
+        setParagraphs,
         handleGen,
         handleReGen,
         clearChat

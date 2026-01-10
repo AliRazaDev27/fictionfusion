@@ -94,6 +94,13 @@ Rules and guidelines:
 - Current setting/location
 - Important unresolved threads
 Output only the summary.`,
+  storygen_extract_lore: `Analyze the provided story segments and update the "Lorebook".
+The Lorebook should be a high-density, bulleted list of current facts:
+1. Active Characters: (name, physical state, immediate goal)
+2. Setting: (Current location, time, atmosphere)
+3. Inventory/Key Items: (Important objects being carried or interacted with)
+4. Plot Momentum: (What just happened and what is the immediate tension)
+Maintain strict continuity. Output ONLY the bulleted Lorebook.`,
   recommendation: `
   You are an expert Recommendation Engine with a deep understanding of pop culture, literature, cinema, and gaming.
   Your goal is to provide highly personalized, insightful, and accurate recommendations based on the user's input.

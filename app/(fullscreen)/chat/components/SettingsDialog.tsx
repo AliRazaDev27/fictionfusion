@@ -22,9 +22,11 @@ interface SettingsDialogProps {
     systemRef: React.MutableRefObject<string>;
     fontSize: string;
     setFontSize: (size: string) => void;
+    paragraphs: number;
+    setParagraphs: (count: number) => void;
 }
 
-export function SettingsDialog({ modelRef, systemRef, fontSize, setFontSize }: SettingsDialogProps) {
+export function SettingsDialog({ modelRef, systemRef, fontSize, setFontSize, paragraphs, setParagraphs }: SettingsDialogProps) {
     return (
         <Dialog>
             <DialogTrigger className="bg-gray-700 px-4 py-2.5 rounded-md cursor-pointer">
@@ -68,6 +70,18 @@ export function SettingsDialog({ modelRef, systemRef, fontSize, setFontSize }: S
                             <SelectItem value="20px">Medium (20px)</SelectItem>
                             <SelectItem value="24px">Large (24px)</SelectItem>
                             <SelectItem value="32px">XL (32px)</SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <Select defaultValue={paragraphs.toString()} onValueChange={(v) => setParagraphs(parseInt(v))}>
+                        <SelectTrigger className="w-fit bg-gray-700">
+                            <SelectValue placeholder="Paragraphs" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-slate-800 text-slate-400">
+                            <SelectItem value="1">1 Paragraph</SelectItem>
+                            <SelectItem value="2">2 Paragraphs</SelectItem>
+                            <SelectItem value="3">3 Paragraphs</SelectItem>
+                            <SelectItem value="4">4 Paragraphs</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>

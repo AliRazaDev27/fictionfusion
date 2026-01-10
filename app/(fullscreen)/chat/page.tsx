@@ -22,6 +22,8 @@ export default function Page() {
         setTotalTokens,
         fontSize,
         setFontSize,
+        paragraphs,
+        setParagraphs,
         handleGen,
         handleReGen,
         clearChat
@@ -39,6 +41,8 @@ export default function Page() {
                         systemRef={systemRef}
                         fontSize={fontSize}
                         setFontSize={setFontSize}
+                        paragraphs={paragraphs}
+                        setParagraphs={setParagraphs}
                     />
 
                     <ManageDialog
