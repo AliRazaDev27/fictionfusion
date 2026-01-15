@@ -149,6 +149,7 @@ export function useChat() {
     };
 
     const handleReGen = async () => {
+        // TODO: rather than reGen, it would be much useful to delete last paragraph, with a 3 sec window to undo it.
         if (textcontentRef.current && textcontentRef.current.value) {
             const contentArray = textcontentRef.current.value.split("\n\n");
             if (contentArray.at(-1) === '') contentArray.pop();
