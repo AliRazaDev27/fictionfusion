@@ -1,7 +1,6 @@
 "use client"
 import React, { useState } from 'react';
 import { getRecommendations } from '@/actions/recommendationActions';
-import { models_groq } from '@/lib/ai';
 import { Sparkles, Tv, Book, Gamepad2, Film, Ghost, Loader2, Search, ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils'; // Assuming this exists, standard in shadcn/ui apps. If not I'll define a helper or just use template literals.
 // I'll assume standard shadcn utils are present given the structure. 
@@ -10,6 +9,29 @@ import { cn } from '@/lib/utils'; // Assuming this exists, standard in shadcn/ui
 // I'll inline a simple clsx/twMerge alternative if I don't check, but I'll gamble on `cn` existing or just use template strings to be safe against missing util.
 // Actually, I'll check if lib/utils exists. 
 // Wait, I saw lib folder in list_dir earlier. `utils.ts` exists (1850 bytes). It likely has `cn`.
+
+const models_groq = [
+    {
+        id: "moonshotai/kimi-k2-instruct-0905",
+        name: "Kimi K2",
+    },
+    {
+        id: "openai/gpt-oss-20b",
+        name: "GPT-OSS 20B",
+    },
+    {
+        id: "openai/gpt-oss-120b",
+        name: "GPT-OSS 120B",
+    },
+    {
+        id: "meta-llama/llama-4-maverick-17b-128e-instruct",
+        name: "LLAMA 4 Maverick",
+    },
+    {
+        id: "meta-llama/llama-4-scout-17b-16e-instruct",
+        name: "LLAMA 4 Scout",
+    }
+]
 
 const CATEGORIES = [
     { id: 'All', icon: Sparkles, label: 'Everything' },
@@ -132,7 +154,7 @@ export default function RecGenPage() {
                                                 className="fixed inset-0 z-40"
                                                 onClick={() => setIsModelMenuOpen(false)}
                                             />
-                                            <div className="absolute bottom-full mb-2 right-0 w-64 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                            <div className="absolute bottom-full mb-2 left-0 w-40 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl backdrop-blur-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                                                 <div className="p-1 max-h-60 overflow-y-auto custom-scrollbar">
                                                     {models_groq.map((m) => (
                                                         <button
@@ -168,7 +190,7 @@ export default function RecGenPage() {
                                 <button
                                     onClick={handleGenerate}
                                     disabled={loading || !query.trim()}
-                                    className="flex items-center px-6 py-2.5 bg-white text-black rounded-full font-bold hover:bg-purple-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] active:scale-95"
+                                    className="flex items-center px-4 py-2 bg-white text-black rounded-full font-bold hover:bg-purple-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_5px_rgba(255,255,255,0.3)] hover:shadow-[0_0_10px_rgba(255,255,255,0.5)] active:scale-95"
                                 >
                                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                                     <span className="ml-2">{loading ? 'Curating...' : 'Discover'}</span>
