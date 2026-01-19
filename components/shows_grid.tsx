@@ -12,9 +12,12 @@ interface ShowsGridProps {
     initialTotal: number;
     search?: string;
     sort?: string;
+    genres?: string[];
+    status?: string;
+    minRating?: number;
 }
 
-export function ShowsGrid({ initialShows, initialTotal, search, sort }: ShowsGridProps) {
+export function ShowsGrid({ initialShows, initialTotal, search, sort, genres, status, minRating }: ShowsGridProps) {
     const [shows, setShows] = useState<Show[]>(initialShows);
     const [selectedShow, setSelectedShow] = useState<Show | null>(null);
     const [open, setOpen] = useState(false);
@@ -56,7 +59,7 @@ export function ShowsGrid({ initialShows, initialTotal, search, sort }: ShowsGri
             setLoading(true);
             try {
                 const LIMIT = 36;
-                const result = await getFilteredShows(page, LIMIT, search, sort);
+                const result = await getFilteredShows(page, LIMIT, search, sort, genres, status, minRating);
 
                 if (result?.data && result.data.length > 0) {
                     setShows(prev => {
@@ -80,7 +83,7 @@ export function ShowsGrid({ initialShows, initialTotal, search, sort }: ShowsGri
         };
 
         loadMore();
-    }, [page, search, sort]);
+    }, [page, search, sort, genres, status, minRating]);
 
     const handleShowClick = (show: Show) => {
         setSelectedShow(show);
