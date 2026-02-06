@@ -6,7 +6,7 @@ import { cookies } from "next/headers"; // For managing cookies in server action
 
 const AUTH_SECRET = process.env.AUTH_SECRET || "your_secret_key";
 
-export const signIn = async (email, password) => {
+export const signIn = async (email: string, password: string) => {
   const user = await getUser(email);
   if (!user) {
     throw new Error("User not found!");
@@ -15,17 +15,16 @@ export const signIn = async (email, password) => {
   if (!passwordMatch) {
     throw new Error("Invalid password!");
   }
-
   // Create JWT token
   const token = jwt.sign(
     {
-      user:{
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    }
-  },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }
+    },
     AUTH_SECRET,
     { expiresIn: "7d" }
   );
@@ -33,7 +32,7 @@ export const signIn = async (email, password) => {
   return;
 };
 
-export const verifyToken = async(token) => {
+export const verifyToken = async (token: string) => {
   try {
     return jwt.verify(token, AUTH_SECRET);
   } catch {
@@ -41,7 +40,7 @@ export const verifyToken = async(token) => {
   }
 };
 
-export const setAuthCookie = async(token) => {
+export const setAuthCookie = async (token: string) => {
   (await cookies()).set({
     name: "auth-token",
     value: token,
@@ -52,18 +51,14 @@ export const setAuthCookie = async(token) => {
   });
 };
 
-export const clearAuthCookie = async() => {
+export const signOut = async () => {
   const cookieStore = await cookies();
   cookieStore.delete('auth-token');
-};
-
-export const signOut = async() => {
-  await clearAuthCookie();
 }
-export const auth = async() => {
+
+export const auth = async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get("auth-token")?.value;
-
   if (!token) return null;
 
   const session = await verifyToken(token);

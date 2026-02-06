@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-import withPWAInit from "@ducanh2912/next-pwa";
 
 const nextConfig = {
     experimental: {
@@ -47,54 +46,4 @@ const nextConfig = {
     }
 };
 
-const withPWA = withPWAInit({
-    dest: "public",
-    disable: process.env.NODE_ENV === 'development', // 👈 disables in dev
-    cacheOnFrontEndNav: true,
-    extendDefaultRuntimeCaching: true,
-    workboxOptions: {
-        runtimeCaching: [
-            {
-                urlPattern: /\/music|\/player/,
-                handler: 'NetworkFirst',
-                options: {
-                    cacheName: 'music-cache',
-                    expiration: {
-                        maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-                    },
-                    cacheableResponse: {
-                        statuses: [0, 200],
-                    },
-                },
-            },
-            {
-                // Match Cloudinary media files
-                urlPattern: /^https:\/\/res\.cloudinary\.com\/.*\.(?:mp3|ogg|wav|mp4|webm)$/i,
-                handler: "CacheFirst",
-                options: {
-                    cacheName: "cloudinary-media",
-                    cacheableResponse: {
-                        statuses: [200],
-                    },
-                    rangeRequests: true,
-                },
-            },
-            {
-                // Cache static assets like JS, CSS
-                urlPattern: ({ request }) => request.destination === 'image',
-                handler: 'CacheFirst',
-                options: {
-                    cacheName: 'image-assets',
-                    expiration: {
-                        maxAgeSeconds: 30 * 24 * 60 * 60, // Cache for 30 days
-                    },
-                    cacheableResponse: {
-                        statuses: [0, 200], // ensure opaque responses (like cross-origin images) are cached
-                    },
-                },
-            },
-        ]
-    }
-});
-
-export default withPWA(nextConfig);
+export default nextConfig;

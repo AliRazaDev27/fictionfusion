@@ -15,7 +15,6 @@ const ai_links = [
   { href: "/chat", label: "StoryAI" },
   { href: "/recgen", label: "RecGenAI" },
   { href: "/subs", label: "SubtitleAI" },
-  { href: "/jarvis", label: "Jarvis" },
   { href: "/quiz", label: "QuizAI" },
 ]
 
@@ -68,7 +67,7 @@ export default function NavLinks() {
         <p className="text-white/60 text-xl">AI</p>
         <div className="hidden group-hover:block absolute left-1/2 -translate-x-1/2 z-50 bg-linear-to-b from-gray-950 to-blue-950 border border-white/50 px-6 py-6 mt-2 rounded-lg">
           <div className="flex flex-col items-center gap-4">
-          {ai_links.map(({ href, label }) => (
+            {ai_links.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}

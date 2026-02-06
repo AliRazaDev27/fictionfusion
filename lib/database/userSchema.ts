@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/vercel-postgres';
-import { InferSelectModel, InferInsertModel,eq } from 'drizzle-orm';
+import { InferSelectModel, InferInsertModel, eq } from 'drizzle-orm';
 import { sql } from "@vercel/postgres";
 import {
   pgTable,
@@ -8,7 +8,6 @@ import {
   timestamp,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-
 
 export type User = InferSelectModel<typeof UserTable>;
 export type NewUser = InferInsertModel<typeof UserTable>;
@@ -33,15 +32,3 @@ export const UserTable = pgTable(
     };
   },
 );
-
-export const getUserTable = async () => {
-  const selectResult = await db.select().from(UserTable);
-  return selectResult
-};
-export const getUserByEmail = async (email: string) => {
-  const selectResult = await db
-    .select()
-    .from(UserTable)
-    .where(eq(UserTable.email, email));
-  return selectResult[0]
-}

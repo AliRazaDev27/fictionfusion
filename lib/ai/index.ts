@@ -1,6 +1,3 @@
-import { google } from '@ai-sdk/google';
-// need more info on other models.
-
 export const models_groq = [
   {
     id: "groq/compound",
