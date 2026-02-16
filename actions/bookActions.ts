@@ -26,9 +26,9 @@ export async function searchBookByTitle(title: string) {
 
 
 export interface Details {
-    covers: string[];
-    description: string | { value: string } | undefined;
-    subjects: string[];
+  covers: string[];
+  description: string | { value: string } | undefined;
+  subjects: string[];
 }
 export async function getBookWorkFromOL(key: string) {
   const result = await fetch(`https://openlibrary.org/${key}.json`)
@@ -37,12 +37,12 @@ export async function getBookWorkFromOL(key: string) {
 }
 
 export async function addBookToDB(book: NewBook) {
-  try{
+  try {
     await db.insert(BookTable).values(book);
-    return {success:true, message: "Book added to DB successfully."};
-  }catch (error) {
+    return { success: true, message: "Book added to DB successfully." };
+  } catch (error) {
     console.error("Error adding book to DB:", error);
-    return {success:false, message: "Failed to add book to DB."};
+    return { success: false, message: "Failed to add book to DB." };
   }
 }
 
@@ -59,7 +59,7 @@ export async function getBooks() {
 }
 
 export async function getTotalBooks() {
-    // return total number of books
-    const result = await db.select({ count: count() }).from(BookTable);
-    return result;
+  // return total number of books
+  const result = await db.select({ count: count() }).from(BookTable);
+  return result;
 }
