@@ -43,7 +43,7 @@ export function MusicPlayerLayoutComponent({ music, list }) {
         </div>
         <MusicList musicPromise={music} />
       </div>
-      <div id="music-player" className="border h-[10%]">
+      <div id="music-player" className="h-[10%]">
         <MusicPlayer />
       </div>
     </div>

@@ -7,9 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IoPersonCircle } from "react-icons/io5";
 import { MdFavoriteBorder, MdMore } from "react-icons/md";
 import { MdDone } from "react-icons/md";
-
-
-
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
@@ -34,6 +31,37 @@ export default function BookCard({ book }: { book: Book }) {
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
+        <Dialog>
+          <DialogTrigger asChild>
+        <button><FaBookOpen className="absolute bottom-4 right-0 left-0 mx-auto size-8 cursor-pointer hover:text-teal-300" /></button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogTitle>Gallery</DialogTitle>
+            <DialogDescription className="sr-only">
+              Book Covers Gallery
+            </DialogDescription>
+            <div>
+              {
+                book?.covers?.map((cover: any) => {
+                  return (
+                    <Image
+                      key={cover.key}
+                      src={getOpenLibraryCoverLink(cover.key) || "/bookplaceholder.svg"}
+                      alt="cover"
+                      quality={100}
+                      // placeholder="blur"
+                      // blurDataURL="/bookplaceholder.svg"
+                      style={{ objectFit: "cover", objectPosition: "center" }}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  )
+              }
+                )
+              }
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
       <div className="relative overflow-y-auto w-full aspect-[2.26] flex flex-col gap-5 p-2 bg-neutral-300">
         <h1 className="text-2xl  font-extrabold text-neutral-600">{book.title}</h1>
@@ -46,7 +74,6 @@ export default function BookCard({ book }: { book: Book }) {
             <AvatarImage src={getOpenLibraryAuthorLink("olid", book?.author_key ? book?.author_key[0] : null, "M")} className="object-cover object-center" />
             <AvatarFallback><IoPersonCircle className="size-14" /></AvatarFallback>
           </Avatar>
-          {/* TODO: some beautiful animation here */}
           <Link href={`/author/${getAuthorId(book?.author_key![0])}`} prefetch={false} className="px-2 py-1  hover:bg-blue-600 hover:no-underline hover:rounded-2xl text-lg font-semibold underline underline-offset-4 transition-color duration-500">{book.author_name}</Link>
         </div>
         <div className="flex gap-8 ps-2 items-center">
@@ -59,7 +86,6 @@ export default function BookCard({ book }: { book: Book }) {
             <FaBookOpen />
           </div>
         </div>
-        {/*  add proper style for description. */}
         <div className="w-full">
           <Dialog>
             <DialogTrigger>
