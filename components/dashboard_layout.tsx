@@ -1,153 +1,228 @@
 "use client"
 
-import Link from 'next/link'
-import { Book, Film, Tv, List, PlusCircle, User } from 'lucide-react'
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import { Book, Film, Tv, TrendingUp, Calendar, Activity } from 'lucide-react'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
+import { motion } from 'framer-motion'
 
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
-const COLORS = ['#0088FE', '#00B55F', '#FFBB28'];
+const COLORS = ['#3b82f6', '#10b981', '#f59e0b'];
 
-export function DashboardLayout({total,list}) {
-  // In a real application, you would fetch this data from your database
-  // const totalBooks = 1250
-  // const totalShows = 580
-  // const totalMovies = 920
-
+export function DashboardLayout({ total, list }: { total: any, list: any[] }) {
   const mediaData = [
     { name: 'Books', value: total.totalBooks },
     { name: 'Shows', value: total.totalShows },
     { name: 'Movies', value: total.totalMovies },
   ]
 
-  const listData = list.map((item) => {
-    return {
-      name: item?.listName,
-      type: item?.type,
-      items: item?.items?.length,
-      lastUpdated: item?.updatedAt?.toDateString(),
+  const listData = list?.map((item) => {
+    let dateStr = "N/A";
+    if (item?.updatedAt) {
+      dateStr = new Date(item.updatedAt).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
     }
-  })
+    return {
+      name: item?.listName || "Untitled List",
+      type: item?.type || "Unknown",
+      items: item?.items?.length || 0,
+      lastUpdated: dateStr,
+    }
+  }) || []
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: 'spring', stiffness: 100 }
+    }
+  };
 
   return (
-    <div className="min-h-screen ">
-     
+    <motion.div
+      className="min-h-screen space-y-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <header className="mb-8">
+        <motion.h1
+          className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400"
+          variants={itemVariants}
+        >
+          Dashboard
+        </motion.h1>
+        <motion.p
+          className="text-muted-foreground mt-2"
+          variants={itemVariants}
+        >
+          Overview of your media consumption and lists.
+        </motion.p>
+      </header>
 
-      {/* Dashboard Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Media Distribution Chart */}
-          <Card className='bg-black/60 text-white'>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatsCard
+          title="Total Books"
+          value={total.totalBooks}
+          icon={<Book className="h-5 w-5 text-blue-500" />}
+          variants={itemVariants}
+        />
+        <StatsCard
+          title="Total Movies"
+          value={total.totalMovies}
+          icon={<Film className="h-5 w-5 text-green-500" />}
+          variants={itemVariants}
+        />
+        <StatsCard
+          title="Total Shows"
+          value={total.totalShows}
+          icon={<Tv className="h-5 w-5 text-amber-500" />}
+          variants={itemVariants}
+        />
+        <StatsCard
+          title="Active Lists"
+          value={list.length}
+          icon={<Activity className="h-5 w-5 text-purple-500" />}
+          variants={itemVariants}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Media Distribution Chart */}
+        <motion.div variants={itemVariants} className="lg:col-span-1">
+          <Card className='h-full border-white/10 bg-black/40 backdrop-blur-xl shadow-xl'>
             <CardHeader>
-              <CardTitle>Media Distribution</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Distribution
+              </CardTitle>
+              <CardDescription>Breakdown by media type</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="h-[300px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={mediaData}
                       cx="50%"
                       cy="50%"
-                      labelLine={false}
+                      innerRadius={60}
                       outerRadius={80}
-                      fill="#8884d8"
+                      paddingAngle={5}
                       dataKey="value"
+                      stroke="none"
                     >
                       {mediaData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip />
-                    <Legend />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#1f1f1f', borderColor: '#333', borderRadius: '8px', color: '#fff' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                    <Legend verticalAlign="bottom" height={36} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
+        </motion.div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-1 sam:grid-cols-3 gap-4">
-            <Card className='bg-black/60 text-white'>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Books</CardTitle>
-                <Book className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{total.totalBooks}</div>
-              </CardContent>
-            </Card>
-            <Card className='bg-black/60 text-white'>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Movies</CardTitle>
-                <Film className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{total.totalMovies}</div>
-              </CardContent>
-            </Card>
-            <Card className='bg-black/60 text-white'>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Shows</CardTitle>
-                <Tv className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{total.totalShows}</div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* All Lists */}
-        <Card className='bg-black/60 text-white'>
-          <CardHeader>
-            <div className="flex items-center">
-              <CardTitle>All Lists</CardTitle>
-              
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 px-4">Name</th>
-                    <th className="text-left py-2 px-4">Type</th>
-                    <th className="text-left py-2 px-4">Items</th>
-                    <th className="text-left py-2 px-4">Last Updated</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {listData.map((list, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="py-2 px-4">{list.name}</td>
-                      <td className="py-2 px-4">{list.type}</td>
-                      <td className="py-2 px-4">{list.items}</td>
-                      <td className="py-2 px-4">{list.lastUpdated}</td>
+        {/* Recent Lists */}
+        <motion.div variants={itemVariants} className="lg:col-span-2">
+          <Card className='h-full border-white/10 bg-black/40 backdrop-blur-xl shadow-xl overflow-hidden'>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                Recent Lists
+              </CardTitle>
+              <CardDescription>Your latest curated collections</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="bg-white/5 text-xs uppercase text-muted-foreground font-semibold">
+                    <tr>
+                      <th className="px-6 py-4 rounded-tl-lg">Name</th>
+                      <th className="px-6 py-4">Type</th>
+                      <th className="px-6 py-4">Items</th>
+                      <th className="px-6 py-4 rounded-tr-lg">Last Updated</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-      </main>
-    </div>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {listData.length > 0 ? (
+                      listData.map((list, index) => (
+                        <tr key={index} className="hover:bg-white/5 transition-colors group">
+                          <td className="px-6 py-4 font-medium text-white group-hover:text-primary transition-colors">
+                            {list.name}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                                                    ${list.type === 'book' ? 'bg-blue-500/10 text-blue-500' :
+                                list.type === 'movie' ? 'bg-green-500/10 text-green-500' :
+                                  list.type === 'show' ? 'bg-amber-500/10 text-amber-500' : 'bg-gray-500/10 text-gray-500'}
+                                                `}>
+                              {list.type}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-muted-foreground">{list.items}</td>
+                          <td className="px-6 py-4 text-muted-foreground">{list.lastUpdated}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
+                          No lists found. Start creating some!
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </motion.div>
+  )
+}
+
+function StatsCard({ title, value, icon, variants }: { title: string, value: number, icon: React.ReactNode, variants: any }) {
+  return (
+    <motion.div variants={variants}>
+      <Card className="border-white/10 bg-black/40 backdrop-blur-xl shadow-lg hover:bg-black/50 transition-all duration-300 group">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-white transition-colors">
+            {title}
+          </CardTitle>
+          <div className="p-2 bg-white/5 rounded-full group-hover:bg-white/10 transition-colors">
+            {icon}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-3xl font-bold tracking-tight text-white">{value}</div>
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }

@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
     experimental: {
-      useCache: true  
+        serverActions: {
+            bodySizeLimit: '100mb',
+        },
     },
+    cacheComponents: true,
+    serverExternalPackages: ['impit'],
     images: {
         remotePatterns: [
             {
@@ -24,7 +29,19 @@ const nextConfig = {
             {
                 protocol: "http",
                 hostname: "books.google.com"
-            }
+            },
+            {
+                protocol: "https",
+                hostname: "image.tmdb.org"
+            },
+            {
+                protocol: "https",
+                hostname: "static.tvmaze.com"
+            },
+            {
+                protocol: "https",
+                hostname: "images.thegreatestbooks.org"
+            },
         ],
     }
 };

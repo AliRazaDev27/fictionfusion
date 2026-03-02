@@ -1,33 +1,42 @@
 "use server"
 import { db } from "@/lib/database";
 import { MusicTable } from "@/lib/database/musicSchema";
-import { NewMusic, Music } from "@/lib/database/musicSchema";
-import { asc, eq } from "drizzle-orm";
+import { NewMusic } from "@/lib/database/musicSchema";
+import {  desc, eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import { deleteMusicFileOnCloudinary } from "@/lib/cloudinaryHelper";
-import { revalidatePath } from "next/cache";
+import { cacheTag, revalidatePath } from "next/cache";
 
+export async function revalidateMusic() {
+    revalidatePath("/music");
+}
 export async function addMusic(music: NewMusic) {
     try {
         const session: any = await auth();
         if (session?.user?.role !== "ADMIN") throw new Error("Not Authorized")
         await db.insert(MusicTable).values(music);
-        revalidatePath("/music")
-        return { success: true }
+        // revalidatePath("/music")
+        return { success: true, message: "Music added successfully", music }
     }
     catch (err:any) {
         console.log(err)
-        return { success: false, message: err.message }
+        return { success: false, message: err.message, music: null }
     }
 }
-export async function getMusic() {
+export async function getMusic(offset: number = 0, limit: number = -1) {
+    "use cache";
+    cacheTag("actions-music-getmusic");
     try {
-        const music = await db.select().from(MusicTable).orderBy(asc(MusicTable.id));
-        return { success: true, music }
+        const music = await db.select().from(MusicTable)
+            .orderBy(desc(MusicTable.modifiedDate))
+            .offset(offset)
+            .limit(limit);
+        const totalMusicCount = await db.select({ count: MusicTable.id }).from(MusicTable);
+        return { success: true, music, totalCount: totalMusicCount.length }
     }
     catch (err:any) {
         console.log(err.message)
-        return { success: false }
+        return { success: false, music: [], totalCount: 0 }
     }
 }
 export async function updateMusicCoverArt(id: number, coverArt: string) {

@@ -15,14 +15,16 @@ import NavLinksMobile from "./nav_links_mobile"
 import { SearchBar } from "./search_bar"
 import { auth } from "@/auth"
 import Link from "next/link"
+
 export default async function Header() {
     const session:any = await auth()
     const role = session?.user?.role || "VISITOR";
     return( 
-        <header className="top-0 relative z-50 flex justify-between h-[70px] items-center  bg-transparent px-4 md:px-6">
+        <header className="top-0 relative z-50 flex justify-between h-[70px] items-center  bg-slate-900 px-4 md:px-6">
           <div className="hidden md:block">
           <Link
             href="/"
+            prefetch={false}
             className="text-xl md:text-2xl italic text-white"
           >
             Fiction<span className="text-orange-500 text-3xl">Fusion</span>
@@ -42,14 +44,17 @@ export default async function Header() {
               <span className="sr-only">Toggle navigation menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[200px] bg-linear-to-b from-gray-950 to-blue-950 ">
+          <SheetContent side="left" className="w-[200px] bg-linear-to-b from-indigo-950 to-blue-950 ">
             <NavLinksMobile/>
           </SheetContent>
         </Sheet>
         <div className="relative flex  items-center gap-1  md:gap-2 lg:gap-4">
           <SearchBar/>
           {role === "VISITOR" ? 
-        <Link href="/login" className="px-4 py-2   rounded-full bg-black/90 hover:bg-black text-white">Login</Link>:
+        <Link href="/login"
+         className="px-4 py-2 rounded-full bg-slate-700 hover:bg-slate-800 text-white"
+         prefetch={false}
+         >Login</Link>:
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size={"icon"}  className="rounded-full  bg-emerald-700 outline-hidden ring-transparent text-white">
@@ -61,7 +66,11 @@ export default async function Header() {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Link className="hover:text-orange-500 hover:bg-black px-4 py-2 rounded-lg  font-medium" href="/dashboard">Dashboard</Link>
+                <Link
+                 className="hover:text-orange-500 hover:bg-black px-4 py-2 rounded-lg  font-medium"
+                  href="/dashboard"
+            prefetch={false}
+                  >Dashboard</Link>
                 </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>

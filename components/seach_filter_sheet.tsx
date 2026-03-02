@@ -1,6 +1,6 @@
 import {Sheet, SheetContent, SheetTitle, SheetTrigger} from "@/components/ui/sheet"
 import { FaFilter } from "react-icons/fa";
-import { SearchControlls } from "@/components/search_controlls";
+import { SearchControls } from "@/components/search_controls";
 export default function SearchAndFilter({ type }: { type: string }) {
     return (
         <Sheet>
@@ -11,7 +11,7 @@ export default function SearchAndFilter({ type }: { type: string }) {
           </div>
           <SheetContent side="top" className="border border-red-500">
             <SheetTitle className="hidden">Search & Filter</SheetTitle>
-            <SearchControlls type={type}/>
+            <SearchControls type={type}/>
           </SheetContent>
         </Sheet>
     )

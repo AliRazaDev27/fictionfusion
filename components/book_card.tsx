@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+<<<<<<< HEAD
 import { getAuthorId, getOpenLibraryAuthorLink, getOpenLibraryCoverLink } from "@/lib";
 import { FaBookOpen } from "react-icons/fa6";
 import { Book } from "@/types";
@@ -10,13 +11,22 @@ import { MdDone } from "react-icons/md";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
+=======
+import placeholder from "@/public/bookplaceholder.svg";
+import { getOpenLibraryCoverLink } from "@/lib";
+import { Book } from "@/types";
+import React from "react";
+import { MdOutlineDateRange } from "react-icons/md";
+import { FaRegStar } from "react-icons/fa";
+import { IoBookOutline } from "react-icons/io5";
+
+>>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222
 
 export default function BookCard({ book }: { book: Book }) {
-
-  let rating = book?.rating;
-  if (!rating) rating = (book as any)?.ratings_average;
-  if (!rating) rating = "0"
+  const rating = book?.rating ?? (book as any)?.ratings_average ?? "0";
+  console.log(book);
   return (
+<<<<<<< HEAD
     <div className="2xl:max-w-7xl w-full flex items-center rounded-3xl overflow-hidden shadow-2xl shadow-neutral-600">
       <div
         className="w-1/3 relative aspect-3/4"
@@ -109,6 +119,38 @@ export default function BookCard({ book }: { book: Book }) {
               </div>
             </div>
           )}
+=======
+    <div className="relative w-full h-full group overflow-hidden rounded-2xl">
+        <div className="relative aspect-[2/3]">
+          <Image
+            src={getOpenLibraryCoverLink(book.cover_edition_key)}
+            alt={book.title}
+            fill
+            quality={90}
+            className="object-cover"
+            placeholder="blur"
+            blurDataURL={placeholder.src}
+            onError={(e) => {
+              e.currentTarget.src = placeholder.src;
+            }}
+          />
+      </div>
+      <div className="bg-slate-950 text-white px-4 py-4 w-full h-full flex flex-col gap-3 absolute group-hover:inset-0 ">
+            <p className="text-3xl">{book.title}</p>
+            <p>{book.author_name}</p>
+            <div className="flex justify-between items-center">
+              <p className="flex items-center gap-1">
+                <MdOutlineDateRange />{book.first_publish_year}</p>
+              <p className="flex items-center gap-1">
+                <FaRegStar />
+                {rating}</p>
+              <p className="flex items-center gap-1">
+                <IoBookOutline />
+                {book.number_of_pages}</p>
+            </div>
+            <p className="line-clamp-5">{book.description}</p>
+
+>>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222
       </div>
     </div>
   );

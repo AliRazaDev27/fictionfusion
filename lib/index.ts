@@ -1,5 +1,6 @@
 export type Key = "isbn" | "olid" | "id"
 export type Size = "S" | "M" | "L"
+<<<<<<< HEAD
 export  const getOpenLibraryCoverLink =  (value:string|null, size: Size = "L") => {
     if(!value) return "/bookplaceholder.svg"
     const valueToString = value.toString().trim();
@@ -9,6 +10,19 @@ export  const getOpenLibraryCoverLink =  (value:string|null, size: Size = "L") =
         key="olid"
     }
     return `https://covers.openlibrary.org/b/${key}/${valueToString}-${size}.jpg?`
+=======
+export const getOpenLibraryCoverLink =  (value:string|null) => {
+    if(!value) return "/bookplaceholder.svg"
+    value = value.trim()
+    let key = "isbn"
+    if(value.startsWith("OL")){
+        key="olid"
+    }
+    else if(value.length === 8){
+        key = "id"
+    }
+    return `https://covers.openlibrary.org/b/${key}/${value}-M.jpg`
+>>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222
 }
 export const getOpenLibraryAuthorLink =  (key:Key,value:string|null,size:Size) => {
     if(!value) return "/bookplaceholder.svg"
@@ -66,3 +80,19 @@ export async function uploadToCloudinary(file) {
 
   return response.json();
 }
+<<<<<<< HEAD
+=======
+
+export interface Film {
+  year: string;
+  title: string;
+  link: string | undefined;
+  episodes: string;
+  role: string;
+  rating: string;
+}
+
+export interface FilmData {
+  [category: string]: Film[];
+}
+>>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222

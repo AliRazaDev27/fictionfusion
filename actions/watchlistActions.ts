@@ -4,18 +4,24 @@ import { ShowMyDramalist } from "@/types";
 import { mydramalistScrapper } from "@/lib/mydramalistScrapper";
 import { auth } from "@/auth";
 import { addShow } from "./showActions";
+import { Impit } from 'impit';
 
 import * as cheerio from 'cheerio';
 
 
-export async function getWatchlist(url: string,email:string|null) {
-  console.log(email);
+export async function getWatchlist(url: string, email: string | null) {
+  const impit = new Impit({
+    browser: "chrome", // or "firefox"
+    ignoreTlsErrors: true,
+  });
   const a = performance.now();
-  const [result, ignoreList] = await Promise.all([fetch(url), getIgnoreList(email)]);
+  const [result, ignoreList] = await Promise.all([impit.fetch(url), getIgnoreList(email)]);
+  console.log("res:", result)
   // const result = await fetch(url);
   // const ignoreList = { success: false, items: Array() };
-  console.log("fetch+ignorelist: ",performance.now() - a);
-  const html = await result.text()
+  console.log("fetch+ignorelist: ", performance.now() - a);
+  const html = await result.text();
+  console.log("html:", html);
   const start = performance.now();
   const $ = cheerio.load(html);
 
@@ -58,20 +64,24 @@ export async function getWatchlist(url: string,email:string|null) {
 
 export async function addMyDramalistShow(url: string) {
   try {
-    const session:any = await auth();
+    const session: any = await auth();
     const role = session?.user?.role || "VISITOR";
-    if(role !== "ADMIN") throw new Error("Not Authorized")
-    if(!(url.startsWith('https://mydramalist.com/'))) throw new Error("Invalid URL");  
-    const result = await fetch(url);
+    if (role !== "ADMIN") throw new Error("Not Authorized")
+    if (!(url.startsWith('https://mydramalist.com/'))) throw new Error("Invalid URL");
+    const impit = new Impit({
+      browser: "chrome", // or "firefox"
+      ignoreTlsErrors: true,
+    });
+    const result = await impit.fetch(url);
     const textContent = await result.text();
     const data = await mydramalistScrapper(textContent);
-    console.log(data)
+    console.log(data);
     if (data.id === 0) throw new Error("Invalid ID");
     if (data.name === "unknown") throw new Error("Invalid Name");
     const response = await addShow(data)
     return response;
   }
-  catch (error:any) {
+  catch (error: any) {
     console.log(error)
     return { success: false, message: error.message };
   }

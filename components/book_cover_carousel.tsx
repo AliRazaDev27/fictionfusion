@@ -10,12 +10,12 @@ import {
 export default  function BookCoverCarousel({list}:{list:string}) {
 const isbnList:string[] = JSON.parse(list)
 for(let isbn of isbnList){
-    console.log(getOpenLibraryCoverLink("isbn",isbn,"M"))
+    console.log(getOpenLibraryCoverLink(isbn))
 }
 
     return(
         <div>
-<img src={getOpenLibraryCoverLink("isbn",isbnList[1],"M")} alt="cover" width={300} height={400}  />
+<img src={getOpenLibraryCoverLink(isbnList[1])} alt="cover" width={300} height={400}  />
         </div>
 
 

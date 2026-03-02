@@ -2,6 +2,10 @@
 import { Book, BookTable, NewBook } from "@/lib/database/bookSchema";
 import { db } from "@/lib/database";
 import { count } from "drizzle-orm";
+<<<<<<< HEAD
+=======
+import { cacheTag } from "next/cache";
+>>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222
 
 export type bookSearchResult = {
   author_key: string[];
@@ -45,6 +49,7 @@ export async function addBookToDB(book: NewBook) {
   }
 }
 
+<<<<<<< HEAD
 export async function getTotalBooks(){
   const result = await db.select({count:count()}).from(BookTable)
   return result
@@ -59,4 +64,22 @@ export async function getBooks(){
     return null
 
   }
+=======
+export async function getBooks() {
+  "use cache";
+  cacheTag("actions-books-getbooks");
+  try {
+    const result = await db.select().from(BookTable);
+    return { success: true, books: result };
+  } catch (error) {
+    console.error("Error fetching books:", error);
+    return { success: false, message: "Failed to fetch books." };
+  }
+}
+
+export async function getTotalBooks() {
+    // return total number of books
+    const result = await db.select({ count: count() }).from(BookTable);
+    return result;
+>>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222
 }
