@@ -10,8 +10,6 @@ export default async function Page() {
     <AudioLayout
       initialMusic={musicData.success ? musicData.music : []}
       initialPlaylists={playlistData.success ? playlistData.lists : []}
-    >
-      {/* Children are now rendered dynamically inside AudioLayout based on store state */}
-    </AudioLayout>
+    />
   )
 }

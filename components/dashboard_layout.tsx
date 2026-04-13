@@ -60,7 +60,7 @@ export function DashboardLayout({ total, list }: { total: any, list: any[] }) {
 
   return (
     <motion.div
-      className="min-h-screen space-y-8"
+      className="min-h-screen space-y-8 text-white"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -112,8 +112,8 @@ export function DashboardLayout({ total, list }: { total: any, list: any[] }) {
         <motion.div variants={itemVariants} className="lg:col-span-1">
           <Card className='h-full border-white/10 bg-black/40 backdrop-blur-xl shadow-xl'>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-primary" />
+              <CardTitle className="flex items-center gap-2 text-white">
+                <TrendingUp className="w-5 h-5 text-white" />
                 Distribution
               </CardTitle>
               <CardDescription>Breakdown by media type</CardDescription>
@@ -152,8 +152,8 @@ export function DashboardLayout({ total, list }: { total: any, list: any[] }) {
         <motion.div variants={itemVariants} className="lg:col-span-2">
           <Card className='h-full border-white/10 bg-black/40 backdrop-blur-xl shadow-xl overflow-hidden'>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-primary" />
+              <CardTitle className="flex items-center gap-2 text-white">
+                <Calendar className="w-5 h-5 text-white" />
                 Recent Lists
               </CardTitle>
               <CardDescription>Your latest curated collections</CardDescription>

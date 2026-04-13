@@ -15,7 +15,7 @@ import {
 import ActiveMediaPanel from './ActiveMediaPanel';
 import PlayerDeck from './PlayerDeck';
 import TrackRow from './track-row';
-import { useMusicStore } from '@/app/(main)/music/music-context';
+import { useMusicStore } from '@/app/(fullscreen)/music/music-context';
 import { Music } from '@/lib/database/musicSchema';
 import { VisualizerProvider } from './VisualizerContext';
 import VisualizerCanvas from './VisualizerCanvas';
@@ -23,12 +23,11 @@ import { List } from '@/lib/database/listSchema';
 import Link from 'next/link';
 
 interface AudioLayoutProps {
-  children?: React.ReactNode;
   initialMusic: Music[];
   initialPlaylists: List[];
 }
 
-const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutProps) => {
+const AudioLayout = ({ initialMusic, initialPlaylists }: AudioLayoutProps) => {
   const {
     playlist,
     music,

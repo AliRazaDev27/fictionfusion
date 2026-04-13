@@ -136,7 +136,7 @@ export default function Page() {
                 <div className='w-full min-h-[89svh] flex flex-col items-center gap-2 p-2'>
                     <div className="flex items-center justify-between md:px-8 md:py-2 w-full">
                         <Button className="cursor-pointer bg-red-500" onClick={() => setStage(0)}>Back</Button>
-                        <Button className="cursor-pointer bg-green-600" onClick={handleUpload}>Upload</Button>
+                        <Button className="cursor-pointer bg-green-600 hover:bg-sky-600" onClick={handleUpload}>Upload</Button>
                     </div>
                     {
                         !selectedFiles && <p>No files selected</p>

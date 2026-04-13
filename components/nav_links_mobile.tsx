@@ -10,10 +10,6 @@ const links = [
     label: "Music",
   },
   {
-    href: "/player",
-    label: "Player",
-  },
-  {
     href: "/watchlist",
     label: "Watchlist",
   },
