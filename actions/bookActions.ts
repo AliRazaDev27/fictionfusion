@@ -30,6 +30,7 @@ export interface Details {
   description: string | { value: string } | undefined;
   subjects: string[];
 }
+
 export async function getBookWorkFromOL(key: string) {
   const result = await fetch(`https://openlibrary.org/${key}.json`)
   const response = await result.json()

@@ -26,4 +26,10 @@
 }
 .playlist-toggle{
   background: linear-gradient(220.55deg, #A531DC 0%, #4300B1 100%) !important;
+<<<<<<< HEAD:app/music/styles.css
+  box-shadow: inset 0px 0px 0px 1px #A531DC !important;
+  box-sizing: border-box;
 }
+=======
+}
+>>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222:app/(main)/music/styles.css

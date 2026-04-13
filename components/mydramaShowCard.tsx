@@ -46,6 +46,7 @@ export default function MyDramaShowCard({ item }: { item: ShowMyDramalist }) {
   }
   const saveToDB = async () => {
     const result = await addMyDramalistShow(`https://mydramalist.com${item.link}` || "");
+    // const result = {success:true, message:"Item added to DB"}; // Mock result for testing
     if (result.success) {
       toast({
         description: "Item added to DB",
