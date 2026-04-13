@@ -9,6 +9,7 @@ const nextConfig = {
     cacheComponents: true,
     serverExternalPackages: ['impit'],
     images: {
+        qualities: [100, 75],
         remotePatterns: [
             {
                 protocol: "https",

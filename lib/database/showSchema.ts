@@ -4,11 +4,6 @@ import { sql } from "@vercel/postgres";
 import { drizzle } from "drizzle-orm/vercel-postgres";
 import { decimal, json, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { eq } from "drizzle-orm";
-<<<<<<< HEAD
-import { stripHtml } from "../utils";
-// import { stripHtml } from "../utils";
-=======
->>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222
 
 export const db = drizzle(sql);
 

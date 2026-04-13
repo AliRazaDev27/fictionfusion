@@ -1,16 +1,5 @@
 export type Key = "isbn" | "olid" | "id"
 export type Size = "S" | "M" | "L"
-<<<<<<< HEAD
-export  const getOpenLibraryCoverLink =  (value:string|null, size: Size = "L") => {
-    if(!value) return "/bookplaceholder.svg"
-    const valueToString = value.toString().trim();
-    let key = "id"
-    console.log(typeof valueToString,valueToString)
-    if(valueToString.startsWith("OL")){
-        key="olid"
-    }
-    return `https://covers.openlibrary.org/b/${key}/${valueToString}-${size}.jpg?`
-=======
 export const getOpenLibraryCoverLink =  (value:string|null) => {
     if(!value) return "/bookplaceholder.svg"
     value = value.trim()
@@ -22,7 +11,6 @@ export const getOpenLibraryCoverLink =  (value:string|null) => {
         key = "id"
     }
     return `https://covers.openlibrary.org/b/${key}/${value}-M.jpg`
->>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222
 }
 export const getOpenLibraryAuthorLink =  (key:Key,value:string|null,size:Size) => {
     if(!value) return "/bookplaceholder.svg"
@@ -80,8 +68,6 @@ export async function uploadToCloudinary(file) {
 
   return response.json();
 }
-<<<<<<< HEAD
-=======
 
 export interface Film {
   year: string;
@@ -95,4 +81,3 @@ export interface Film {
 export interface FilmData {
   [category: string]: Film[];
 }
->>>>>>> f370ba3651d66ac7da1301f305bfefe6c0b19222

@@ -224,7 +224,7 @@ export function BookCard({ book, details, index }: { book: bookSearchResult, det
                                     <div className="max-h-80 overflow-y-auto space-y-2  grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
                                         {editedBook.covers.map((cover, index) => (
                                             <div key={index} className="flex items-center gap-2 p-1 border rounded">
-                                                <img src={getOpenLibraryCoverLink(cover, "M")} alt={`Cover ${index + 1}`} className="w-16 h-24 object-contain border" />
+                                                <img src={getOpenLibraryCoverLink(cover)} alt={`Cover ${index + 1}`} className="w-16 h-24 object-contain border" />
                                                 <div className="flex-1">
                                                     <Input
                                                         value={cover}
