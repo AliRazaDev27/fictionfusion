@@ -23,12 +23,11 @@ import { List } from '@/lib/database/listSchema';
 import Link from 'next/link';
 
 interface AudioLayoutProps {
-  children?: React.ReactNode;
   initialMusic: Music[];
   initialPlaylists: List[];
 }
 
-const AudioLayout = ({ children, initialMusic, initialPlaylists }: AudioLayoutProps) => {
+const AudioLayout = ({ initialMusic, initialPlaylists }: AudioLayoutProps) => {
   const {
     playlist,
     music,

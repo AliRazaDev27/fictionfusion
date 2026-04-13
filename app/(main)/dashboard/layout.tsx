@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <TooltipTrigger asChild>
               <Link
                 href="/dashboard"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-foreground md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-green-500 md:h-8 md:w-8"
               >
                 <Home className="h-5 w-5" />
                 <span className="sr-only">Dashboard</span>
@@ -35,7 +35,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <TooltipTrigger asChild>
               <Link
                 href="/dashboard/books"
-                className="flex h-9 w-9 items-center justify-center rounded-lg  text-white/80 transition-colors hover:text-foreground md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg  text-white/80 transition-colors hover:text-green-500 md:h-8 md:w-8"
               >
                 <FaBookOpen className="h-5 w-5" />
                 <span className="sr-only">Books</span>
@@ -47,7 +47,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <TooltipTrigger asChild>
               <Link
                 href="/dashboard/movies"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-foreground md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-green-500 md:h-8 md:w-8"
               >
                 <BiSolidMoviePlay className="h-5 w-5" />
                 <span className="sr-only">Movies</span>
@@ -59,7 +59,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <TooltipTrigger asChild>
               <Link
                 href="/dashboard/shows"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-foreground md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-green-500 md:h-8 md:w-8"
               >
                 <ImTv className="h-5 w-5" />
                 <span className="sr-only">Shows</span>
@@ -68,15 +68,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <TooltipContent side="right">Shows</TooltipContent>
           </Tooltip>
           
-
+          <Tooltip>
+            <TooltipTrigger asChild>
               <Link
                 href="/dashboard/music"
-                prefetch={false}
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-foreground md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition-colors hover:text-green-500 md:h-8 md:w-8"
               >
                 <FaMusic className="h-5 w-5" />
                 <span className="sr-only">Music</span>
               </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Music</TooltipContent>
+          </Tooltip>
+
         </nav>
         
       </aside>

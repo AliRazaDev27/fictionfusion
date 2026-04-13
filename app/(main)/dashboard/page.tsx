@@ -39,7 +39,7 @@ export default function Page() {
     }, [])
 
     return (
-        <main className="text-white md:w-[95%] ms-auto py-8 px-4">
+        <main className="md:w-[95%] ms-auto py-8 px-4">
             <DashboardLayout total={total} list={list} />
         </main>
     );

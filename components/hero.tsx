@@ -9,7 +9,7 @@ const HeroSection = () => {
   const bootLogs = [
     { id: 1, text: "INITIALIZING_CORE...", status: "OK", color: "text-green-500" },
     { id: 2, text: "CONNECTING_DB [PostgreSQL]", status: "CONNECTED", color: "text-blue-500" },
-    { id: 3, text: "LOADING_AI_MODEL [Gemini Pro]", status: "READY", color: "text-indigo-500" },
+    { id: 3, text: "LOADING_AI_MODEL [Groq Cloud]", status: "READY", color: "text-indigo-500" },
     { id: 4, text: "CHECKING_PWA_CACHE", status: "SYNCED", color: "text-emerald-500" },
     { id: 5, text: "MOUNTING_UI_COMPONENTS...", status: "DONE", color: "text-slate-400" },
   ];
@@ -72,7 +72,7 @@ const HeroSection = () => {
               </span>
             </button>
             
-            <a href="#" className="px-6 py-3 border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 rounded font-mono flex items-center gap-2 transition-all">
+            <a href="https://github.com/AliRazaDev27/fictionfusion" target="_blank" className="px-6 py-3 border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500 rounded font-mono flex items-center gap-2 transition-all">
               <Github className="w-4 h-4" />
               VIEW_SOURCE
             </a>
@@ -81,7 +81,7 @@ const HeroSection = () => {
           {/* Tech Stack Mini-Bar */}
           <div className="pt-8 flex items-center gap-6 text-slate-600">
              <div className="flex items-center gap-2 text-xs font-mono uppercase">
-                <Cpu className="w-4 h-4" /> Next.js 14
+                <Cpu className="w-4 h-4" /> Next.js 16
              </div>
              <div className="flex items-center gap-2 text-xs font-mono uppercase">
                 <Zap className="w-4 h-4" /> PWA Enabled

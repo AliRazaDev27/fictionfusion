@@ -46,6 +46,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { revalidateMusic } from "@/actions/musicActions";
+import { MdAdd } from "react-icons/md";
+import Link from "next/link";
 
 const ITEMS_PER_PAGE = 16;
 
@@ -274,10 +276,15 @@ export default function Page() {
     <div className="text-white md:w-[95%] ms-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Manage Music</h1>
-        <Button onClick={handleRevalidateMusic} variant="outline" className="flex text-black cursor-pointer items-center gap-2">
+        <div className="flex items-center gap-2">
+        <Link href="/dashboard/music/add" title="Add" className="flex justify-center bg-white rounded-md size-10 text-black cursor-pointer items-center gap-2">
+          <MdAdd/>
+        </Link>
+        <Button onClick={handleRevalidateMusic} variant="outline" title="Refresh" className="flex text-black cursor-pointer items-center gap-2">
           <RefreshCw className="h-4 w-4" />
-          Revalidate
         </Button>
+        </div>
+
       </div>
 
       {loading ? (
@@ -285,7 +292,7 @@ export default function Page() {
       ) : (
         <div className="rounded-md border">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-teal-300 font-bold text-lg">
               <TableRow>
                 <TableHead className="w-[100px]">Cover</TableHead>
                 <TableHead>Title</TableHead>
@@ -297,9 +304,9 @@ export default function Page() {
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
+            <TableBody className="bg-zinc-950">
               {musicData.map((music, index) => (
-                <TableRow key={music.id} id={index === musicData.length - 1 ? "last-music-row" : undefined}>
+                <TableRow className="hover:bg-slate-700" key={music.id} id={index === musicData.length - 1 ? "last-music-row" : undefined}>
                   <TableCell>
                     {music.coverArt ? (
                       <img src={music.coverArt} alt={music.title} className="w-16 h-16 object-cover rounded-md" />
