@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from 'react';
 import { Disc, Mic2, Activity } from 'lucide-react';
-import { useMusicStore } from '@/app/(fullscreen)/player/music-context';
+import { useMusicStore } from '@/app/(fullscreen)/music/music-context';
 import { Music } from '@/lib/database/musicSchema';
 import { useVisualizer } from './VisualizerContext';
 import VisualizerCanvas from './VisualizerCanvas';
