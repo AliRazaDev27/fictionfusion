@@ -1,6 +1,6 @@
 'use client'
 import { useRef } from 'react'
-import { useMusicStore } from './music-context';
+import { useMusicStore } from '../../(fullscreen)/player/music-context';
 import { MusicPlayer } from './music-player';
 import { PlaylistView } from './components/playlist';
 import { MusicList } from './components/music-list';

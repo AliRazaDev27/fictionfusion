@@ -1,4 +1,4 @@
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 import ArtistRender from "./render";
 
 export type Music = {
@@ -18,7 +18,6 @@ export type Music = {
   trackCount: number,
   trackNumber: number,
 }
-type Params = Promise<{ id: string }>
 export default async function Page(props: PageProps<"/music/artists/[id]">) {
   const id = props.params.then((params) => params.id);
   return (

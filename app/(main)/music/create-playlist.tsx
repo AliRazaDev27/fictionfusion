@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { createPlaylist, getAllMusicPlaylists } from "@/actions/playlistActions";
 import { useToast } from "@/components/ui/use-toast";
-import { useMusicStore } from "./music-context";
+import { useMusicStore } from "../../(fullscreen)/player/music-context";
 export default function Create() {
     const addPlaylist = useMusicStore((state:any) => state.addPlaylist);
     const playlist = useMusicStore((state:any) => state.playlist);

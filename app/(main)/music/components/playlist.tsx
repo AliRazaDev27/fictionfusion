@@ -1,4 +1,4 @@
-import { useMusicStore } from "../music-context"
+import { useMusicStore } from "../../../(fullscreen)/player/music-context"
 import { use, useEffect } from "react"
 import { List } from "@/lib/database/listSchema"
 import { Music } from "@/lib/database/musicSchema"

@@ -8,7 +8,7 @@ import { IoPlaySkipBackSharp } from "react-icons/io5";
 import { IoPlaySkipForward } from "react-icons/io5";
 import { IoSearch } from "react-icons/io5";
 import { IoIosCloseCircle } from "react-icons/io";
-import { useMusicStore } from "./music-context";
+import { useMusicStore } from "../../(fullscreen)/player/music-context";
 export function MusicPlayer() {
   const music = useMusicStore((state: any) => state.music)
   const current = useMusicStore((state: any) => state.current)

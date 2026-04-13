@@ -1,7 +1,7 @@
 import { MusicCard } from "../music-card"
 import { Suspense, use, useEffect, useRef, useState } from "react"
 import { Music } from "@/lib/database/musicSchema"
-import { useMusicStore } from "../music-context"
+import { useMusicStore } from "../../../(fullscreen)/player/music-context"
 
 export function MusicList({musicPromise}){
     const result = use<any>(musicPromise)

@@ -13,7 +13,7 @@ import {
    ListMusic,
    Repeat1
 } from 'lucide-react';
-import { useMusicStore } from '@/app/(main)/music/music-context';
+import { useMusicStore } from '@/app/(fullscreen)/player/music-context';
 import { useVisualizer } from './VisualizerContext';
 import EqualizerModal from './EqualizerModal';
 

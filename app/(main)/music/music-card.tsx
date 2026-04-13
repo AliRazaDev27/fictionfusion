@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, forwardRef, useState } from "react";
 import { Music } from "@/lib/database/musicSchema";
-import { useMusicStore } from "./music-context";
+import { useMusicStore } from "../../(fullscreen)/player/music-context";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 

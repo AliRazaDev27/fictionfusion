@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { useMusicStore }  from "./music-context";
+import { useMusicStore }  from "../../(fullscreen)/player/music-context";
 import { List } from "@/lib/database/listSchema";
 
 export function AddToPlaylist({index}: {index: number}) {
