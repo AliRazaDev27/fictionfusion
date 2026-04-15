@@ -68,32 +68,6 @@ const ActiveMediaPanel = () => {
             </div>
          </div>
 
-         {/* 4. Queue / Next Operations */}
-         <div className="flex-1 overflow-y-auto bg-slate-900/20">
-            <div className="px-4 py-3 border-b border-slate-800/50 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-            // QUEUE_SEQUENCE
-            </div>
-
-            <div className="p-2 space-y-1">
-               {queue.length > 0 ? (
-                  queue.map((track: Music, i: number) => (
-                     <div
-                        key={track.id}
-                        onClick={() => setCurrent(current + 1 + i)}
-                        className="flex items-center gap-3 p-2 rounded hover:bg-slate-800/50 group cursor-pointer border border-transparent hover:border-slate-700 transition-all"
-                     >
-                        <div className="text-slate-600 text-[10px] font-mono">0{i + 1}</div>
-                        <div className="min-w-0">
-                           <div className="text-xs text-slate-300 truncate group-hover:text-cyan-400 transition-colors">{track.title}</div>
-                           <div className="text-[10px] text-slate-600 truncate">{track.artist}</div>
-                        </div>
-                     </div>
-                  ))
-               ) : (
-                  <div className="p-4 text-[10px] text-slate-600 font-mono text-center">END OF PLAYLIST</div>
-               )}
-            </div>
-         </div>
 
          {/* 5. Lyrics / Lyrics Toggle */}
          <div className="p-4 border-t border-slate-800 bg-slate-950">
