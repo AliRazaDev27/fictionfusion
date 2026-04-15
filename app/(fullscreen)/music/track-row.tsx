@@ -1,5 +1,5 @@
-import React from 'react';
-import { Play, MoreHorizontal, HardDrive, Cloud, Disc, Download } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Play, MoreHorizontal, HardDrive, Cloud, Disc, Download, Trash2 } from 'lucide-react';
 
 interface TrackProps {
   index: number;
@@ -29,18 +29,43 @@ const TrackRow = ({
   audioSrc
 }: TrackProps) => {
 
+  const [isDownloaded, setIsDownloaded] = useState(false);
   const handleDownload = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!audioSrc) return;
-
     try {
-      const cache = await window.caches.open("cloudinary-media");
+      const cache = await window.caches.open("v1-audio");
       await cache.add(audioSrc);
       console.log('Added to cache:', audioSrc);
+      setIsDownloaded(true);
     } catch (error) {
       console.error('Failed to add to cache:', error);
     }
   };
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!audioSrc) return;
+    try {
+      const cache = await window.caches.open("v1-audio");
+      await cache.delete(audioSrc);
+      console.log('Deleted from cache:', audioSrc);
+      setIsDownloaded(false);
+    } catch (error) {
+      console.error('Failed to delete from cache:', error);
+    }
+  };
+
+  useEffect(() => {
+  if (audioSrc) {
+    const checkCache = async () => {
+      const result = await window.caches.match(audioSrc);
+      if (result) {
+        setIsDownloaded(true);
+      }
+    }
+    checkCache();
+  }
+  },[])
 
   return (
     // Changed Grid: Responsive - Mobile: [Thumb] [Info] [Action] | Desktop: [Index] [Thumb] [Info] [Source] [Specs] [Action]
@@ -62,7 +87,7 @@ const TrackRow = ({
 
       {/* 2. THE THUMBNAIL (Media Cartridge Style) */}
       <div className="flex justify-center pr-2 md:pr-3">
-        <div className={`relative w-10 h-10 border ${isPlaying ? 'border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.3)]' : 'border-slate-700 group-hover:border-slate-500'} bg-slate-800 transition-all`}>
+        <div className={`${isDownloaded? 'outline-4 outline-green-500':''} relative w-10 h-10 border ${isPlaying ? 'border-cyan-500/50 shadow-[0_0_10px_rgba(6,182,212,0.3)]' : 'border-slate-700 group-hover:border-slate-500'} bg-slate-800 transition-all`}>
           {coverImage ? (
             <img src={coverImage} alt="Cover" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
           ) : (
@@ -109,13 +134,28 @@ const TrackRow = ({
       <div className="flex items-center justify-end gap-3 text-xs font-mono text-slate-500">
         <span className="hidden md:inline group-hover:hidden">{duration}</span>
         <div className="flex items-center gap-1 md:hidden md:group-hover:flex">
+          {
+            isDownloaded ? (
+            <button
+              onClick={handleDelete}
+              className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors"
+              title="Delete from Cache"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+            )
+            :
+            (
           <button
             onClick={handleDownload}
             className="p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors"
             title="Download to Cache"
+            style={{backgroundColor:isDownloaded? 'text-sky-600': 'text-white'}}
           >
             <Download className="w-4 h-4" />
           </button>
+            )
+          }
           <button className="hidden md:block p-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white transition-colors">
             <MoreHorizontal className="w-4 h-4" />
           </button>

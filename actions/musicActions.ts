@@ -26,6 +26,7 @@ export async function addMusic(music: NewMusic) {
 export async function getMusic(offset: number = 0, limit: number = -1) {
     "use cache";
     cacheTag("actions-music-getmusic");
+    // BUG: a failed response also gets cached
     try {
         const music = await db.select().from(MusicTable)
             .orderBy(desc(MusicTable.modifiedDate))
