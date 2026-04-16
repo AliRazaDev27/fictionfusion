@@ -5,8 +5,8 @@ import { useToast } from "./ui/use-toast";
 import { ShowMyDramalist } from "@/types";
 import { addMyDramalistShow } from "@/actions/watchlistActions";
 import { addItemToIgnoreList } from "@/actions/ignorelistActions";
-import { MdClose, MdDescription, MdSave } from "react-icons/md";
-import { TiCancel } from "react-icons/ti";
+import { MdClose } from "react-icons/md";
+import { Download, Info, Search, Trash } from "lucide-react";
 
 export default function MyDramaShowCard({ item }: { item: ShowMyDramalist }) {
   const [showDescription, setShowDescription] = useState(false);
@@ -62,19 +62,24 @@ export default function MyDramaShowCard({ item }: { item: ShowMyDramalist }) {
       })
     }
   }
+  const enhanceImage = (image: string) => {
+    if(image === '') return "";
+    else{
+      let dotIndex = image.lastIndexOf('.');
+      let imageFirstPart = image.slice(0, dotIndex);
+      return imageFirstPart + "m" + ".jpg";
+    }
+  }
   return (
     <div
       ref={cardRef}
-      className="bg-teal-950 relative flex flex-col gap-1 items-center justify-between rounded-lg  px-2 py-3 text-center overflow-hidden transition-all duration-500"
+      className="hover:scale-105 hover:shadow-2xl transition-transform duration-300 bg-black/30 backdrop-blur-xl border border-white/20 shadow-white/10 shadow-lg rounded-2xl relative flex flex-col gap-1 items-center justify-between text-center overflow-hidden group"
     >
-      <div className="relative overflow-hidden w-[90%]  mx-auto aspect-2/3">
-        <Image src={item?.image || ""} alt={item?.title || "cover"} fill quality={100} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="bg-cover" />
+      <div className="relative overflow-hidden w-full  mx-auto aspect-2/3">
+        <Image src={enhanceImage(item?.image || "")} alt={item?.title || "cover"} fill quality={100} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="bg-cover" />
       </div>
       {
-        item.ranking && <div className="absolute top-0 right-0  text-white bg-cyan-700 px-4 py-2 rounded-bl-3xl">{item.ranking}</div>
-      }
-      {
-        item.rating && <div className="absolute top-0 left-0  text-white bg-cyan-700 px-4 py-2 rounded-br-3xl">{item.rating}</div>
+        item.rating && <div className="absolute top-0 left-0  text-white font-semibold bg-white/15 backdrop-blur-xs px-4 py-2 rounded-br-3xl">{item.rating}</div>
       }
       <a
         href={`https://mydramalist.com${item.link}`}
@@ -84,28 +89,34 @@ export default function MyDramaShowCard({ item }: { item: ShowMyDramalist }) {
         {item.title}
       </a>
       {
-        item?.info && <div className="text-neutral-300">{item?.info}</div>
-      }
-      {
         item?.description && showDescription &&
         <div
-          className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/90 ">
+          className="absolute inset-0 w-full h-full flex items-center justify-center bg-black/80 backdrop-blur-xs">
           <button onClick={() => setShowDescription(false)}>
             <MdClose className="bg-red-600 text-white rounded-full w-8 h-8 p-1 cursor-pointer absolute top-4 right-4" />
           </button>
+          <div>
+
           <p className="text-white text-lg md:text-xl ">{item?.description}</p>
+      {
+        item?.info && <p className="text-gray-300 mt-4">{item?.info}</p>
+      }
+          </div>
         </div>
       }
 
-      <div className="flex items-center justify-between w-full gap-4 text-lg">
-        <button className="bg-black px-4 py-2 text-white rounded-lg hover:bg-orange-600 cursor-pointer" onClick={() => setShowDescription(true)}>
-          <MdDescription />
+      <div className="flex items-center justify-between w-full gap-4 text-lg py-2 px-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        <button className="bg-cyan-700 px-1.5 py-1.5 text-white rounded-md hover:bg-emerald-700 cursor-pointer" onClick={() => setShowDescription(true)}>
+          <Info />
         </button>
-        <button className="bg-black px-4 py-2 text-white rounded-lg hover:bg-orange-600 cursor-pointer" onClick={handleClick}>
-          <TiCancel />
+        <a href={`https://www.youtube.com/results?search_query=${encodeURIComponent(item?.title || "")}+trailer`} target="_blank" className="bg-cyan-700 px-1.5 py-1.5 text-white rounded-md hover:bg-emerald-700 cursor-pointer" onClick={() => setShowDescription(true)}>
+          <Search/>
+        </a>
+        <button className="bg-cyan-700 px-1.5 py-1.5 text-white rounded-md hover:bg-emerald-700 cursor-pointer" onClick={handleClick}>
+          <Trash />
         </button>
-        <button className="bg-black px-4 py-2 text-white rounded-lg hover:bg-orange-600 cursor-pointer" onClick={saveToDB}>
-          <MdSave />
+        <button className="bg-cyan-700 px-1.5 py-1.5 text-white rounded-md hover:bg-emerald-700 cursor-pointer" onClick={saveToDB}>
+          <Download />
         </button>
       </div>
 

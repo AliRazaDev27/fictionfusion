@@ -3,6 +3,7 @@
 import { getWatchlist } from "@/actions/watchlistActions";
 import { auth } from "@/auth";
 import MyDramaShowCard from "@/components/mydramaShowCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ShowMyDramalist } from "@/types";
 import { useEffect, useState, useRef } from "react";
 
@@ -16,11 +17,9 @@ export default function Page() {
         () => {
             const fetcher = async () => {
                 setIsFetching(true);
-                console.log("page is:", page);
                 const start = performance.now();
                 const result = await getWatchlist(`https://mydramalist.com/shows/top?page=${page}`, email);
                 const end = performance.now();
-                console.log("fetch time", end - start);
                 if (result.length === 0) setPage((prev) => prev + 1);
                 setData([...data, ...result]);
                 setIsFetching(false);
@@ -54,10 +53,8 @@ export default function Page() {
     useEffect(() => {
         const getEmail = async () => {
             const session = await auth();
-            console.log(session)
             if (!!session) {
                 setEmail(session.user.email);
-                console.log("witchhunter: ")
             }
             else {
                 setEmail(null);
@@ -70,9 +67,14 @@ export default function Page() {
 
     return (
         <div className="w-full" style={{ minHeight: "calc(100vh - 70px)", overflowY: "auto" }}>
-            {data.length === 0 && <div className="w-full text-center  text-5xl text-white">Loading Please Wait...</div>}
+            {data.length === 0 && <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 py-4">
+                <Skeleton className="w-full aspect-[5/6]" />
+                <Skeleton className="w-full aspect-[5/6] hidden sm:block" />
+                <Skeleton className="w-full aspect-[5/6] hidden md:block" />
+                <Skeleton className="w-full aspect-[5/6] hidden lg:block" />
+                </div>}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4 py-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 py-4">
                 {data.map((item) => (
                     <MyDramaShowCard key={item.title} item={item} />
                 ))}
