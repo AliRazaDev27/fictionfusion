@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button"
 import { createCeleb, setupCelebInfo } from "@/actions/celebActions"
 import { useState } from "react"
 import { getPersonIdFromTMDBByTitle } from "@/actions/movieActions"
+import { getDefaultAgent } from "groq-sdk/_shims/index.mjs"
+import getWorksFromLLM from "./llm"
+import { getPersonsByNameFromTvMaze } from "@/lib/tvMaze"
 
 export function AddCeleb() {
   const [url, setUrl] = useState("")
@@ -16,18 +19,22 @@ export function AddCeleb() {
     await setupCelebInfo(url)
     }
     else{
-      const result = await getPersonIdFromTMDBByTitle(url);
-      if(result.results.length > 0){
-        const data = result.results.find(item => item.name === url);
-        console.log(data);
-        if(!data) return
-        await createCeleb({ 
-          title: url, 
-          avatar: `https://image.tmdb.org/t/p/w500${data.profile_path}`, 
-          url: `${data.id}`,
-          source: "TMDB"
-         })
-      }
+      const response_tvMaze = await getPersonsByNameFromTvMaze(url);
+      const response_tmdb = await getPersonIdFromTMDBByTitle(url);
+      console.log(response_tvMaze);
+      console.log(response_tmdb);
+      const tvMazeID = response_tvMaze.sort((a, b) => b.score - a.score)[0].person.id;
+      console.log(tvMazeID);
+      const tmdbID = response_tmdb.results.find((item) => {
+        return item.name.toString() == url.toString();
+      })?.id;
+      console.log(tmdbID);
+      await createCeleb({ 
+        title: url,
+        url: `${tvMazeID}-${tmdbID}`,
+        source: "TVMAZE-TMDB",
+        avatar: response_tvMaze.sort((a, b) => b.score - a.score)[0].person.image?.medium
+       });
     }
   }
   const handleOpen = async () => {

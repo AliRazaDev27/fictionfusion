@@ -1,6 +1,5 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import * as cheerio from 'cheerio';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

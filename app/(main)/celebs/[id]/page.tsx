@@ -2,6 +2,7 @@ import { extractRealTimeWorkInfo, getCelebInfo } from "@/actions/celebActions";
 import { WorkList } from "../workList";
 import { WorksListTMDB } from "../WorksListTMDB"
 import { FilmData } from "@/lib";
+import { WorksListTvMaze } from "./workListTvMaze";
 
 export default async function Page({ params }) {
   const { id } = await params;
@@ -34,9 +35,12 @@ export default async function Page({ params }) {
       </div>
     );
   }
-  if (info.source === "TMDB") {
+  if (info.source === "TVMAZE-TMDB") {
     return (
-      <WorksListTMDB id={Number(info.url)} />
+      <div>
+        <WorksListTvMaze id={Number(info.url.split('-')[0])} />
+      <WorksListTMDB id={Number(info.url.split('-')[1])} />
+      </div>
     )
   }
 }

@@ -12,7 +12,7 @@ export async function createCeleb(values: NewCelebList) {
     const session = await auth();
     if (session?.user?.role !== "ADMIN") return
     await db.insert(CelebListTable).values(values);
-    revalidatePath("/people")
+    revalidatePath("/celebs")
   }
   catch (e) {
     console.log(e)
@@ -31,7 +31,7 @@ export async function setupCelebInfo(url: string) {
     const title = content("#content > div > div.container-fluid > div > div.col-lg-4.col-md-4 > div > div:nth-child(1) > div.box-header.p-b-0.text-center > h1").text().trim();
     const avatar = content("#content > div > div.container-fluid > div > div.col-lg-4.col-md-4 > div > div:nth-child(1) > div.box-body > img").attr("src")?.trim();
     await db.insert(CelebListTable).values({ title, avatar, url })
-    revalidatePath("/people")
+    revalidatePath("/celebs")
     return;
   }
   catch (e) {

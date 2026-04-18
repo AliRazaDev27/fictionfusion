@@ -7,7 +7,6 @@ import { asc, count, desc, eq, ilike, inArray, like, gte, and, sql, SQL } from "
 import { auth } from "@/auth";
 import { db } from "@/lib/database";
 
-
 export async function getShowInfo(showID: string) {
   // https://api.tvmaze.com/shows/:id
   const result = await fetch(`https://api.tvmaze.com/shows/${showID}`);
