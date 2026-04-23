@@ -4,6 +4,7 @@ import { Show } from "@/types";
 import { Badge } from "./ui/badge";
 import Image from "next/image";
 import RatingStar from "./ratingStar";
+import { Star } from "lucide-react";
 
 interface ShowCardProps {
   show: Show;
@@ -25,7 +26,7 @@ export function ShowCard({ show, onClick }: ShowCardProps) {
   return (
     <div
       onClick={onClick}
-      className="flex flex-col gap-3 p-3 border border-border bg-card rounded-xl text-card-foreground shadow-sm hover:shadow-md transition-shadow h-full cursor-pointer hover:ring-2 hover:ring-primary/50"
+      className="flex flex-col gap-3 p-3 border border-slate-900 bg-slate-700  rounded-xl text-white shadow-sm hover:shadow-md transition-shadow h-full cursor-pointer hover:ring-2 hover:ring-primary/50"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden rounded-lg group">
         <Image
@@ -50,20 +51,20 @@ export function ShowCard({ show, onClick }: ShowCardProps) {
 
         <div className="flex items-center gap-2 text-sm justify-between">
           <div className="flex items-center gap-1">
-            <RatingStar rating={averageRating} max={1} />
+            <Star className="size-4 fill-yellow-400 text-yellow-400" />
             <span className="font-medium">{averageRating}</span>
           </div>
-          <span className="text-muted-foreground text-xs">{show.premiered?.split("-")[0] || "N/A"}</span>
+          <span className="text-gray-300 text-xs">{show.premiered?.split("-")[0] || "N/A"}</span>
         </div>
 
         <div className="flex flex-wrap gap-1 mt-auto pt-2">
-          {show.genres && show.genres.slice(0, 2).map((genre, i) => (
-            <Badge key={i} variant="outline" className="text-[10px] px-1 py-0 h-5">
+          {show.genres && show.genres.slice(0, 3).map((genre, i) => (
+            <Badge key={i} variant="outline" className="text-[10px] px-1 py-0 h-5 bg-teal-300">
               {genre}
             </Badge>
           ))}
-          {show.genres && show.genres.length > 2 && (
-            <span className="text-[10px] text-muted-foreground self-center">+{show.genres.length - 2}</span>
+          {show.genres && show.genres.length > 3 && (
+            <span className="text-[10px] text-muted-foreground self-center">+{show.genres.length - 3}</span>
           )}
         </div>
       </div>
