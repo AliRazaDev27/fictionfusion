@@ -15,6 +15,11 @@ const ActiveMediaPanel = () => {
 
    // Get next 3 songs for the queue
    const queue = music ? music.slice(current + 1, current + 4) : [];
+   const upscaleImg = (url:string)=>{
+      if(url){
+         return url.replace('100x100', '400x400');
+      }
+   }
 
    return (
       <aside className="w-[300px] border-l border-slate-800 bg-slate-950 flex-col hidden lg:flex">
@@ -36,7 +41,7 @@ const ActiveMediaPanel = () => {
                {/* The Image */}
                <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
                   {currentTrack?.coverArt ? (
-                     <img src={currentTrack.coverArt} className="w-full h-full object-cover" alt="Cover" />
+                     <img src={upscaleImg(currentTrack?.coverArt)} className="w-full h-full object-cover" alt="Cover" />
                   ) : (
                      <Disc className="w-12 h-12 text-slate-700 animate-spin-slow" />
                   )}

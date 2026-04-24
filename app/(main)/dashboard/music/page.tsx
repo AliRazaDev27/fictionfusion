@@ -48,6 +48,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { revalidateMusic } from "@/actions/musicActions";
 import { MdAdd } from "react-icons/md";
 import Link from "next/link";
+import { generateSubs } from "./actions";
 
 const ITEMS_PER_PAGE = 16;
 
@@ -272,6 +273,11 @@ export default function Page() {
     });
   };
 
+  const genSubs = async (url:string) => {
+    const result = await generateSubs(url);
+    console.log(result);
+  }
+
   return (
     <div className="text-white md:w-[95%] ms-auto py-8 px-4">
       <div className="flex justify-between items-center mb-6">
@@ -424,6 +430,8 @@ export default function Page() {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
+
+                      <Button onClick={()=>genSubs(music?.fileUrlPublic || "")}>Gen</Button>
                     </div>
                   </TableCell>
                 </TableRow>
