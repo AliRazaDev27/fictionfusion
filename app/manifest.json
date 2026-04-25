@@ -2,7 +2,7 @@
   "name": "FictionFusion",
   "short_name": "FictionFusion",
   "description": "Your Entertainment Hub",
-  "start_url": "/",
+  "start_url": "/music",
   "display": "standalone",
   "background_color": "#082635",
   "theme_color": "#082635",
