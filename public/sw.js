@@ -31,7 +31,7 @@ self.addEventListener("fetch", async (event) => {
       return;
     }
   }
-  if (url.origin === self.location.origin && request.referrer === "https://localhost:3000/music") {
+  if (url.origin === self.location.origin && request.referrer === "https://fictionfusion.vercel.app/music") {
     event.respondWith(
       caches.open(ASSET_CACHE_NAME).then((cache) => {
         return cache.match(request).then((response) => {
