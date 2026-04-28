@@ -15,8 +15,8 @@ const ActiveMediaPanel = () => {
 
    // Get next 3 songs for the queue
    const queue = music ? music.slice(current + 1, current + 4) : [];
-   const upscaleImg = (url:string)=>{
-      if(url){
+   const upscaleImg = (url: string) => {
+      if (url) {
          return url.replace('100x100', '400x400');
       }
    }
@@ -50,7 +50,11 @@ const ActiveMediaPanel = () => {
                {/* The Data Overlay (Glassmorphism) */}
                <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent pt-12">
                   <h2 className="text-lg font-bold text-white leading-tight mb-1 truncate">{currentTrack?.title || "No Media"}</h2>
-                  <p className="text-cyan-400 text-xs font-mono truncate">{currentTrack?.artist || "Standby..."}</p>
+                  {
+                     currentTrack?.artist && (
+                        <a href={`music/artists/${encodeURIComponent(currentTrack?.artist)}`} className='text-cyan-400 text-xs font-mono truncate' target='_blank'>{currentTrack?.artist || "Standby..."}</a>
+                     )
+                  }
                </div>
 
                {/* Status Badge */}
